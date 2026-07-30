@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://player/player.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cntyty2uryegv" path="res://assets/shasnow/stand_1.png" id="2_stand"]
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_stand")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-10, -5, 10, -5, 10, 25, -10, 25)
