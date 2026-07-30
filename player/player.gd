@@ -12,6 +12,10 @@ var anim_timer := 0.0
 var current_frame := 0
 var is_moving := false  # 记录是否在移动
 
+# 子场景属性
+@export var current_scene: String = "base"
+@export var current_sub_scene: String = "outdoor"
+
 func _ready() -> void:
 	for i in range(1, 7):
 		var path = "res://assets/shasnow/walk_%d.png" % i
@@ -26,6 +30,14 @@ func _ready() -> void:
 	
 	# 初始显示站立
 	sprite.texture = tex_stand
+	
+	# 从场景管理器获取当前场景信息
+	var scene_manager = get_node_or_null("/root/SceneManager")
+	if scene_manager:
+		current_scene = scene_manager.get_current_scene()
+
+func set_scene_info(scene: String) -> void:
+	current_scene = scene
 
 func _physics_process(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
