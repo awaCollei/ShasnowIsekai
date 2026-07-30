@@ -6,136 +6,140 @@ var options: Array[Dictionary] = []
 var selected_index: int = 0
 var is_visible: bool = false
 
-# UI组件引用
+# UI 位置参数：间距只作用于角色外轮廓，不参与世界坐标换算。
+@export var right_gap: float = 14.0
+@export var debug_position: bool = false
+
+# UI 组件引用
 @onready var options_container: VBoxContainer = $VBoxContainer
-@onready var option_label_scene: PackedScene = preload("res://ui/interaction_option.tscn")
+@onready var option_scene: PackedScene = preload("res://ui/interaction_option.tscn")
 
 # 输入处理
 var input_cooldown: float = 0.0
 const INPUT_COOLDOWN_TIME: float = 0.15
 
+var player_ref: CharacterBody2D
+var _last_debug_position := Vector2.ZERO
+var _has_debug_position := false
+
 func _ready() -> void:
-	# 初始隐藏
+	# 初始隐藏；玩家缓存后，后续只在失效时重新查找。
 	options_container.visible = false
-	# 连接信号
+	player_ref = find_player_node(get_tree().root)
 	set_process_input(true)
 
 func _process(delta: float) -> void:
-	# 更新输入冷却
-	if input_cooldown > 0:
+	if input_cooldown > 0.0:
 		input_cooldown -= delta
-	
-	# 更新UI位置（跟随玩家）
-	update_position()
+
+	# CanvasLayer 下的 Control 使用视口坐标，位置需随玩家的画布坐标更新。
+	if is_visible:
+		update_position()
 
 func _input(event: InputEvent) -> void:
-	if not is_visible or options.is_empty():
+	if not is_visible or options.is_empty() or input_cooldown > 0.0:
 		return
-	
-	if input_cooldown > 0:
-		return
-	
-	# W/S键选择
+
+	# W/S（ui_up/ui_down）选择选项。
 	if event.is_action_pressed("ui_up"):
 		select_previous()
 		input_cooldown = INPUT_COOLDOWN_TIME
 	elif event.is_action_pressed("ui_down"):
 		select_next()
 		input_cooldown = INPUT_COOLDOWN_TIME
-	# 交互键
 	elif event.is_action_pressed("interact"):
 		execute_selected()
 
 func add_option(id: String, text: String, target: Node) -> void:
-	# 检查是否已存在
 	for option in options:
 		if option.id == id:
 			return
-	
-	# 添加新选项
+
 	options.append({
 		"id": id,
 		"text": text,
 		"target": target
 	})
-	
-	# 更新UI
 	update_ui()
-	
-	# 如果这是第一个选项，自动显示
+
 	if options.size() == 1:
 		show_ui()
+	else:
+		update_selection()
 
 func remove_option(id: String) -> void:
-	# 查找并移除选项
+	var removed_index := -1
 	for i in range(options.size() - 1, -1, -1):
 		if options[i].id == id:
+			removed_index = i
 			options.remove_at(i)
-	
-	# 更新UI
-	update_ui()
-	
-	# 如果没有选项了，隐藏UI
+			break
+
+	if removed_index == -1:
+		return
+
 	if options.is_empty():
 		hide_ui()
-	else:
-		# 调整选中索引
-		if selected_index >= options.size():
-			selected_index = options.size() - 1
-		update_selection()
+		update_ui()
+		return
+
+	# 删除当前选项之前的项时，保持原来指向的选项不变。
+	if removed_index < selected_index:
+		selected_index -= 1
+	selected_index = clampi(selected_index, 0, options.size() - 1)
+	update_ui()
+	update_selection()
 
 func show_ui() -> void:
 	is_visible = true
 	options_container.visible = true
 	selected_index = 0
 	update_selection()
+	update_position()
 
 func hide_ui() -> void:
 	is_visible = false
 	options_container.visible = false
 
 func update_ui() -> void:
-	# 清空现有选项
+	# 先移出旧节点，避免 queue_free 延迟期间影响新选项的索引。
 	for child in options_container.get_children():
+		options_container.remove_child(child)
 		child.queue_free()
-	
-	# 创建新选项
+
 	for i in range(options.size()):
-		var option = options[i]
-		var option_ui = option_label_scene.instantiate()
+		var option_ui := option_scene.instantiate() as InteractionOption
 		options_container.add_child(option_ui)
-		option_ui.set_text(option.text)
+		option_ui.set_text(options[i].text)
 		option_ui.set_index(i)
 		option_ui.selected.connect(_on_option_selected)
 
+	if is_visible:
+		update_selection()
+
 func update_selection() -> void:
-	# 更新所有选项的选中状态
 	for i in range(options_container.get_child_count()):
-		var option_ui = options_container.get_child(i)
-		option_ui.set_selected(i == selected_index)
+		var option_ui := options_container.get_child(i) as InteractionOption
+		if option_ui:
+			option_ui.set_selected(i == selected_index)
 
 func select_next() -> void:
 	if options.is_empty():
 		return
-	
 	selected_index = (selected_index + 1) % options.size()
 	update_selection()
 
 func select_previous() -> void:
 	if options.is_empty():
 		return
-	
 	selected_index = (selected_index - 1 + options.size()) % options.size()
 	update_selection()
 
 func execute_selected() -> void:
 	if options.is_empty() or selected_index >= options.size():
 		return
-	
-	var option = options[selected_index]
-	var target = option.target
-	
-	# 执行目标节点的interact方法
+
+	var target: Node = options[selected_index].target
 	if target and target.has_method("interact"):
 		target.interact()
 
@@ -144,21 +148,57 @@ func _on_option_selected(index: int) -> void:
 	execute_selected()
 
 func update_position() -> void:
-	# 获取玩家位置
-	var player = find_player_node(get_tree().root)
-	if player:
-		# 将玩家世界坐标转换为屏幕坐标，显示在玩家左上方
-		options_container.position = get_viewport().get_screen_transform() * player.global_position + Vector2(0, 0)
+	if not is_instance_valid(player_ref):
+		player_ref = find_player_node(get_tree().root)
+	if not player_ref:
+		return
+
+	# get_screen_transform() 是视口到窗口的变换，不是世界坐标到 CanvasLayer 的变换。
+	# 玩家自身的 get_global_transform_with_canvas() 才能正确包含 Camera2D 的画布变换。
+	var player_canvas_position := player_ref.get_global_transform_with_canvas().origin
+	var player_bounds := _get_player_canvas_bounds(player_ref)
+	var list_height: float = max(options_container.size.y, options_container.get_combined_minimum_size().y)
+	var right_edge := player_bounds.end.x if player_bounds.size.x > 0.0 else player_canvas_position.x
+	var vertical_center := player_bounds.get_center().y if player_bounds.size.y > 0.0 else player_canvas_position.y
+
+	options_container.position = Vector2(
+		right_edge + right_gap,
+		vertical_center - list_height * 0.5
+	)
+
+	# 可选的低频定位日志，方便检查相机或分辨率变化下的坐标链路。
+	if debug_position and (not _has_debug_position or _last_debug_position.distance_to(options_container.position) > 8.0):
+		print("[InteractionSystem] player canvas=", player_canvas_position,
+			" bounds=", player_bounds, " ui=", options_container.position)
+		_last_debug_position = options_container.position
+		_has_debug_position = true
+
+func _get_player_canvas_bounds(player: CharacterBody2D) -> Rect2:
+	var player_sprite := player.get_node_or_null("Sprite2D") as Sprite2D
+	if player_sprite and player_sprite.texture:
+		return _transform_rect(player_sprite.get_global_transform_with_canvas(), player_sprite.get_rect())
+
+	# 没有 Sprite2D 时退回玩家原点，不影响正常场景的定位逻辑。
+	return Rect2(player.get_global_transform_with_canvas().origin, Vector2.ZERO)
+
+func _transform_rect(transform: Transform2D, rect: Rect2) -> Rect2:
+	var corners: Array[Vector2] = [
+		rect.position,
+		rect.position + Vector2(rect.size.x, 0.0),
+		rect.position + rect.size,
+		rect.position + Vector2(0.0, rect.size.y)
+	]
+	var bounds := Rect2(transform * corners[0], Vector2.ZERO)
+	for corner in corners:
+		bounds = bounds.expand(transform * corner)
+	return bounds
 
 func find_player_node(node: Node) -> CharacterBody2D:
-	# 检查当前节点是否是玩家
 	if node is CharacterBody2D and node.has_method("set_scene_info"):
 		return node
-	
-	# 递归查找子节点
+
 	for child in node.get_children():
-		var result = find_player_node(child)
+		var result := find_player_node(child)
 		if result:
 			return result
-	
 	return null
