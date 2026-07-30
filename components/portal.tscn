@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cwahr311htqac" path="res://components/portal.gd" id="1_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bbqw1"]
+size = Vector2(40, 40)
 
 [node name="Portal" type="Area2D" unique_id=1259496356]
 script = ExtResource("1_script")
