@@ -1,17 +1,17 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://p0wi07vi4f5b"]
 
-[ext_resource type="Script" path="res://player/player.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://wvnmsq1cnblf" path="res://player/player.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cntyty2uryegv" path="res://assets/shasnow/stand_1.png" id="2_stand"]
-[ext_resource type="Script" path="res://player/camera.gd" id="3_camera"]
+[ext_resource type="Script" uid="uid://brqtcpwog54oo" path="res://player/camera.gd" id="3_camera"]
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=967496791]
 script = ExtResource("1_script")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1264378251]
 texture = ExtResource("2_stand")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(-10, -5, 10, -5, 10, 25, -10, 25)
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1785904715]
+polygon = PackedVector2Array(-13, -34, 10, -34, 10, 31, -13, 31)
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=96067796]
 script = ExtResource("3_camera")
