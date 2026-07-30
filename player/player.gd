@@ -39,6 +39,15 @@ func _ready() -> void:
 func set_scene_info(scene: String) -> void:
 	current_scene = scene
 
+# 传送接口：角色立即到达目标位置，镜头由 PlayerCamera 在 0.5 秒内跟过去。
+# 直接修改 global_position 也会被 PlayerCamera 自动识别，但优先使用此方法可避免依赖距离阈值。
+func teleport_to(destination: Vector2) -> void:
+	global_position = destination
+
+	var camera := get_node_or_null("Camera2D") as PlayerCamera
+	if camera:
+		camera.smooth_move_to(destination)
+
 func _physics_process(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
 

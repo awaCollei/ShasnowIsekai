@@ -15,3 +15,6 @@ polygon = PackedVector2Array(-13, -34, 10, -34, 10, 31, -13, 31)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=96067796]
 script = ExtResource("3_camera")
+top_level = true
+teleport_pan_duration = 0.5
+teleport_distance_threshold = 128.0
