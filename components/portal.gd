@@ -5,7 +5,6 @@ class_name Portal
 @export var portal_id: String = ""  # 传送门唯一标识
 @export var target_portal_id: String = ""  # 目标传送门ID
 @export var sub_scene: String = ""  # 所在子场景（留空表示所有子场景）
-@export var change_sub_scene: String = ""  # 传送后改变玩家的子场景
 
 # 显示相关（可选）
 @export var visible_texture: Texture2D  # 显示的纹理，如果为空则不显示
@@ -103,9 +102,8 @@ func teleport_to(target_portal: Portal) -> void:
 	# 传送到目标位置
 	player_ref.global_position = target_portal.global_position
 	
-	# 改变玩家子场景
-	if change_sub_scene != "":
-		player_ref.current_sub_scene = change_sub_scene
+	# 改变玩家子场景为目标传送门所在的子场景
+	player_ref.current_sub_scene = target_portal.sub_scene
 	
 	# 平滑移动镜头
 	var camera = player_ref.get_node_or_null("Camera2D")
