@@ -52,25 +52,23 @@ theme_override_constants/margin_bottom = 3
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1086528023]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 7
-
-[node name="ArrowLabel" type="Label" parent="MarginContainer/HBoxContainer" unique_id=377730794]
-visible = false
-custom_minimum_size = Vector2(18, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.38, 1)
-theme_override_font_sizes/font_size = 16
-text = "▶"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_constants/separation = 0
 
 [node name="KeyLabel" type="Label" parent="MarginContainer/HBoxContainer" unique_id=1911836257]
-visible = false
 custom_minimum_size = Vector2(22, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.58, 1)
 theme_override_font_sizes/font_size = 20
 text = "F"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ArrowLabel" type="Label" parent="MarginContainer/HBoxContainer" unique_id=377730794]
+custom_minimum_size = Vector2(18, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.38, 1)
+theme_override_font_sizes/font_size = 16
+text = "▶ "
 horizontal_alignment = 1
 vertical_alignment = 1
 
