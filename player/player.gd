@@ -1,12 +1,12 @@
 extends CharacterBody2D
 
 const SPEED = 400.0
-const ANIM_INTERVAL = 0.1
+const ANIM_INTERVAL = 0.03
 
 @onready var sprite: Sprite2D = $Sprite2D
 
 var walk_frames: Array[Texture2D] = []
-var tex_stand: Texture2D = preload("res://assets/shasnow/stand_1.png")
+var tex_stand: Texture2D = preload("res://assets/shasnow/stand/stand_1.png")
 
 var anim_timer := 0.0
 var current_frame := 0
@@ -17,8 +17,8 @@ var is_moving := false  # 记录是否在移动
 @export var current_sub_scene: String = "outdoor"
 
 func _ready() -> void:
-	for i in range(1, 7):
-		var path = "res://assets/shasnow/walk_%d.png" % i
+	for i in range(1, 25):
+		var path = "res://assets/shasnow/walk/walk_%d.png" % i
 		var texture = load(path)
 		if texture:
 			walk_frames.append(texture)

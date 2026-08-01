@@ -1,10 +1,10 @@
-<!-- index.html - 修改部分 -->
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视频背景去除工具</title>
+    <title>视频背景去除工具 · 多色块版</title>
     <style>
         * {
             margin: 0;
@@ -14,29 +14,34 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
+            background: #0f0f1a;
             color: #e0e0e0;
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 0 auto;
         }
 
         h1 {
             text-align: center;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 300;
             color: #a8d8ea;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             letter-spacing: 2px;
+        }
+        h1 span {
+            font-size: 1rem;
+            color: #4a5a7e;
+            font-weight: 400;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 420px 1fr;
             gap: 20px;
         }
 
@@ -44,17 +49,26 @@
         .panel {
             background: #16213e;
             border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
             height: fit-content;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+        .panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        .panel::-webkit-scrollbar-thumb {
+            background: #2a3a5e;
+            border-radius: 2px;
         }
 
         .panel label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #8a9bb5;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 500;
         }
 
@@ -66,7 +80,7 @@
 
         .panel input[type="range"] {
             width: 100%;
-            margin: 8px 0 16px;
+            margin: 4px 0 12px;
             -webkit-appearance: none;
             background: transparent;
         }
@@ -76,52 +90,46 @@
             background: #2a3a5e;
             border-radius: 2px;
         }
-
         .panel input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             border-radius: 50%;
             background: #a8d8ea;
-            margin-top: -7px;
+            margin-top: -6px;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(168, 216, 234, 0.3);
         }
-
         .panel input[type="range"]::-moz-range-track {
             height: 4px;
             background: #2a3a5e;
             border-radius: 2px;
             border: none;
         }
-
         .panel input[type="range"]::-moz-range-thumb {
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             border-radius: 50%;
             background: #a8d8ea;
             cursor: pointer;
             border: none;
         }
 
-        /* 切换开关样式 */
+        /* 切换开关 */
         .switch-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #1a1a2e;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 8px;
-            margin: 8px 0 16px;
+            margin: 6px 0 12px;
             border: 1px solid #2a3a5e;
         }
-
         .switch-container .label-text {
             font-size: 0.85rem;
             color: #8a9bb5;
             font-weight: 500;
         }
-
         .switch-container .label-text .highlight {
             color: #a8d8ea;
         }
@@ -129,17 +137,15 @@
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 26px;
+            width: 44px;
+            height: 24px;
             flex-shrink: 0;
         }
-
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
-
         .slider {
             position: absolute;
             cursor: pointer;
@@ -149,56 +155,48 @@
             bottom: 0;
             background: #2a3a5e;
             transition: 0.3s;
-            border-radius: 26px;
+            border-radius: 24px;
         }
-
         .slider::before {
             content: "";
             position: absolute;
-            height: 20px;
-            width: 20px;
+            height: 18px;
+            width: 18px;
             left: 3px;
             bottom: 3px;
             background: #8a9bb5;
             transition: 0.3s;
             border-radius: 50%;
         }
-
         .switch input:checked + .slider {
             background: #a8d8ea;
         }
-
         .switch input:checked + .slider::before {
-            transform: translateX(24px);
+            transform: translateX(20px);
             background: #1a1a2e;
         }
-
         .switch .status-label {
             position: absolute;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 600;
             top: 50%;
             transform: translateY(-50%);
             pointer-events: none;
             transition: 0.3s;
         }
-
         .switch .status-label.on {
-            left: 7px;
+            left: 6px;
             color: #1a1a2e;
             opacity: 0;
         }
-
         .switch .status-label.off {
-            right: 7px;
+            right: 6px;
             color: #8a9bb5;
             opacity: 1;
         }
-
         .switch input:checked + .slider .status-label.on {
             opacity: 1;
         }
-
         .switch input:checked + .slider .status-label.off {
             opacity: 0;
         }
@@ -206,112 +204,108 @@
         .upload-area {
             border: 2px dashed #2a3a5e;
             border-radius: 10px;
-            padding: 30px 20px;
+            padding: 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
-
         .upload-area:hover {
             border-color: #a8d8ea;
             background: rgba(168, 216, 234, 0.05);
         }
-
         .upload-area.dragover {
             border-color: #a8d8ea;
             background: rgba(168, 216, 234, 0.1);
         }
-
         .upload-area .icon {
-            font-size: 48px;
+            font-size: 32px;
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
         }
-
         .upload-area p {
             color: #8a9bb5;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
-
         .upload-area .filename {
             color: #a8d8ea;
             font-weight: 500;
-            margin-top: 8px;
+            margin-top: 4px;
             word-break: break-all;
+            font-size: 0.85rem;
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 32px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
             text-align: center;
         }
-
         .btn-primary {
             background: #a8d8ea;
             color: #1a1a2e;
         }
-
         .btn-primary:hover {
             background: #8ec6d9;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(168, 216, 234, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(168, 216, 234, 0.15);
         }
-
         .btn-primary:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
         }
-
         .btn-danger {
             background: #e74c6f;
             color: #fff;
         }
-
         .btn-danger:hover {
             background: #c0395b;
         }
-
         .btn-secondary {
             background: #2a3a5e;
             color: #a8d8ea;
         }
-
         .btn-secondary:hover {
             background: #3a4a6e;
         }
-
         .btn-success {
             background: #2ecc71;
             color: #1a1a2e;
         }
-
         .btn-success:hover {
             background: #27ae60;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.15);
         }
-
         .btn-success:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
         }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            width: auto;
+        }
+        .btn-xs {
+            padding: 3px 8px;
+            font-size: 0.65rem;
+            width: auto;
+            border-radius: 4px;
+        }
 
         .btn-group {
             display: flex;
-            gap: 10px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 10px;
         }
-
         .btn-group .btn {
             flex: 1;
         }
@@ -321,104 +315,270 @@
             gap: 8px;
             margin-top: 8px;
         }
-
         .export-group .btn {
             flex: 1;
-            padding: 10px 16px;
-            font-size: 0.9rem;
+            padding: 8px 12px;
+            font-size: 0.85rem;
         }
 
         .prefix-input-group {
             display: flex;
             gap: 8px;
             align-items: center;
-            margin-top: 10px;
+            margin-top: 8px;
         }
-
         .prefix-input-group label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #8a9bb5;
             white-space: nowrap;
             margin-bottom: 0;
         }
-
         .prefix-input-group input {
             flex: 1;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
             border: 1px solid #2a3a5e;
             background: #1a1a2e;
             color: #e0e0e0;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             outline: none;
             transition: border-color 0.3s ease;
         }
-
         .prefix-input-group input:focus {
             border-color: #a8d8ea;
         }
 
         .progress-container {
-            margin: 16px 0;
+            margin: 12px 0;
             display: none;
         }
-
         .progress-container.active {
             display: block;
         }
-
         .progress-bar {
-            height: 6px;
+            height: 4px;
             background: #2a3a5e;
-            border-radius: 3px;
+            border-radius: 2px;
             overflow: hidden;
-            margin-top: 8px;
+            margin-top: 4px;
         }
-
         .progress-bar .fill {
             height: 100%;
             background: linear-gradient(90deg, #a8d8ea, #7ec8d9);
-            border-radius: 3px;
+            border-radius: 2px;
             width: 0%;
             transition: width 0.3s ease;
         }
-
         .progress-text {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #8a9bb5;
         }
 
         .stats {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin: 12px 0;
-            font-size: 0.85rem;
+            gap: 6px;
+            margin: 10px 0;
+            font-size: 0.8rem;
             color: #8a9bb5;
         }
-
         .stats span {
             background: #1a1a2e;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
             text-align: center;
         }
-
         .stats .num {
             color: #a8d8ea;
             font-weight: 600;
             display: block;
-            font-size: 1.1rem;
+            font-size: 1rem;
+        }
+
+        /* ===== 颜色块管理 ===== */
+        .color-block-section {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0 12px;
+            border: 1px solid #2a3a5e;
+        }
+        .color-block-section .section-title {
+            font-size: 0.8rem;
+            color: #8a9bb5;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .color-block-section .section-title .badge {
+            background: #2a3a5e;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: #a8d8ea;
+        }
+
+        .color-block-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .color-block-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        .color-block-list::-webkit-scrollbar-thumb {
+            background: #2a3a5e;
+            border-radius: 2px;
+        }
+
+        .color-block-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #0f0f1a;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .color-block-item:hover {
+            border-color: #2a3a5e;
+        }
+        .color-block-item .color-preview {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            border: 1px solid #2a3a5e;
+            cursor: pointer;
+        }
+        .color-block-item .color-hex {
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #8a9bb5;
+            min-width: 60px;
+        }
+        .color-block-item .color-tolerance {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: auto;
+        }
+        .color-block-item .color-tolerance input[type="range"] {
+            width: 50px;
+            margin: 0;
+            padding: 0;
+        }
+        .color-block-item .color-tolerance .tol-val {
+            font-size: 0.6rem;
+            color: #4a5a7e;
+            min-width: 20px;
+            text-align: center;
+        }
+        .color-block-item .del-btn {
+            background: none;
+            border: none;
+            color: #4a5a7e;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0 4px;
+            transition: color 0.2s;
+        }
+        .color-block-item .del-btn:hover {
+            color: #e74c6f;
+        }
+
+        .color-block-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .color-block-actions .btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+        }
+        .color-picker-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-top: 6px;
+        }
+        .color-picker-row input[type="color"] {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #2a3a5e;
+            border-radius: 6px;
+            padding: 2px;
+            background: transparent;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .color-picker-row input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .color-picker-row input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+        .color-picker-row input[type="text"] {
+            flex: 1;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #2a3a5e;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            font-size: 0.8rem;
+            font-family: monospace;
+            outline: none;
+            min-width: 70px;
+        }
+        .color-picker-row input[type="text"]:focus {
+            border-color: #a8d8ea;
+        }
+        .color-picker-row .btn {
+            flex: 0 0 auto;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            width: auto;
+        }
+
+        /* 吸管按钮 */
+        .eyedropper-btn {
+            background: #2a3a5e;
+            border: none;
+            color: #a8d8ea;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .eyedropper-btn:hover {
+            background: #3a4a6e;
+        }
+        .eyedropper-btn.active {
+            background: #a8d8ea;
+            color: #1a1a2e;
         }
 
         /* 预览区域 */
         .preview-area {
             background: #16213e;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            padding: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
             min-height: 500px;
         }
@@ -427,39 +587,34 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
-
         .preview-header h2 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 500;
             color: #8a9bb5;
         }
-
         .preview-controls {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             align-items: center;
         }
-
         .preview-controls button {
             background: #2a3a5e;
             border: none;
             color: #a8d8ea;
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
-
         .preview-controls button:hover {
             background: #3a4a6e;
         }
-
         .preview-controls button:disabled {
             opacity: 0.3;
             cursor: not-allowed;
@@ -470,65 +625,60 @@
             border-radius: 8px;
             overflow: hidden;
             position: relative;
-            min-height: 400px;
+            min-height: 380px;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: crosshair;
         }
-
         .preview-container canvas {
             width: 100%;
-            max-width: 520px;
+            max-width: 480px;
             height: auto;
             aspect-ratio: 1/1;
             image-rendering: pixelated;
             display: block;
             background: transparent;
         }
-
         .preview-container .placeholder {
             color: #4a5a7e;
-            font-size: 1rem;
+            font-size: 0.95rem;
             text-align: center;
-            padding: 40px;
+            padding: 30px;
         }
-
         .preview-container .placeholder .icon {
-            font-size: 48px;
+            font-size: 40px;
             display: block;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .frame-counter {
             text-align: center;
             color: #4a5a7e;
-            font-size: 0.85rem;
-            margin-top: 12px;
+            font-size: 0.8rem;
+            margin-top: 8px;
         }
 
         .thumbnail-strip {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             overflow-x: auto;
-            padding: 8px 0;
-            margin-top: 12px;
-            max-height: 80px;
+            padding: 6px 0;
+            margin-top: 8px;
+            max-height: 70px;
             scrollbar-width: thin;
             scrollbar-color: #2a3a5e transparent;
         }
-
         .thumbnail-strip::-webkit-scrollbar {
-            height: 4px;
+            height: 3px;
         }
-
         .thumbnail-strip::-webkit-scrollbar-thumb {
             background: #2a3a5e;
             border-radius: 2px;
         }
-
         .thumbnail-strip img {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             object-fit: cover;
             border-radius: 4px;
             border: 2px solid transparent;
@@ -537,14 +687,41 @@
             flex-shrink: 0;
             image-rendering: pixelated;
         }
-
         .thumbnail-strip img:hover {
             border-color: #a8d8ea;
         }
-
         .thumbnail-strip img.active {
             border-color: #a8d8ea;
-            box-shadow: 0 0 15px rgba(168, 216, 234, 0.3);
+            box-shadow: 0 0 12px rgba(168, 216, 234, 0.25);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #16213e;
+            color: #e0e0e0;
+            padding: 14px 22px;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            max-width: 400px;
+            font-size: 0.9rem;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast.error {
+            border-color: #e74c6f;
+        }
+        .toast.success {
+            border-color: #2ecc71;
         }
 
         /* 响应式 */
@@ -552,18 +729,18 @@
             .grid {
                 grid-template-columns: 1fr;
             }
+            .panel {
+                max-height: none;
+            }
         }
-
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 8px;
             }
             .panel {
-                padding: 16px;
+                padding: 12px;
             }
-            .btn-group {
-                flex-direction: column;
-            }
+            .btn-group,
             .export-group {
                 flex-direction: column;
             }
@@ -573,46 +750,33 @@
             .prefix-input-group {
                 flex-wrap: wrap;
             }
-            .switch-container {
+            .color-picker-row {
                 flex-wrap: wrap;
-                gap: 8px;
+            }
+            .color-block-item {
+                flex-wrap: wrap;
+            }
+            .color-block-item .color-tolerance {
+                margin-left: 0;
+                width: 100%;
+            }
+            .color-block-item .color-tolerance input[type="range"] {
+                flex: 1;
             }
         }
 
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #16213e;
-            color: #e0e0e0;
-            padding: 16px 24px;
-            border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.4s ease;
-            z-index: 1000;
-            max-width: 400px;
-        }
-
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .toast.error {
-            border-color: #e74c6f;
-        }
-
-        .toast.success {
-            border-color: #2ecc71;
+        /* 空状态 */
+        .empty-hint {
+            color: #4a5a7e;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 12px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎬 视频背景去除 · 帧处理</h1>
+        <h1>🎬 视频背景去除 · <span>多色块精准去除</span></h1>
 
         <div class="grid">
             <!-- 控制面板 -->
@@ -629,12 +793,13 @@
                 </label>
                 <input type="range" id="fpsSlider" min="1" max="30" value="8">
 
-                <label>背景色容差
-                    <span class="value-display" id="toleranceValue">35</span>
+                <!-- 全局容差（默认值，新色块继承） -->
+                <label>默认容差
+                    <span class="value-display" id="globalToleranceValue">35</span>
                 </label>
-                <input type="range" id="toleranceSlider" min="0" max="80" value="35">
+                <input type="range" id="globalToleranceSlider" min="0" max="80" value="35">
 
-                <!-- AI/纯色切换开关 -->
+                <!-- AI/纯色切换 -->
                 <div class="switch-container">
                     <span class="label-text">
                         🤖 <span class="highlight">AI</span> 智能去背景
@@ -647,8 +812,34 @@
                         </span>
                     </label>
                 </div>
-                <div style="font-size: 0.75rem; color: #4a5a7e; margin-top: -10px; margin-bottom: 12px; text-align: center;">
-                    💡 开启 = AI模型 + 纯色检测 | 关闭 = 仅纯色检测
+                <div style="font-size: 0.7rem; color: #4a5a7e; margin-top: -8px; margin-bottom: 10px; text-align: center;">
+                    💡 开启 = AI模型 + 多色块检测 | 关闭 = 仅多色块检测
+                </div>
+
+                <!-- ===== 颜色块管理 ===== -->
+                <div class="color-block-section">
+                    <div class="section-title">
+                        <span>🎨 背景色块 <span class="badge" id="blockCount">0</span></span>
+                        <button class="btn btn-xs btn-danger" id="clearAllBlocks" style="width:auto; padding:2px 12px;">清空</button>
+                    </div>
+
+                    <div class="color-block-list" id="colorBlockList">
+                        <div class="empty-hint">点击下方添加颜色块</div>
+                    </div>
+
+                    <div class="color-picker-row">
+                        <input type="color" id="colorPicker" value="#C7BBBB">
+                        <input type="text" id="colorHexInput" value="#C7BBBB" placeholder="#RRGGBB">
+                        <button class="btn btn-sm btn-secondary" id="addColorBtn" style="width:auto;">➕ 添加</button>
+                    </div>
+
+                    <div class="color-picker-row" style="margin-top:4px;">
+                        <button class="eyedropper-btn" id="eyedropperBtn">💉 从画面取色</button>
+                        <button class="btn btn-sm btn-secondary" id="addDefaultColors" style="width:auto;">📋 预设色块</button>
+                    </div>
+                    <div style="font-size:0.65rem; color:#4a5a7e; margin-top:4px; text-align:center;">
+                        点击颜色块可编辑颜色，拖动滑块调整容差
+                    </div>
                 </div>
 
                 <button class="btn btn-primary" id="processBtn" disabled>🚀 开始处理</button>
@@ -687,7 +878,7 @@
             <!-- 预览区域 -->
             <div class="preview-area">
                 <div class="preview-header">
-                    <h2>🖼️ 帧预览</h2>
+                    <h2>🖼️ 帧预览 <span style="font-size:0.7rem;color:#4a5a7e;font-weight:400;">（点击画面取色）</span></h2>
                     <div class="preview-controls">
                         <button id="playBtn" disabled title="播放/暂停">▶</button>
                         <button id="prevBtn" disabled title="上一帧">◀</button>
@@ -721,17 +912,21 @@
             playInterval: null,
             isProcessing: false,
             file: null,
+            colorBlocks: [
+                { color: '#C7BBBB', tolerance: 35 }
+            ],
+            eyedropperMode: false,
         };
 
         // ============ DOM引用 ============
-        const elements = {
+        const el = {
             uploadArea: document.getElementById('uploadArea'),
             fileInput: document.getElementById('fileInput'),
             fileName: document.getElementById('fileName'),
             fpsSlider: document.getElementById('fpsSlider'),
             fpsValue: document.getElementById('fpsValue'),
-            toleranceSlider: document.getElementById('toleranceSlider'),
-            toleranceValue: document.getElementById('toleranceValue'),
+            globalToleranceSlider: document.getElementById('globalToleranceSlider'),
+            globalToleranceValue: document.getElementById('globalToleranceValue'),
             aiSwitch: document.getElementById('aiSwitch'),
             processBtn: document.getElementById('processBtn'),
             clearBtn: document.getElementById('clearBtn'),
@@ -752,41 +947,232 @@
             prevBtn: document.getElementById('prevBtn'),
             nextBtn: document.getElementById('nextBtn'),
             toast: document.getElementById('toast'),
+            // 颜色块相关
+            colorBlockList: document.getElementById('colorBlockList'),
+            colorPicker: document.getElementById('colorPicker'),
+            colorHexInput: document.getElementById('colorHexInput'),
+            addColorBtn: document.getElementById('addColorBtn'),
+            clearAllBlocks: document.getElementById('clearAllBlocks'),
+            eyedropperBtn: document.getElementById('eyedropperBtn'),
+            addDefaultColors: document.getElementById('addDefaultColors'),
+            blockCount: document.getElementById('blockCount'),
+            previewContainer: document.getElementById('previewContainer'),
         };
 
         // ============ 工具函数 ============
         function showToast(message, type = 'info') {
-            const t = elements.toast;
+            const t = el.toast;
             t.textContent = message;
             t.className = 'toast ' + type + ' show';
             clearTimeout(t._timer);
             t._timer = setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        function formatTime(ms) {
-            const s = Math.floor(ms / 1000);
-            const m = Math.floor(s / 60);
-            return `${m}:${String(s % 60).padStart(2, '0')}`;
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(c => Math.round(c).toString(16).padStart(2, '0')).join('');
+        }
+
+        function isValidHex(color) {
+            return /^#?([A-Fa-f0-9]{6})$/.test(color);
+        }
+
+        function normalizeHex(color) {
+            if (!color) return '#000000';
+            let c = color.trim();
+            if (!c.startsWith('#')) c = '#' + c;
+            if (c.length === 4) {
+                c = '#' + c[1]+c[1]+c[2]+c[2]+c[3]+c[3];
+            }
+            return c.length === 7 ? c : '#000000';
+        }
+
+        // ============ 颜色块管理 ============
+        function renderColorBlocks() {
+            const list = el.colorBlockList;
+            list.innerHTML = '';
+
+            if (state.colorBlocks.length === 0) {
+                list.innerHTML = '<div class="empty-hint">点击下方添加颜色块</div>';
+                el.blockCount.textContent = '0';
+                return;
+            }
+
+            state.colorBlocks.forEach((block, index) => {
+                const item = document.createElement('div');
+                item.className = 'color-block-item';
+                item.dataset.index = index;
+
+                const preview = document.createElement('div');
+                preview.className = 'color-preview';
+                preview.style.background = block.color;
+                preview.title = '点击修改颜色';
+                preview.addEventListener('click', () => {
+                    el.colorPicker.value = block.color;
+                    el.colorHexInput.value = block.color;
+                    // 更新颜色块
+                    const newColor = block.color;
+                    const newTolerance = block.tolerance;
+                    // 简单替换
+                    state.colorBlocks[index] = { color: newColor, tolerance: newTolerance };
+                    renderColorBlocks();
+                    updateProcessBtn();
+                });
+
+                const hexSpan = document.createElement('span');
+                hexSpan.className = 'color-hex';
+                hexSpan.textContent = block.color.toUpperCase();
+
+                const tolGroup = document.createElement('div');
+                tolGroup.className = 'color-tolerance';
+                const tolSlider = document.createElement('input');
+                tolSlider.type = 'range';
+                tolSlider.min = 0;
+                tolSlider.max = 80;
+                tolSlider.value = block.tolerance;
+                tolSlider.title = '容差';
+                tolSlider.addEventListener('input', () => {
+                    const val = parseInt(tolSlider.value);
+                    state.colorBlocks[index].tolerance = val;
+                    tolVal.textContent = val;
+                    updateProcessBtn();
+                });
+                const tolVal = document.createElement('span');
+                tolVal.className = 'tol-val';
+                tolVal.textContent = block.tolerance;
+
+                tolGroup.appendChild(tolSlider);
+                tolGroup.appendChild(tolVal);
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'del-btn';
+                delBtn.textContent = '✕';
+                delBtn.title = '删除此色块';
+                delBtn.addEventListener('click', () => {
+                    state.colorBlocks.splice(index, 1);
+                    renderColorBlocks();
+                    updateProcessBtn();
+                });
+
+                item.appendChild(preview);
+                item.appendChild(hexSpan);
+                item.appendChild(tolGroup);
+                item.appendChild(delBtn);
+                list.appendChild(item);
+            });
+
+            el.blockCount.textContent = state.colorBlocks.length;
+        }
+
+        function addColorBlock(color, tolerance) {
+            const c = normalizeHex(color);
+            const tol = tolerance !== undefined ? tolerance : parseInt(el.globalToleranceSlider.value);
+            if (!isValidHex(c)) {
+                showToast('无效的颜色值，请使用 #RRGGBB 格式', 'error');
+                return false;
+            }
+            // 检查是否已存在相同颜色
+            const exists = state.colorBlocks.some(b => b.color.toUpperCase() === c.toUpperCase());
+            if (exists) {
+                showToast('该颜色已存在', 'info');
+                return false;
+            }
+            state.colorBlocks.push({ color: c, tolerance: tol });
+            renderColorBlocks();
+            updateProcessBtn();
+            return true;
+        }
+
+        function updateProcessBtn() {
+            const hasBlocks = state.colorBlocks.length > 0;
+            const hasFile = state.file !== null;
+            el.processBtn.disabled = !(hasFile && hasBlocks);
+        }
+
+        // 预设色块
+        function addDefaultColors() {
+            const defaults = [
+                '#C7BBBB', // 灰色
+                '#B5A9A9', // 深灰
+                '#D5C9C9', // 浅灰
+                '#A0A0A0', // 中灰
+                '#E8DCDC', // 暖灰
+            ];
+            let added = 0;
+            defaults.forEach(c => {
+                if (addColorBlock(c, 35)) added++;
+            });
+            showToast(`添加了 ${added} 个预设色块`, 'success');
+        }
+
+        // ============ 吸管工具 ============
+        function toggleEyedropper() {
+            state.eyedropperMode = !state.eyedropperMode;
+            el.eyedropperBtn.classList.toggle('active', state.eyedropperMode);
+            el.eyedropperBtn.textContent = state.eyedropperMode ? '🔴 点击画面取色' : '💉 从画面取色';
+            if (state.eyedropperMode) {
+                showToast('点击预览画面中的颜色进行取色', 'info');
+            }
+        }
+
+        // 从canvas取色
+        function pickColorFromCanvas(event) {
+            if (!state.eyedropperMode) return;
+            if (state.frames.length === 0) {
+                showToast('请先处理视频，加载帧数据', 'error');
+                return;
+            }
+
+            const canvas = el.previewCanvas;
+            const rect = canvas.getBoundingClientRect();
+            const x = (event.clientX - rect.left) / rect.width * canvas.width;
+            const y = (event.clientY - rect.top) / rect.height * canvas.height;
+
+            if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) return;
+
+            const ctx = canvas.getContext('2d');
+            const pixel = ctx.getImageData(x, y, 1, 1);
+            const [r, g, b] = pixel.data;
+
+            const hex = rgbToHex(r, g, b);
+            el.colorPicker.value = hex;
+            el.colorHexInput.value = hex;
+
+            // 自动添加到色块列表
+            addColorBlock(hex, parseInt(el.globalToleranceSlider.value));
+
+            // 关闭吸管模式
+            state.eyedropperMode = false;
+            el.eyedropperBtn.classList.remove('active');
+            el.eyedropperBtn.textContent = '💉 从画面取色';
+            showToast(`已添加颜色 ${hex}`, 'success');
         }
 
         // ============ 文件上传 ============
-        elements.uploadArea.addEventListener('click', () => elements.fileInput.click());
-        elements.uploadArea.addEventListener('dragover', (e) => {
+        el.uploadArea.addEventListener('click', () => el.fileInput.click());
+        el.uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            elements.uploadArea.classList.add('dragover');
+            el.uploadArea.classList.add('dragover');
         });
-        elements.uploadArea.addEventListener('dragleave', () => {
-            elements.uploadArea.classList.remove('dragover');
+        el.uploadArea.addEventListener('dragleave', () => {
+            el.uploadArea.classList.remove('dragover');
         });
-        elements.uploadArea.addEventListener('drop', (e) => {
+        el.uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            elements.uploadArea.classList.remove('dragover');
+            el.uploadArea.classList.remove('dragover');
             if (e.dataTransfer.files.length) {
                 handleFile(e.dataTransfer.files[0]);
             }
         });
-
-        elements.fileInput.addEventListener('change', (e) => {
+        el.fileInput.addEventListener('change', (e) => {
             if (e.target.files.length) {
                 handleFile(e.target.files[0]);
             }
@@ -798,11 +1184,9 @@
                 return;
             }
             state.file = file;
-            elements.fileName.textContent = file.name;
-            elements.processBtn.disabled = false;
+            el.fileName.textContent = file.name;
+            updateProcessBtn();
             showToast(`已加载: ${file.name}`, 'success');
-            
-            // 上传到服务器
             uploadVideo(file);
         }
 
@@ -829,40 +1213,46 @@
 
         async function startProcessing() {
             if (state.isProcessing) return;
+            if (state.colorBlocks.length === 0) {
+                showToast('请至少添加一个背景色块', 'error');
+                return;
+            }
 
-            const fps = parseInt(elements.fpsSlider.value);
-            const tolerance = parseInt(elements.toleranceSlider.value);
-            const use_ai = elements.aiSwitch.checked;
+            const fps = parseInt(el.fpsSlider.value);
+            const use_ai = el.aiSwitch.checked;
+            const blocks = state.colorBlocks.map(b => ({
+                color: b.color,
+                tolerance: b.tolerance
+            }));
 
-            elements.processBtn.disabled = true;
-            elements.processBtn.textContent = '⏳ 处理中...';
-            elements.progressContainer.classList.add('active');
+            el.processBtn.disabled = true;
+            el.processBtn.textContent = '⏳ 处理中...';
+            el.progressContainer.classList.add('active');
             state.isProcessing = true;
             state.frames = [];
             state.currentIndex = 0;
-            elements.exportBtn.disabled = true;
-            elements.exportZipBtn.disabled = true;
+            el.exportBtn.disabled = true;
+            el.exportZipBtn.disabled = true;
 
             try {
                 const res = await fetch('/process', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fps, tolerance, use_ai }),
+                    body: JSON.stringify({ fps, use_ai, color_blocks: blocks }),
                 });
                 const data = await res.json();
                 if (data.error) {
                     showToast(data.error, 'error');
-                    elements.processBtn.disabled = false;
-                    elements.processBtn.textContent = '🚀 开始处理';
+                    el.processBtn.disabled = false;
+                    el.processBtn.textContent = '🚀 开始处理';
                     state.isProcessing = false;
                     return;
                 }
-                // 开始轮询状态
                 pollStatus();
             } catch (e) {
                 showToast('启动处理失败: ' + e.message, 'error');
-                elements.processBtn.disabled = false;
-                elements.processBtn.textContent = '🚀 开始处理';
+                el.processBtn.disabled = false;
+                el.processBtn.textContent = '🚀 开始处理';
                 state.isProcessing = false;
             }
         }
@@ -872,21 +1262,18 @@
                 const res = await fetch('/status');
                 const data = await res.json();
 
-                // 更新进度
-                elements.progressFill.style.width = data.progress + '%';
-                elements.progressText.textContent = data.is_processing ? '处理中...' : '完成！';
-                elements.frameCount.textContent = `${data.processed} / ${data.total}`;
-                elements.totalFrames.textContent = data.total || 0;
-                elements.processedFrames.textContent = data.processed || 0;
+                el.progressFill.style.width = data.progress + '%';
+                el.progressText.textContent = data.is_processing ? '处理中...' : '完成！';
+                el.frameCount.textContent = `${data.processed} / ${data.total}`;
+                el.totalFrames.textContent = data.total || 0;
+                el.processedFrames.textContent = data.processed || 0;
 
                 if (data.is_processing) {
-                    // 继续轮询
                     setTimeout(pollStatus, 500);
                 } else {
-                    // 处理完成，获取帧数据
                     state.isProcessing = false;
-                    elements.processBtn.textContent = '✅ 完成';
-                    elements.processBtn.disabled = false;
+                    el.processBtn.textContent = '✅ 完成';
+                    el.processBtn.disabled = false;
                     await loadFrames();
                     showToast(`处理完成！共 ${state.frames.length} 帧`, 'success');
                 }
@@ -903,12 +1290,12 @@
                 state.frames = data.frames || [];
                 if (state.frames.length > 0) {
                     renderFrames();
-                    elements.clearBtn.disabled = false;
-                    elements.exportBtn.disabled = false;
-                    elements.exportZipBtn.disabled = false;
-                    elements.playBtn.disabled = false;
-                    elements.prevBtn.disabled = false;
-                    elements.nextBtn.disabled = false;
+                    el.clearBtn.disabled = false;
+                    el.exportBtn.disabled = false;
+                    el.exportZipBtn.disabled = false;
+                    el.playBtn.disabled = false;
+                    el.prevBtn.disabled = false;
+                    el.nextBtn.disabled = false;
                 }
             } catch (e) {
                 showToast('加载帧数据失败: ' + e.message, 'error');
@@ -925,24 +1312,25 @@
                     clearInterval(state.playInterval);
                     state.playInterval = null;
                 }
-                elements.playBtn.textContent = '▶';
-                elements.previewCanvas.style.display = 'none';
-                elements.placeholder.style.display = 'block';
-                elements.thumbnailStrip.innerHTML = '';
-                elements.frameCounter.textContent = '0 / 0';
-                elements.totalFrames.textContent = '0';
-                elements.processedFrames.textContent = '0';
-                elements.progressFill.style.width = '0%';
-                elements.progressText.textContent = '已清除';
-                elements.clearBtn.disabled = true;
-                elements.exportBtn.disabled = true;
-                elements.exportZipBtn.disabled = true;
-                elements.playBtn.disabled = true;
-                elements.prevBtn.disabled = true;
-                elements.nextBtn.disabled = true;
-                elements.processBtn.textContent = '🚀 开始处理';
-                elements.processBtn.disabled = false;
-                elements.progressContainer.classList.remove('active');
+                el.playBtn.textContent = '▶';
+                el.previewCanvas.style.display = 'none';
+                el.placeholder.style.display = 'block';
+                el.thumbnailStrip.innerHTML = '';
+                el.frameCounter.textContent = '0 / 0';
+                el.totalFrames.textContent = '0';
+                el.processedFrames.textContent = '0';
+                el.progressFill.style.width = '0%';
+                el.progressText.textContent = '已清除';
+                el.clearBtn.disabled = true;
+                el.exportBtn.disabled = true;
+                el.exportZipBtn.disabled = true;
+                el.playBtn.disabled = true;
+                el.prevBtn.disabled = true;
+                el.nextBtn.disabled = true;
+                el.processBtn.textContent = '🚀 开始处理';
+                el.processBtn.disabled = false;
+                el.progressContainer.classList.remove('active');
+                updateProcessBtn();
                 showToast('已清除所有结果', 'info');
             } catch (e) {
                 showToast('清除失败: ' + e.message, 'error');
@@ -956,12 +1344,12 @@
                 return;
             }
 
-            const prefix = elements.prefixInput.value.trim() || 'frame_';
+            const prefix = el.prefixInput.value.trim() || 'frame_';
             const endpoint = asZip ? '/export/zip' : '/export';
 
             try {
-                elements.exportBtn.disabled = true;
-                elements.exportZipBtn.disabled = true;
+                el.exportBtn.disabled = true;
+                el.exportZipBtn.disabled = true;
 
                 const res = await fetch(endpoint, {
                     method: 'POST',
@@ -970,7 +1358,6 @@
                 });
 
                 if (asZip) {
-                    // ZIP下载
                     if (res.ok) {
                         const blob = await res.blob();
                         const url = URL.createObjectURL(blob);
@@ -987,7 +1374,6 @@
                         showToast(error.error || '导出失败', 'error');
                     }
                 } else {
-                    // 普通导出
                     const data = await res.json();
                     if (data.error) {
                         showToast(data.error, 'error');
@@ -998,33 +1384,31 @@
             } catch (e) {
                 showToast('导出失败: ' + e.message, 'error');
             } finally {
-                elements.exportBtn.disabled = false;
-                elements.exportZipBtn.disabled = false;
+                el.exportBtn.disabled = false;
+                el.exportZipBtn.disabled = false;
             }
         }
 
         // ============ 渲染预览 ============
         function renderFrames() {
-            const canvas = elements.previewCanvas;
+            const canvas = el.previewCanvas;
             const ctx = canvas.getContext('2d');
-            
-            // 设置canvas尺寸为260x260 (显示时保持比例)
             canvas.width = 260;
             canvas.height = 260;
             canvas.style.display = 'block';
-            elements.placeholder.style.display = 'none';
+            el.placeholder.style.display = 'none';
 
             if (state.frames.length > 0) {
                 showFrame(0);
                 renderThumbnails();
-                elements.frameCounter.textContent = `1 / ${state.frames.length}`;
+                el.frameCounter.textContent = `1 / ${state.frames.length}`;
             }
         }
 
         function showFrame(index) {
-            const canvas = elements.previewCanvas;
+            const canvas = el.previewCanvas;
             const ctx = canvas.getContext('2d');
-            
+
             if (index < 0 || index >= state.frames.length || !state.frames[index]) {
                 return;
             }
@@ -1035,26 +1419,25 @@
                 canvas.height = 260;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, 260, 260);
-                
-                // 更新缩略图高亮
-                const thumbs = elements.thumbnailStrip.querySelectorAll('img');
+
+                const thumbs = el.thumbnailStrip.querySelectorAll('img');
                 thumbs.forEach((el, i) => {
                     el.classList.toggle('active', i === index);
                 });
             };
             img.src = 'data:image/png;base64,' + state.frames[index];
-            
+
             state.currentIndex = index;
-            elements.frameCounter.textContent = `${index + 1} / ${state.frames.length}`;
+            el.frameCounter.textContent = `${index + 1} / ${state.frames.length}`;
         }
 
         function renderThumbnails() {
-            const strip = elements.thumbnailStrip;
+            const strip = el.thumbnailStrip;
             strip.innerHTML = '';
-            
+
             const maxThumbs = Math.min(state.frames.length, 100);
             const step = Math.max(1, Math.floor(state.frames.length / maxThumbs));
-            
+
             for (let i = 0; i < state.frames.length; i += step) {
                 const img = document.createElement('img');
                 img.src = 'data:image/png;base64,' + state.frames[i];
@@ -1070,10 +1453,10 @@
         // ============ 播放控制 ============
         function togglePlay() {
             if (state.frames.length === 0) return;
-            
+
             state.isPlaying = !state.isPlaying;
-            elements.playBtn.textContent = state.isPlaying ? '⏸' : '▶';
-            
+            el.playBtn.textContent = state.isPlaying ? '⏸' : '▶';
+
             if (state.isPlaying) {
                 if (state.currentIndex >= state.frames.length - 1) {
                     state.currentIndex = 0;
@@ -1084,7 +1467,7 @@
                         next = 0;
                     }
                     showFrame(next);
-                }, 1000 / 8); // 8fps播放
+                }, 1000 / 8);
             } else {
                 if (state.playInterval) {
                     clearInterval(state.playInterval);
@@ -1106,24 +1489,75 @@
         }
 
         // ============ 事件绑定 ============
-        elements.fpsSlider.addEventListener('input', () => {
-            elements.fpsValue.textContent = elements.fpsSlider.value;
+        el.fpsSlider.addEventListener('input', () => {
+            el.fpsValue.textContent = el.fpsSlider.value;
         });
 
-        elements.toleranceSlider.addEventListener('input', () => {
-            elements.toleranceValue.textContent = elements.toleranceSlider.value;
+        el.globalToleranceSlider.addEventListener('input', () => {
+            el.globalToleranceValue.textContent = el.globalToleranceSlider.value;
         });
 
-        elements.processBtn.addEventListener('click', startProcessing);
-        elements.clearBtn.addEventListener('click', clearResults);
-        elements.exportBtn.addEventListener('click', () => exportFrames(false));
-        elements.exportZipBtn.addEventListener('click', () => exportFrames(true));
-        elements.playBtn.addEventListener('click', togglePlay);
-        elements.prevBtn.addEventListener('click', prevFrame);
-        elements.nextBtn.addEventListener('click', nextFrame);
+        // 颜色输入同步
+        el.colorPicker.addEventListener('input', () => {
+            el.colorHexInput.value = el.colorPicker.value;
+        });
+        el.colorHexInput.addEventListener('input', () => {
+            const val = normalizeHex(el.colorHexInput.value);
+            if (isValidHex(val)) {
+                el.colorPicker.value = val;
+            }
+        });
+        el.colorHexInput.addEventListener('blur', () => {
+            const val = normalizeHex(el.colorHexInput.value);
+            if (isValidHex(val)) {
+                el.colorHexInput.value = val;
+                el.colorPicker.value = val;
+            } else {
+                el.colorHexInput.value = el.colorPicker.value;
+            }
+        });
+
+        el.addColorBtn.addEventListener('click', () => {
+            const color = el.colorHexInput.value.trim() || el.colorPicker.value;
+            addColorBlock(color);
+        });
+
+        el.clearAllBlocks.addEventListener('click', () => {
+            if (state.colorBlocks.length === 0) return;
+            state.colorBlocks = [];
+            renderColorBlocks();
+            updateProcessBtn();
+            showToast('已清空所有色块', 'info');
+        });
+
+        el.addDefaultColors.addEventListener('click', addDefaultColors);
+
+        el.eyedropperBtn.addEventListener('click', toggleEyedropper);
+
+        // 点击预览容器取色
+        el.previewContainer.addEventListener('click', pickColorFromCanvas);
+
+        // 键盘快捷键：E 键切换吸管
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'e' || e.key === 'E') {
+                if (!e.target.matches('input, textarea')) {
+                    e.preventDefault();
+                    toggleEyedropper();
+                }
+            }
+        });
+
+        el.processBtn.addEventListener('click', startProcessing);
+        el.clearBtn.addEventListener('click', clearResults);
+        el.exportBtn.addEventListener('click', () => exportFrames(false));
+        el.exportZipBtn.addEventListener('click', () => exportFrames(true));
+        el.playBtn.addEventListener('click', togglePlay);
+        el.prevBtn.addEventListener('click', prevFrame);
+        el.nextBtn.addEventListener('click', nextFrame);
 
         // 键盘快捷键
         document.addEventListener('keydown', (e) => {
+            if (e.target.matches('input, textarea')) return;
             if (e.key === ' ' || e.key === 'Space') {
                 e.preventDefault();
                 togglePlay();
@@ -1133,9 +1567,11 @@
         });
 
         // ============ 初始化 ============
-        console.log('🎬 视频背景处理工具已启动');
-        console.log('📖 快捷键: Space=播放/暂停, ←/→=上一帧/下一帧');
-        console.log('🤖 模型: u2net (可切换为纯色检测模式)');
+        renderColorBlocks();
+        updateProcessBtn();
+        console.log('🎬 视频背景处理工具已启动 (多色块版)');
+        console.log('📖 快捷键: Space=播放/暂停, ←/→=上一帧/下一帧, E=吸管取色');
+        console.log('🎨 支持任意数量背景色块精准去除');
     </script>
 </body>
 </html>

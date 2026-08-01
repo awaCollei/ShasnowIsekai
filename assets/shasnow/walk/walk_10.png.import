@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cntyty2uryegv"
-path="res://.godot/imported/stand_1.png-5ec0856b99ef6463908f6d95324f04cd.ctex"
+uid="uid://btyf7gsnksgl3"
+path="res://.godot/imported/walk_10.png-ae4b924131a7ea1c52a12ea257af7125.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/shasnow/stand_1.png"
-dest_files=["res://.godot/imported/stand_1.png-5ec0856b99ef6463908f6d95324f04cd.ctex"]
+source_file="res://assets/shasnow/walk/walk_10.png"
+dest_files=["res://.godot/imported/walk_10.png-ae4b924131a7ea1c52a12ea257af7125.ctex"]
 
 [params]
 

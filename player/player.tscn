@@ -1,20 +1,19 @@
 [gd_scene format=3 uid="uid://p0wi07vi4f5b"]
 
 [ext_resource type="Script" uid="uid://wvnmsq1cnblf" path="res://player/player.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://cntyty2uryegv" path="res://assets/shasnow/stand_1.png" id="2_stand"]
+[ext_resource type="Texture2D" uid="uid://cb6qwekulw72n" path="res://assets/shasnow/stand/stand_1.png" id="2_g1dw6"]
 [ext_resource type="Script" uid="uid://brqtcpwog54oo" path="res://player/camera.gd" id="3_camera"]
 
 [node name="Player" type="CharacterBody2D" unique_id=967496791]
 script = ExtResource("1_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1264378251]
-texture = ExtResource("2_stand")
+texture = ExtResource("2_g1dw6")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1785904715]
-polygon = PackedVector2Array(-13, -34, 10, -34, 10, 31, -13, 31)
+position = Vector2(7, 0)
+polygon = PackedVector2Array(-52, -109, 24, -109, 24, 122, -53, 122)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=96067796]
-script = ExtResource("3_camera")
 top_level = true
-teleport_pan_duration = 0.5
-teleport_distance_threshold = 128.0
+script = ExtResource("3_camera")
