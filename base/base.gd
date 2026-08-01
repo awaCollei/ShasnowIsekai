@@ -1,7 +1,7 @@
 extends Node2D
 
 # 预加载纹理
-var rv_texture_indoor: Texture2D = preload("res://assets/rv.png")
+var rv_texture_indoor: Texture2D = preload("res://assets/base/rv.png")
 var rv_texture_outdoor: Texture2D = preload("res://assets/base/rv2.png")
 
 # 节点引用

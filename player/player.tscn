@@ -12,7 +12,7 @@ texture = ExtResource("2_g1dw6")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1785904715]
 position = Vector2(7, 0)
-polygon = PackedVector2Array(-52, -109, 24, -109, 24, 122, -53, 122)
+polygon = PackedVector2Array(-40, -95, 20, -95, 20, 95, -40, 95)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=96067796]
 top_level = true
