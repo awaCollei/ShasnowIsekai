@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://25nv0k7a7jcf"]
 
 [ext_resource type="PackedScene" uid="uid://p0wi07vi4f5b" path="res://player/player.tscn" id="1_player"]
-[ext_resource type="Texture2D" uid="uid://b0bkcobhamey3" path="res://assets/base/background.png" id="2_q1uc1"]
+[ext_resource type="Texture2D" uid="uid://bhoj2nob5cvie" path="res://assets/base/background2.png" id="2_q1uc2"]
+[ext_resource type="Texture2D" uid="uid://bqt42mbhpq1l2" path="res://assets/base/background1.png" id="3_c3xta"]
 [ext_resource type="Texture2D" uid="uid://d3flwqiv8ww7i" path="res://assets/base/rv.png" id="3_q1uc1"]
 [ext_resource type="PackedScene" path="res://ui/interaction_system.tscn" id="5_interaction"]
 [ext_resource type="Script" uid="uid://baro0peocov28" path="res://base/base.gd" id="6_base_script"]
@@ -11,9 +12,13 @@
 [node name="Main" type="Node2D" unique_id=1532273606]
 script = ExtResource("6_base_script")
 
-[node name="Background" type="Sprite2D" parent="." unique_id=343704136]
+[node name="FarBackground" type="Sprite2D" parent="." unique_id=343704136]
 position = Vector2(2, 171)
-texture = ExtResource("2_q1uc1")
+texture = ExtResource("2_q1uc2")
+
+[node name="NearBackground" type="Sprite2D" parent="." unique_id=1541434983]
+position = Vector2(2, 171)
+texture = ExtResource("3_c3xta")
 
 [node name="RV" type="Sprite2D" parent="." unique_id=512291946]
 position = Vector2(0, 467)
