@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://25nv0k7a7jcf"]
 
 [ext_resource type="PackedScene" uid="uid://p0wi07vi4f5b" path="res://player/player.tscn" id="1_player"]
-[ext_resource type="Texture2D" uid="uid://dk6cl4cp8l2o4" path="res://assets/background.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://6q6m4rifsbx6" path="res://assets/base/background.png" id="2_q1uc1"]
 [ext_resource type="Texture2D" uid="uid://djh5ep7vui0kv" path="res://assets/rv.png" id="3_rv"]
 [ext_resource type="PackedScene" path="res://ui/interaction_system.tscn" id="5_interaction"]
 [ext_resource type="Script" uid="uid://baro0peocov28" path="res://base/base.gd" id="6_base_script"]
@@ -12,16 +12,15 @@
 script = ExtResource("6_base_script")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=343704136]
-position = Vector2(378, -17)
-scale = Vector2(2, 2.087)
-texture = ExtResource("2_bg")
+position = Vector2(534, -76)
+texture = ExtResource("2_q1uc1")
 
 [node name="RV" type="Sprite2D" parent="." unique_id=512291946]
 position = Vector2(575, 320)
 texture = ExtResource("3_rv")
 
 [node name="Player" parent="." unique_id=592892824 instance=ExtResource("1_player")]
-position = Vector2(539, 548)
+position = Vector2(539, 550)
 
 [node name="Portals" type="Node2D" parent="." unique_id=1838196847]
 
@@ -40,7 +39,7 @@ sub_scene = "outdoor"
 portal_name = "爬上车顶"
 
 [node name="RVDoor" parent="Portals" unique_id=491037065 instance=ExtResource("7_portal")]
-position = Vector2(860, 540)
+position = Vector2(860, 550)
 portal_id = "rv_door"
 target_portal_id = "indoor_exit"
 sub_scene = "outdoor"
@@ -54,14 +53,14 @@ sub_scene = "indoor"
 portal_name = "进入车厢"
 
 [node name="Bedroom1" parent="Portals" unique_id=119496946 instance=ExtResource("7_portal")]
-position = Vector2(273, 428)
+position = Vector2(273, 422)
 portal_id = "bedout"
 target_portal_id = "bedin"
 sub_scene = "indoor"
 portal_name = "进入卧室"
 
 [node name="IndoorExit" parent="Portals" unique_id=1223855119 instance=ExtResource("7_portal")]
-position = Vector2(859, 426)
+position = Vector2(859, 422)
 portal_id = "indoor_exit"
 target_portal_id = "rv_door"
 sub_scene = "indoor"
