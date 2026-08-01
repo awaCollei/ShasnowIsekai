@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-const SPEED = 400.0
+const SPEED = 300.0
 const ANIM_INTERVAL = 0.03
 
 @onready var sprite: Sprite2D = $Sprite2D
