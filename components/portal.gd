@@ -99,15 +99,23 @@ func teleport_to(target_portal: Portal) -> void:
 	if not player_ref:
 		return
 	
-	# 传送到目标位置
-	player_ref.global_position = target_portal.global_position
+	# 先移除当前传送门的交互选项
+	remove_interaction_option()
 	
 	# 改变玩家子场景为目标传送门所在的子场景
 	player_ref.current_sub_scene = target_portal.sub_scene
+	
+	# 传送到目标位置
+	player_ref.global_position = target_portal.global_position
 	
 	# 平滑移动镜头
 	var camera = player_ref.get_node_or_null("Camera2D")
 	if camera and camera.has_method("smooth_move_to"):
 		camera.smooth_move_to(target_portal.global_position)
+	
+	# 手动触发目标传送门的交互检查（因为玩家已经在其区域内，不会触发body_entered）
+	target_portal.player_ref = player_ref
+	if target_portal.can_interact():
+		target_portal.add_interaction_option()
 	
 	print("玩家传送到: ", target_portal.portal_id)
