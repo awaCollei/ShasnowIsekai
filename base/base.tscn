@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bhoj2nob5cvie" path="res://assets/base/background2.png" id="2_q1uc2"]
 [ext_resource type="Texture2D" uid="uid://bqt42mbhpq1l2" path="res://assets/base/background1.png" id="3_c3xta"]
 [ext_resource type="Texture2D" uid="uid://d3flwqiv8ww7i" path="res://assets/base/rv.png" id="3_q1uc1"]
-[ext_resource type="PackedScene" path="res://ui/interaction_system.tscn" id="5_interaction"]
+[ext_resource type="PackedScene" uid="uid://c17nidagjr5ef" path="res://ui/interaction_system.tscn" id="5_interaction"]
 [ext_resource type="Script" uid="uid://baro0peocov28" path="res://base/base.gd" id="6_base_script"]
 [ext_resource type="PackedScene" uid="uid://bhk8g7l1pse8f" path="res://components/portal.tscn" id="7_portal"]
 [ext_resource type="PackedScene" uid="uid://cmg4bseg87hut" path="res://components/wall.tscn" id="8_wall"]
@@ -47,7 +47,7 @@ sub_scene = "floor2"
 portal_name = "回到地面"
 
 [node name="RVLadder" parent="Portals" unique_id=1809704570 instance=ExtResource("7_portal")]
-position = Vector2(-470, 640)
+position = Vector2(-509, 640)
 portal_id = "rv_ladder"
 target_portal_id = "rv_f2"
 sub_scene = "outdoor"

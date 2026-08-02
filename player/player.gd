@@ -77,20 +77,29 @@ func _physics_process(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
 	
 	# ======================
+	# 始终疾跑检测
+	# ======================
+	var always_run := false
+	var settings = get_node_or_null("/root/SettingsManager")
+	if settings:
+		always_run = settings.always_run
+
+	# ======================
 	# 双击检测
 	# ======================
 	var pressed := direction != 0.0
-	
+
 	if pressed and not was_direction_pressed:
 		handle_run_input(direction)
-	
+
 	was_direction_pressed = pressed
-	
+
 	# ======================
 	# 移动
 	# ======================
 	if direction != 0.0:
-		var current_speed = RUN_SPEED if is_running else SPEED
+		var effective_running := is_running or always_run
+		var current_speed = RUN_SPEED if effective_running else SPEED
 		velocity.x = direction * current_speed
 		sprite.flip_h = direction > 0.0
 		
@@ -98,16 +107,16 @@ func _physics_process(delta: float) -> void:
 		if not is_moving:
 			is_moving = true
 			current_frame = 0
-			if is_running:
+			if effective_running:
 				sprite.texture = run_frames[current_frame]
 			else:
 				sprite.texture = walk_frames[current_frame]
 			anim_timer = 0.0
-		
+
 		# 动画播放
 		anim_timer += delta
-		var interval = RUN_ANIM_INTERVAL if is_running else ANIM_INTERVAL
-		var frames = run_frames if is_running else walk_frames
+		var interval = RUN_ANIM_INTERVAL if effective_running else ANIM_INTERVAL
+		var frames = run_frames if effective_running else walk_frames
 		
 		if anim_timer >= interval:
 			anim_timer -= interval

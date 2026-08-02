@@ -17,7 +17,9 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+SettingsManager="*res://scripts/settings_manager.tscn"
 SceneManager="*res://scripts/scene_manager.tscn"
+PauseMenu="*res://ui/pause_menu.tscn"
 
 [display]
 

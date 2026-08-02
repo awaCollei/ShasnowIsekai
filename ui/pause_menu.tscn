@@ -1,0 +1,307 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/pause_menu.gd" id="1_script"]
+[ext_resource type="Shader" path="res://ui/blur_shader.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
+shader = ExtResource("2_shader")
+shader_parameter/blur_amount = 3.0
+shader_parameter/dim_amount = 0.4
+
+[node name="PauseMenu" type="CanvasLayer"]
+layer = 100
+process_mode = 3
+script = ExtResource("1_script")
+
+[node name="BlurRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_blur")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(1, 1, 1, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="BlurRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainPanel" type="VBoxContainer" parent="BlurRect/CenterContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="BlurRect/CenterContainer/MainPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "菜单"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="BlurRect/CenterContainer/MainPanel"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="BlurRect/CenterContainer/MainPanel"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "继续游戏"
+
+[node name="KeybindButton" type="Button" parent="BlurRect/CenterContainer/MainPanel"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "键位设置"
+
+[node name="KeyBindingsPanel" type="VBoxContainer" parent="BlurRect/CenterContainer"]
+custom_minimum_size = Vector2(400, 0)
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "键位设置"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+custom_minimum_size = Vector2(400, 350)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BindingsList" type="VBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="Row_move_up" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_up"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "移动（上）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_up"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "↑"
+
+[node name="Row_move_down" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_down"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "移动（下）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_down"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "↓"
+
+[node name="Row_move_left" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_left"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "移动（左）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_left"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "←"
+
+[node name="Row_move_right" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_right"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "移动（右）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_move_right"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "→"
+
+[node name="Row_interact" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_interact"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "交互"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_interact"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "F"
+
+[node name="Row_select_prev" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_select_prev"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "选择（上一个）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_select_prev"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "W"
+
+[node name="Row_select_next" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_select_next"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "选择（下一个）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_select_next"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "S"
+
+[node name="Row_menu" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_menu"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "菜单"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_menu"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Esc"
+
+[node name="Row_attack" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_attack"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "攻击"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_attack"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Z"
+
+[node name="Row_chant" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_chant"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "吟唱"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_chant"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "X"
+
+[node name="Row_dodge" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_dodge"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "闪避"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ScrollContainer/BindingsList/Row_dodge"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Shift"
+
+[node name="Spacer2" type="Control" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="AlwaysRunRow" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel/AlwaysRunRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "始终疾跑"
+
+[node name="CheckBox" type="CheckBox" parent="BlurRect/CenterContainer/KeyBindingsPanel/AlwaysRunRow"]
+layout_mode = 2
+
+[node name="Spacer3" type="Control" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="ButtonsRow" type="HBoxContainer" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="ResetButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ButtonsRow"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "恢复默认"
+
+[node name="BackButton" type="Button" parent="BlurRect/CenterContainer/KeyBindingsPanel/ButtonsRow"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "返回"
+
+[node name="WaitingLabel" type="Label" parent="BlurRect/CenterContainer/KeyBindingsPanel"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
+text = "按下新的按键..."
+horizontal_alignment = 1
