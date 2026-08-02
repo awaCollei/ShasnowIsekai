@@ -11,7 +11,7 @@ var rv_texture_outdoor: Texture2D = preload("res://assets/base/rv2.png")
 @onready var far_bg: Sprite2D = $FarBackground
 
 # 远背景视差系数（0 = 不动，1 = 跟玩家完全同步）
-@export var far_bg_parallax: float = 0.7
+@export var far_bg_parallax: float = 0.8
 
 # 背景初始位置基准
 var _far_bg_base_pos: Vector2
