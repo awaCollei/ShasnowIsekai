@@ -7,6 +7,7 @@ signal attack_ended
 @onready var player: CharacterBody2D = get_parent()
 @onready var animation: PlayerAnimation = player.get_node("PlayerAnimation")
 @onready var attack_area: Area2D = player.get_node("AttackArea")
+@onready var attack_sfx: AudioStreamPlayer2D = player.get_node("AttackPlayer")
 
 # 攻击判定帧
 const HIT_FRAME_START: int = 4
@@ -17,6 +18,7 @@ const COOLDOWN_TIME: float = 0.3
 
 const DAMAGE: int = 10
 
+var attack_stream: AudioStream
 var cooldown_remaining: float = 0.0
 
 var hit_enemies: Array = []
@@ -29,6 +31,7 @@ enum State {
 var state: State = State.IDLE
 
 func _ready() -> void:
+	attack_stream = load("res://assets/sound_effects/basic_attack.mp3")
 	attack_area.monitoring = false
 	attack_area.monitorable = false
 
@@ -47,6 +50,11 @@ func try_attack() -> bool:
 
 func _start_attack() -> void:
 	state = State.ATTACKING
+
+	# 播放攻击音效
+	if attack_stream:
+		attack_sfx.stream = attack_stream
+		attack_sfx.play()
 
 	# 清空本次攻击命中的敌人
 	hit_enemies.clear()

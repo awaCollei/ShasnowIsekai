@@ -3,9 +3,12 @@ class_name PlayerCamera
 
 # 传送时镜头移动的总时长；角色位置不会被这个过程延迟。
 @export_range(0.05, 3.0, 0.05) var teleport_pan_duration: float = 0.5
-# 用于自动识别“直接修改玩家 global_position”的传送，正常行走不会触发镜头平移。
+# 用于自动识别"直接修改玩家 global_position"的传送，正常行走不会触发镜头平移。
 @export var teleport_distance_threshold: float = 128.0
 @export var debug_teleport_pan: bool = false
+
+# 镜头偏移量：让角色在画面中偏下（正值使镜头向上偏移）
+@export var camera_offset: Vector2 = Vector2(0, -40)
 
 const PAN_RETARGET_EPSILON: float = 0.01
 # 指数衰减的速度因子系数，保证经过 pan_duration 后几乎追上目标。
@@ -22,9 +25,9 @@ func _ready() -> void:
 
 	var parent_node := get_parent() as Node2D
 	if parent_node:
-		target_position = parent_node.global_position
+		target_position = parent_node.global_position + camera_offset
 		global_position = target_position
-		_last_follow_position = target_position
+		_last_follow_position = parent_node.global_position
 	else:
 		target_position = global_position
 		_last_follow_position = global_position
@@ -43,7 +46,7 @@ func _process(delta: float) -> void:
 			smooth_move_to(follow_position)
 		elif moved_distance > PAN_RETARGET_EPSILON:
 			# 玩家普通移动时，只更新目标位置，镜头继续平滑追赶
-			target_position = follow_position
+			target_position = follow_position + camera_offset
 
 		# 用指数衰减平滑移动，避免 Tween 反复重建带来的抖动
 		_smooth_follow(delta)
@@ -54,9 +57,9 @@ func _process(delta: float) -> void:
 			if debug_teleport_pan:
 				print("[PlayerCamera] detected teleport, pan to ", follow_position)
 		else:
-			# 普通移动：直接紧跟玩家
-			target_position = follow_position
-			global_position = follow_position
+			# 普通移动：直接紧跟玩家（带偏移）
+			target_position = follow_position + camera_offset
+			global_position = target_position
 
 	_last_follow_position = follow_position
 
@@ -74,7 +77,7 @@ func _smooth_follow(delta: float) -> void:
 			print("[PlayerCamera] pan finished at ", target_position)
 
 func smooth_move_to(new_position: Vector2) -> void:
-	target_position = new_position
+	target_position = new_position + camera_offset
 	_last_follow_position = new_position
 	is_smoothing = true
 

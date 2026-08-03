@@ -8,6 +8,7 @@ signal attack_finished
 
 @onready var player: CharacterBody2D = get_parent()
 @onready var sprite: Sprite2D = player.get_node("Sprite2D")
+@onready var footstep_player: AudioStreamPlayer2D = player.get_node("FootstepPlayer")
 
 # 动画帧
 var walk_frames: Array[Texture2D] = []
@@ -15,13 +16,20 @@ var run_frames: Array[Texture2D] = []
 var attack_frames: Array[Texture2D] = []
 var stand_texture: Texture2D
 
+# 音效
+var footstep_sounds: Array[AudioStream] = []
+
 # 动画参数
 var current_frame: int = 0
 var anim_timer: float = 0.0
+var footstep_timer: float = 0.0
 
 const WALK_INTERVAL: float = 0.04
 const RUN_INTERVAL: float = 0.04
 const ATTACK_INTERVAL: float = 0.025
+
+const WALK_FOOTSTEP_INTERVAL: float = 0.50
+const RUN_FOOTSTEP_INTERVAL: float = 0.30
 
 enum AnimState { IDLE, WALK, RUN, ATTACK }
 var state: AnimState = AnimState.IDLE
@@ -29,6 +37,7 @@ var state: AnimState = AnimState.IDLE
 
 func _ready() -> void:
 	_load_frames()
+	_load_footstep_sounds()
 	sprite.texture = stand_texture
 
 
@@ -56,6 +65,13 @@ func _load_frames() -> void:
 		run_frames = walk_frames.duplicate()
 
 
+func _load_footstep_sounds() -> void:
+	for i in range(1, 4):
+		var snd = load("res://assets/sound_effects/footstep_%d.mp3" % i)
+		if snd:
+			footstep_sounds.append(snd)
+
+
 func _process(delta: float) -> void:
 	match state:
 		AnimState.IDLE:
@@ -76,6 +92,13 @@ func _advance_loop(delta: float, frames: Array, interval: float) -> void:
 		anim_timer -= interval
 		current_frame = (current_frame + 1) % frames.size()
 		sprite.texture = frames[current_frame]
+
+	# 脚步声
+	var footstep_interval := RUN_FOOTSTEP_INTERVAL if state == AnimState.RUN else WALK_FOOTSTEP_INTERVAL
+	footstep_timer += delta
+	if footstep_timer >= footstep_interval:
+		footstep_timer -= footstep_interval
+		_play_random_footstep()
 
 
 func _advance_oneshot(delta: float, frames: Array, interval: float) -> void:
@@ -101,6 +124,7 @@ func request_idle() -> void:
 	state = AnimState.IDLE
 	current_frame = 0
 	anim_timer = 0.0
+	footstep_timer = 0.0
 	sprite.texture = stand_texture
 
 
@@ -109,6 +133,7 @@ func request_walk() -> void:
 		state = AnimState.WALK
 		current_frame = 0
 		anim_timer = 0.0
+		footstep_timer = 0.0
 		if not walk_frames.is_empty():
 			sprite.texture = walk_frames[0]
 
@@ -118,6 +143,7 @@ func request_run() -> void:
 		state = AnimState.RUN
 		current_frame = 0
 		anim_timer = 0.0
+		footstep_timer = 0.0
 		if not run_frames.is_empty():
 			sprite.texture = run_frames[0]
 
@@ -126,6 +152,7 @@ func request_attack() -> void:
 	state = AnimState.ATTACK
 	current_frame = 0
 	anim_timer = 0.0
+	footstep_timer = 0.0
 	if not attack_frames.is_empty():
 		sprite.texture = attack_frames[0]
 
@@ -140,3 +167,11 @@ func get_current_frame() -> int:
 
 func set_flip_h(h: bool) -> void:
 	sprite.flip_h = h
+
+
+func _play_random_footstep() -> void:
+	if footstep_sounds.is_empty():
+		return
+	var idx := randi() % footstep_sounds.size()
+	footstep_player.stream = footstep_sounds[idx]
+	footstep_player.play()
