@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://p0wi07vi4f5b"]
 
 [ext_resource type="Script" uid="uid://wvnmsq1cnblf" path="res://player/player.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://cb6qwekulw72n" path="res://assets/shasnow/stand/stand_1.png" id="2_g1dw6"]
+[ext_resource type="Texture2D" uid="uid://ct24lnkwfbsjk" path="res://assets/shasnow/stand/stand_1.png" id="2_g1dw6"]
 [ext_resource type="Script" uid="uid://brqtcpwog54oo" path="res://player/camera.gd" id="3_camera"]
 [ext_resource type="Script" uid="uid://ce87nwnffnwca" path="res://player/basic_attack.gd" id="4_batk_script"]
+[ext_resource type="Script" uid="uid://bb6d1us42vdv7" path="res://player/animation.gd" id="5_anim"]
 
 [sub_resource type="RectangleShape2D" id="AttackShape"]
-size = Vector2(111, 120)
+size = Vector2(121.5, 120)
 
 [node name="Player" type="CharacterBody2D" unique_id=967496791]
 script = ExtResource("1_script")
@@ -20,7 +21,7 @@ position = Vector2(7, 0)
 polygon = PackedVector2Array(-40, -95, 20, -95, 20, 95, -40, 95)
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=980000001]
-position = Vector2(25, 0)
+position = Vector2(30, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=980000002]
 shape = SubResource("AttackShape")
@@ -28,6 +29,9 @@ shape = SubResource("AttackShape")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=96067796]
 top_level = true
 script = ExtResource("3_camera")
+
+[node name="PlayerAnimation" type="Node" parent="." unique_id=945792146]
+script = ExtResource("5_anim")
 
 [node name="BasicAttack" type="Node" parent="." unique_id=980000003]
 script = ExtResource("4_batk_script")

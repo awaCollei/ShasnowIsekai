@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://b7e2ycn84hf3a" path="res://ui/damage_number.gd" id="1_script"]
 
 [node name="DamageNumber" type="Node2D" unique_id=1734488279]
+z_index = 999
 script = ExtResource("1_script")
 
 [node name="Label" type="Label" parent="." unique_id=46456816]

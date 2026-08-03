@@ -33,7 +33,7 @@ func _ready() -> void:
 
 func _spawn_training_dummy() -> void:
 	var dummy: Enemy = training_dummy_scene.instantiate()
-	dummy.position = Vector2(600, 610)
+	dummy.position = Vector2(-800, 640)
 	dummy.damage_taken.connect(_on_enemy_damage_taken.bind(dummy))
 	add_child(dummy)
 
