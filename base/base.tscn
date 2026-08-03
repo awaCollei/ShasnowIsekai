@@ -13,21 +13,21 @@
 script = ExtResource("6_base_script")
 
 [node name="FarBackground" type="Sprite2D" parent="." unique_id=343704136]
-position = Vector2(0, 170)
+position = Vector2(0, 225)
 texture = ExtResource("2_q1uc2")
 
 [node name="NearBackground3" type="Sprite2D" parent="." unique_id=292879816]
-position = Vector2(-2521, 170)
+position = Vector2(-2521, 225)
 scale = Vector2(-1, 1)
 texture = ExtResource("3_c3xta")
 
 [node name="NearBackground2" type="Sprite2D" parent="." unique_id=1334546215]
-position = Vector2(2521, 170)
+position = Vector2(2521, 225)
 scale = Vector2(-1, 1)
 texture = ExtResource("3_c3xta")
 
 [node name="NearBackground" type="Sprite2D" parent="." unique_id=1541434983]
-position = Vector2(0, 170)
+position = Vector2(0, 225)
 texture = ExtResource("3_c3xta")
 
 [node name="RV" type="Sprite2D" parent="." unique_id=512291946]
@@ -35,7 +35,7 @@ position = Vector2(0, 467)
 texture = ExtResource("3_q1uc1")
 
 [node name="Player" parent="." unique_id=592892824 instance=ExtResource("1_player")]
-position = Vector2(-98, 640)
+position = Vector2(-98, 630)
 
 [node name="Portals" type="Node2D" parent="." unique_id=1838196847]
 
@@ -47,14 +47,14 @@ sub_scene = "floor2"
 portal_name = "回到地面"
 
 [node name="RVLadder" parent="Portals" unique_id=1809704570 instance=ExtResource("7_portal")]
-position = Vector2(-509, 640)
+position = Vector2(-509, 630)
 portal_id = "rv_ladder"
 target_portal_id = "rv_f2"
 sub_scene = "outdoor"
 portal_name = "爬上车顶"
 
 [node name="RVDoor" parent="Portals" unique_id=491037065 instance=ExtResource("7_portal")]
-position = Vector2(208, 640)
+position = Vector2(208, 630)
 portal_id = "rv_door"
 target_portal_id = "indoor_exit"
 sub_scene = "outdoor"
