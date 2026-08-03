@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Shasnow_rv"
-run/main_scene="res://base/base.tscn"
+run/main_scene="res://ui/main_menu.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 SettingsManager="*res://scripts/settings_manager.tscn"
 SceneManager="*res://scripts/scene_manager.tscn"
 PauseMenu="*res://ui/pause_menu.tscn"
+SaveManager="*res://scripts/save_manager.gd"
 
 [display]
 

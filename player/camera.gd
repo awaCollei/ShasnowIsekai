@@ -8,7 +8,7 @@ class_name PlayerCamera
 @export var debug_teleport_pan: bool = false
 
 # 镜头偏移量：让角色在画面中偏下（正值使镜头向上偏移）
-@export var camera_offset: Vector2 = Vector2(0, -40)
+@export var camera_offset: Vector2 = Vector2(0, -50)
 
 const PAN_RETARGET_EPSILON: float = 0.01
 # 指数衰减的速度因子系数，保证经过 pan_duration 后几乎追上目标。

@@ -1,0 +1,122 @@
+[gd_scene load_steps=6 format=3 uid="uid://dtvlb3ul4e1pr"]
+
+[ext_resource type="Script" uid="uid://b4dh10y6d3sk0" path="res://ui/main_menu.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dnnt5r14p83q5" path="res://assets/main_menu.png" id="2_bg"]
+[ext_resource type="Theme" uid="uid://dxscbhbyg47rp" path="res://theme/green_button.tres" id="3_rmr83"]
+[ext_resource type="Theme" uid="uid://e1svjwc5fekc" path="res://theme/blue_button.tres" id="4_8uxxo"]
+[ext_resource type="Theme" uid="uid://c6gyciuad8n1j" path="res://theme/red_button.tres" id="5_8uxxo"]
+[ext_resource type="Shader" path="res://ui/blur_shader.gdshader" id="6_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
+shader = ExtResource("6_shader")
+shader_parameter/blur_amount = 3.0
+shader_parameter/dim_amount = 0.4
+
+[node name="MainMenu" type="Control" unique_id=231140565]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1697904005]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+
+[node name="BlurRect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_blur")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="MainPanel" type="VBoxContainer" parent="." unique_id=371862870]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 130.0
+offset_top = -10.0
+offset_right = 430.0
+offset_bottom = 270.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="NewGameButton" type="Button" parent="MainPanel" unique_id=1846386191]
+custom_minimum_size = Vector2(220, 44)
+layout_mode = 2
+theme = ExtResource("3_rmr83")
+theme_override_font_sizes/font_size = 40
+text = "从头开始"
+
+[node name="LoadGameButton" type="Button" parent="MainPanel" unique_id=818405622]
+custom_minimum_size = Vector2(220, 44)
+layout_mode = 2
+theme = ExtResource("4_8uxxo")
+theme_override_font_sizes/font_size = 40
+text = "读取存档"
+
+[node name="QuitButton" type="Button" parent="MainPanel" unique_id=571999058]
+custom_minimum_size = Vector2(220, 44)
+layout_mode = 2
+theme = ExtResource("5_8uxxo")
+theme_override_font_sizes/font_size = 40
+text = "退出游戏"
+
+[node name="SaveSlotsPanel" type="VBoxContainer" parent="." unique_id=1183629927]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title" type="Label" parent="SaveSlotsPanel" unique_id=932939391]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "选择存档"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="SaveSlotsPanel" unique_id=250802073]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="SlotsContainer" type="VBoxContainer" parent="SaveSlotsPanel" unique_id=104367386]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Spacer2" type="Control" parent="SaveSlotsPanel" unique_id=1237076132]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="SaveSlotsPanel" unique_id=2079928227]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "返回"

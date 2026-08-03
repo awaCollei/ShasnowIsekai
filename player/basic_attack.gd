@@ -89,7 +89,6 @@ func _update_hitbox() -> void:
 	)
 
 	attack_area.monitoring = hit_active
-	print("hit_active:", hit_active)
 
 	# flip_h=true 表示面朝右
 	attack_area.position.x = (
