@@ -6,6 +6,7 @@ const ANIM_INTERVAL = 0.04
 const RUN_ANIM_INTERVAL = 0.04
 
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var basic_attack: BasicAttack = $BasicAttack
 
 var walk_frames: Array[Texture2D] = []
 var run_frames: Array[Texture2D] = []
@@ -74,6 +75,16 @@ func teleport_to(destination: Vector2) -> void:
 		camera.smooth_move_to(destination)
 
 func _physics_process(delta: float) -> void:
+	# 普攻输入
+	if Input.is_action_just_pressed("attack"):
+		basic_attack.try_attack()
+
+	# 普攻 / 冷却期间禁止移动和动画
+	if basic_attack.is_busy():
+		velocity.x = 0.0
+		move_and_slide()
+		return
+
 	var direction := Input.get_axis("ui_left", "ui_right")
 	
 	# ======================

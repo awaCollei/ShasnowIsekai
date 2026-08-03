@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c24sw0q6rpna6"
-path="res://.godot/imported/basic_attack_38.png-78ecd468b169fcfcdf2b930814db752f.ctex"
+uid="uid://qqt18dknrf6x"
+path="res://.godot/imported/dummy.png-34b86031552e0d72cec1ce1ad9cc4d67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/shasnow/basic_attack/basic_attack_38.png"
-dest_files=["res://.godot/imported/basic_attack_38.png-78ecd468b169fcfcdf2b930814db752f.ctex"]
+source_file="res://assets/enemies/dummy.png"
+dest_files=["res://.godot/imported/dummy.png-34b86031552e0d72cec1ce1ad9cc4d67.ctex"]
 
 [params]
 

@@ -4,6 +4,12 @@ extends Node2D
 var rv_texture_indoor: Texture2D = preload("res://assets/base/rv.png")
 var rv_texture_outdoor: Texture2D = preload("res://assets/base/rv2.png")
 
+# 预加载训练木桩场景
+var training_dummy_scene: PackedScene = preload("res://enemies/training_dummy.tscn")
+
+# 预加载伤害数字场景
+var damage_number_scene: PackedScene = preload("res://ui/damage_number.tscn")
+
 # 节点引用
 @onready var rv_sprite: Sprite2D = $RV
 @onready var player: CharacterBody2D = $Player
@@ -21,6 +27,20 @@ func _ready() -> void:
 	# 初始设置RV纹理
 	update_rv_texture()
 	_far_bg_base_pos = far_bg.position
+
+	# 生成训练木桩
+	_spawn_training_dummy()
+
+func _spawn_training_dummy() -> void:
+	var dummy: Enemy = training_dummy_scene.instantiate()
+	dummy.position = Vector2(600, 610)
+	dummy.damage_taken.connect(_on_enemy_damage_taken.bind(dummy))
+	add_child(dummy)
+
+func _on_enemy_damage_taken(amount: int, enemy: Enemy) -> void:
+	var dmg_node: Node2D = damage_number_scene.instantiate()
+	add_child(dmg_node)
+	dmg_node.show_damage(amount, enemy.global_position + Vector2(0, -60))
 
 func _process(_delta: float) -> void:
 	# 视差：远背景根据玩家X坐标偏移
