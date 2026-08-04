@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://e1svjwc5fekc" path="res://theme/blue_button.tres" id="4_8uxxo"]
 [ext_resource type="Theme" uid="uid://c6gyciuad8n1j" path="res://theme/red_button.tres" id="5_8uxxo"]
 [ext_resource type="Shader" uid="uid://jonut7r5ivto" path="res://ui/blur_shader.gdshader" id="6_shader"]
+[ext_resource type="Texture2D" uid="uid://dl222vjq0dgg0" path="res://assets/settings.png" id="7_p8ri8"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
 shader = ExtResource("6_shader")
@@ -122,11 +123,12 @@ text = "返回"
 
 [node name="SettingsButton" type="Button" parent="." unique_id=701741628]
 layout_mode = 0
-offset_left = 1171.0
-offset_top = 628.0
-offset_right = 1261.0
-offset_bottom = 707.0
+offset_left = 1187.0
+offset_top = 630.0
+offset_right = 1267.0
+offset_bottom = 710.0
 theme_override_font_sizes/font_size = 60
-text = "⚙"
+icon = ExtResource("7_p8ri8")
 flat = true
 icon_alignment = 1
+expand_icon = true

@@ -17,17 +17,17 @@ position = Vector2(0, 225)
 texture = ExtResource("2_q1uc2")
 
 [node name="NearBackground3" type="Sprite2D" parent="." unique_id=292879816]
-position = Vector2(-2521, 225)
+position = Vector2(-2521, 260)
 scale = Vector2(-1, 1)
 texture = ExtResource("3_c3xta")
 
 [node name="NearBackground2" type="Sprite2D" parent="." unique_id=1334546215]
-position = Vector2(2521, 225)
+position = Vector2(2521, 260)
 scale = Vector2(-1, 1)
 texture = ExtResource("3_c3xta")
 
 [node name="NearBackground" type="Sprite2D" parent="." unique_id=1541434983]
-position = Vector2(0, 225)
+position = Vector2(0, 260)
 texture = ExtResource("3_c3xta")
 
 [node name="RV" type="Sprite2D" parent="." unique_id=512291946]
