@@ -19,6 +19,14 @@ var _chat_ui_scene = preload("res://plot/chat_ui.tscn")
 var _black_sui = null            # BlackScreen 实例
 var _black_sui_scene = preload("res://plot/black_screen.tscn")
 
+# 任务书
+var quest_book: Dictionary = {}           # 从 script.json 加载的任务书
+var _quest_completed: Dictionary = {}     # 已完成的任务 { quest_id: true }
+
+
+func _ready() -> void:
+	_load_quest_book()
+
 
 # ==========================
 # 剧情播放
@@ -161,6 +169,54 @@ func show_black_text(text: String) -> void:
 
 
 # ==========================
+# 任务进度
+# ==========================
+
+## 标记指定 ID 的任务为已完成
+func mark_quest_completed(quest_id: String) -> void:
+	_quest_completed[quest_id] = true
+
+
+## 查询指定 ID 的任务是否已完成
+func is_quest_completed(quest_id: String) -> bool:
+	return _quest_completed.get(quest_id, false)
+
+
+## 获取所有已完成任务的 ID 列表
+func get_completed_quests() -> Array:
+	var result: Array = []
+	for key in _quest_completed:
+		if _quest_completed[key]:
+			result.append(key)
+	return result
+
+
+## 导出当前任务进度（供存档系统调用）
+func get_quest_progress() -> Dictionary:
+	return _quest_completed.duplicate()
+
+
+## 导入任务进度（供存档系统调用）
+func set_quest_progress(data: Dictionary) -> void:
+	_quest_completed = data.duplicate()
+
+
+## 重置所有任务进度
+func reset_quest_progress() -> void:
+	_quest_completed.clear()
+
+
+## 根据章节 ID 获取该章节的任务列表（从 script.json 中读取）
+func get_quests_in_chapter(chapter_id: String) -> Array:
+	if not quest_book.has("chapters"):
+		return []
+	for chapter in quest_book["chapters"]:
+		if str(chapter.get("id", "")) == chapter_id:
+			return chapter.get("acts", [])
+	return []
+
+
+# ==========================
 # 内部
 # ==========================
 
@@ -200,6 +256,21 @@ func _restore_player_controls() -> void:
 	var pause_menu = get_node_or_null("/root/PauseMenu")
 	if pause_menu and not pause_menu.is_open:
 		pause_menu.set_process_unhandled_key_input(true)
+
+
+func _load_quest_book() -> void:
+	var file := FileAccess.open("res://plotline/script.json", FileAccess.READ)
+	if file == null:
+		push_error("PlotlineManager: 无法加载任务书 script.json")
+		return
+	var json_text := file.get_as_text()
+	file.close()
+	var json := JSON.new()
+	var err := json.parse(json_text)
+	if err != OK:
+		push_error("PlotlineManager: script.json 解析失败")
+		return
+	quest_book = json.data
 
 
 func _get_player():

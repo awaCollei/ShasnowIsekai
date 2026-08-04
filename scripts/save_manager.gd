@@ -13,6 +13,7 @@ class SaveData:
 	var player_position: Vector2     # 玩家位置
 	var player_sub_scene: String     # 玩家子场景
 	var timestamp: String            # 保存时间
+	var quest_progress: Dictionary = {}  # 任务进度
 	var has_data: bool = false
 
 # 当前是否在游戏中（非主菜单）
@@ -41,6 +42,11 @@ func save_game(slot: int) -> bool:
 	config.set_value("save", "player_position_y", data.player_position.y)
 	config.set_value("save", "player_sub_scene", data.player_sub_scene)
 	config.set_value("save", "timestamp", data.timestamp)
+
+	# 保存任务进度
+	for quest_id in data.quest_progress:
+		if data.quest_progress[quest_id]:
+			config.set_value("quests", quest_id, true)
 
 	var err := config.save(_get_slot_path(slot))
 	if err != OK:
@@ -72,6 +78,13 @@ func load_save_info(slot: int) -> SaveData:
 	data.player_sub_scene = config.get_value("save", "player_sub_scene", "outdoor")
 	data.timestamp = config.get_value("save", "timestamp", "")
 	data.has_data = true
+
+	# 读取任务进度
+	var quest_keys := config.get_section_keys("quests")
+	if quest_keys != null:
+		for key in quest_keys:
+			data.quest_progress[key] = config.get_value("quests", key)
+
 	return data
 
 
@@ -102,12 +115,16 @@ func load_game(slot: int) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_restore_player(info)
+	_restore_quest_progress(info)
 
 
 # 开始新游戏
 func start_new_game() -> void:
 	current_slot = -1
 	current_scene_path = "res://base/base.tscn"
+
+	# 重置任务进度
+	_reset_quest_progress()
 
 	var pause_menu = get_node_or_null("/root/PauseMenu")
 	if pause_menu and pause_menu.is_open:
@@ -202,6 +219,11 @@ func _collect_save_data(slot: int) -> SaveData:
 		dt["hour"], dt["minute"], dt["second"]
 	]
 
+	# 收集任务进度
+	var plot_mgr = get_node_or_null("/root/PlotlineManager")
+	if plot_mgr:
+		data.quest_progress = plot_mgr.get_quest_progress()
+
 	return data
 
 
@@ -228,3 +250,15 @@ func _restore_player(info: SaveData) -> void:
 		var base := get_tree().current_scene
 		if base and base.has_method("update_rv_texture"):
 			base.update_rv_texture()
+
+
+func _restore_quest_progress(info: SaveData) -> void:
+	var plot_mgr = get_node_or_null("/root/PlotlineManager")
+	if plot_mgr:
+		plot_mgr.set_quest_progress(info.quest_progress)
+
+
+func _reset_quest_progress() -> void:
+	var plot_mgr = get_node_or_null("/root/PlotlineManager")
+	if plot_mgr:
+		plot_mgr.reset_quest_progress()

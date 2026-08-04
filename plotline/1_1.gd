@@ -18,3 +18,4 @@ func play() -> void:
 	await PlotlineManager.chat("雪影", "不对你谁啊？！", ["雪影", "薇芯"])
 
 	PlotlineManager.chat_end()
+	PlotlineManager.mark_quest_completed("1_1")
