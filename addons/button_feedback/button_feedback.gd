@@ -58,11 +58,11 @@ var _stylebox_empty := StyleBoxEmpty.new()
 
 
 func _init() -> void:
-	button_hover_player.stream = load("res://addons/button_feedback/button_hover.wav") as AudioStreamWAV
+	button_hover_player.stream = load("res://addons/button_feedback/button_hover.mp3") as AudioStreamMP3
 	button_hover_player.volume_db = VOLUME_DB - 6.0
-	button_down_player.stream = load("res://addons/button_feedback/button_down.wav") as AudioStreamWAV
+	button_down_player.stream = load("res://addons/button_feedback/button_down.mp3") as AudioStreamMP3
 	button_down_player.volume_db = VOLUME_DB
-	button_pressed_player.stream = load("res://addons/button_feedback/button_pressed.wav") as AudioStreamWAV
+	button_pressed_player.stream = load("res://addons/button_feedback/button_pressed.mp3") as AudioStreamMP3
 	button_pressed_player.volume_db = VOLUME_DB
 
 

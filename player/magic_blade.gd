@@ -18,19 +18,13 @@ signal finished
 var _busy := false
 var _damage_dealt := false
 var _physics_ticks_since_release := 0
-var _magic_stream: AudioStream
+const MAGIC_SFX_PATH := "res://assets/sound_effects/magic_1.mp3"
 
 
 func _ready() -> void:
 	hit_area.monitoring = false
 	hit_area.monitorable = false
 	animation.attack_finished.connect(_on_attack_finished)
-
-	var sound_path := "res://assets/sound_effects/magic_1.mp3"
-	if ResourceLoader.exists(sound_path):
-		_magic_stream = load(sound_path)
-	else:
-		push_warning("魔法之刃音效不存在，请添加：%s" % sound_path)
 
 
 func try_release() -> bool:
@@ -46,8 +40,7 @@ func try_release() -> bool:
 	hit_area.monitoring = true
 
 	animation.request_magic_blade()
-	if _magic_stream:
-		AudioManager.play_game_sfx(_magic_stream)
+	AudioManager.play_game_sfx(MAGIC_SFX_PATH)
 	released.emit()
 	return true
 
