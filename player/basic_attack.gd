@@ -7,7 +7,6 @@ signal attack_ended
 @onready var player: CharacterBody2D = get_parent()
 @onready var animation: PlayerAnimation = player.get_node("PlayerAnimation")
 @onready var attack_area: Area2D = player.get_node("AttackArea")
-@onready var attack_sfx: AudioStreamPlayer2D = player.get_node("AttackPlayer")
 
 # 攻击判定帧
 const HIT_FRAME_START: int = 4
@@ -53,8 +52,7 @@ func _start_attack() -> void:
 
 	# 播放攻击音效
 	if attack_stream:
-		attack_sfx.stream = attack_stream
-		attack_sfx.play()
+		AudioManager.play_game_sfx(attack_stream)
 
 	# 清空本次攻击命中的敌人
 	hit_enemies.clear()

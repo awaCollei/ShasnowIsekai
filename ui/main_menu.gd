@@ -18,6 +18,7 @@ func _ready() -> void:
 	load_game_button.pressed.connect(_on_load_game_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	$SaveSlotsPanel/BackButton.pressed.connect(_on_back_pressed)
+	$SettingsButton.pressed.connect(_on_settings_pressed)
 
 	# 创建删除确认对话框
 	delete_confirm = ConfirmationDialog.new()
@@ -121,3 +122,9 @@ func _on_delete_confirmed() -> void:
 		save_manager.delete_save(_pending_delete_slot)
 	_pending_delete_slot = -1
 	_show_save_slots()  # 刷新列表
+
+
+func _on_settings_pressed() -> void:
+	var sm = preload("res://ui/settings_menu.tscn").instantiate()
+	get_tree().root.add_child(sm)
+	sm.open()

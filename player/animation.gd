@@ -8,7 +8,6 @@ signal attack_finished
 
 @onready var player: CharacterBody2D = get_parent()
 @onready var sprite: Sprite2D = player.get_node("Sprite2D")
-@onready var footstep_player: AudioStreamPlayer2D = player.get_node("FootstepPlayer")
 
 # 动画帧
 var walk_frames: Array[Texture2D] = []
@@ -17,7 +16,7 @@ var attack_frames: Array[Texture2D] = []
 var stand_texture: Texture2D
 
 # 音效
-var footstep_sounds: Array[AudioStream] = []
+var footstep_streams: Array[AudioStream] = []
 
 # 动画参数
 var current_frame: int = 0
@@ -69,7 +68,7 @@ func _load_footstep_sounds() -> void:
 	for i in range(1, 4):
 		var snd = load("res://assets/sound_effects/footstep_%d.mp3" % i)
 		if snd:
-			footstep_sounds.append(snd)
+			footstep_streams.append(snd)
 
 
 func _process(delta: float) -> void:
@@ -170,8 +169,7 @@ func set_flip_h(h: bool) -> void:
 
 
 func _play_random_footstep() -> void:
-	if footstep_sounds.is_empty():
+	if footstep_streams.is_empty():
 		return
-	var idx := randi() % footstep_sounds.size()
-	footstep_player.stream = footstep_sounds[idx]
-	footstep_player.play()
+	var idx := randi() % footstep_streams.size()
+	AudioManager.play_game_sfx(footstep_streams[idx])

@@ -214,7 +214,7 @@ func _input(event: InputEvent) -> void:
 
 	get_viewport().set_input_as_handled()
 
-	AudioManager.play_sfx("res://assets/sound_effects/next.mp3")
+	AudioManager.play_ui_sfx("res://assets/sound_effects/next.mp3")
 	if _is_typing:
 		skip_typewriter()
 	elif _can_advance:

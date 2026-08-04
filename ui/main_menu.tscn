@@ -119,3 +119,14 @@ custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "返回"
+
+[node name="SettingsButton" type="Button" parent="." unique_id=701741628]
+layout_mode = 0
+offset_left = 1171.0
+offset_top = 628.0
+offset_right = 1261.0
+offset_bottom = 707.0
+theme_override_font_sizes/font_size = 60
+text = "⚙"
+flat = true
+icon_alignment = 1

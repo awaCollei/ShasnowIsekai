@@ -38,6 +38,11 @@ var key_bindings: Dictionary = {}
 # 始终疾跑
 var always_run: bool = false
 
+# 音量设置（0.0 ~ 1.0）
+var game_sfx_volume: float = 1.0
+var ui_sfx_volume: float = 1.0
+var bgm_volume: float = 1.0
+
 # 设置文件路径
 const SETTINGS_PATH: String = "user://settings.cfg"
 
@@ -61,7 +66,24 @@ func load_settings() -> void:
 	else:
 		always_run = false
 
+	# 加载音量设置
+	if err == OK and config.has_section_key("audio", "game_sfx"):
+		game_sfx_volume = config.get_value("audio", "game_sfx", 1.0)
+	else:
+		game_sfx_volume = 1.0
+
+	if err == OK and config.has_section_key("audio", "ui_sfx"):
+		ui_sfx_volume = config.get_value("audio", "ui_sfx", 1.0)
+	else:
+		ui_sfx_volume = 1.0
+
+	if err == OK and config.has_section_key("audio", "bgm"):
+		bgm_volume = config.get_value("audio", "bgm", 1.0)
+	else:
+		bgm_volume = 1.0
+
 	apply_key_bindings()
+	apply_audio_settings()
 
 func save_settings() -> void:
 	var config := ConfigFile.new()
@@ -70,6 +92,11 @@ func save_settings() -> void:
 		config.set_value("key_bindings", action, key_bindings[action])
 
 	config.set_value("gameplay", "always_run", always_run)
+
+	config.set_value("audio", "game_sfx", game_sfx_volume)
+	config.set_value("audio", "ui_sfx", ui_sfx_volume)
+	config.set_value("audio", "bgm", bgm_volume)
+
 	config.save(SETTINGS_PATH)
 
 func apply_key_bindings() -> void:
@@ -90,7 +117,11 @@ func reset_to_defaults() -> void:
 	for action in DEFAULT_KEY_BINDINGS:
 		key_bindings[action] = DEFAULT_KEY_BINDINGS[action]
 	always_run = false
+	game_sfx_volume = 1.0
+	ui_sfx_volume = 1.0
+	bgm_volume = 1.0
 	apply_key_bindings()
+	apply_audio_settings()
 	save_settings()
 
 func set_key_binding(action: String, keycode: Key) -> void:
@@ -107,3 +138,27 @@ func get_key_name(action: String) -> String:
 func set_always_run(value: bool) -> void:
 	always_run = value
 	save_settings()
+
+
+func set_game_sfx_volume(value: float) -> void:
+	game_sfx_volume = value
+	AudioManager.set_game_sfx_volume(value)
+	save_settings()
+
+
+func set_ui_sfx_volume(value: float) -> void:
+	ui_sfx_volume = value
+	AudioManager.set_ui_sfx_volume(value)
+	save_settings()
+
+
+func set_bgm_volume(value: float) -> void:
+	bgm_volume = value
+	AudioManager.set_bgm_volume(value)
+	save_settings()
+
+
+func apply_audio_settings() -> void:
+	AudioManager.set_game_sfx_volume(game_sfx_volume)
+	AudioManager.set_ui_sfx_volume(ui_sfx_volume)
+	AudioManager.set_bgm_volume(bgm_volume)

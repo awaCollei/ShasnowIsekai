@@ -33,9 +33,5 @@ script = ExtResource("3_camera")
 [node name="PlayerAnimation" type="Node" parent="." unique_id=945792146]
 script = ExtResource("5_anim")
 
-[node name="FootstepPlayer" type="AudioStreamPlayer2D" parent="."]
-
-[node name="AttackPlayer" type="AudioStreamPlayer2D" parent="."]
-
 [node name="BasicAttack" type="Node" parent="." unique_id=980000003]
 script = ExtResource("4_batk_script")

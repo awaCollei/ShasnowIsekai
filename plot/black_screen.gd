@@ -93,7 +93,7 @@ func _input(event: InputEvent) -> void:
 
 	get_viewport().set_input_as_handled()
 	_can_advance = false
-	AudioManager.play_sfx("res://assets/sound_effects/next.mp3")
+	AudioManager.play_ui_sfx("res://assets/sound_effects/next.mp3")
 	advance_confirmed.emit()
 
 
