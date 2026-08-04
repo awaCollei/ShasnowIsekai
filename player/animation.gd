@@ -8,6 +8,7 @@ signal attack_finished
 
 @onready var player: CharacterBody2D = get_parent()
 @onready var sprite: Sprite2D = player.get_node("Sprite2D")
+@onready var chant_effect: MagicChantEffect = player.get_node("MagicChantEffect")
 
 # 动画帧
 var walk_frames: Array[Texture2D] = []
@@ -148,6 +149,7 @@ func _advance_chant(delta: float) -> void:
 		state = AnimState.IDLE
 		sprite.texture = stand_texture
 		_stop_chant_audio()
+		chant_effect.stop()
 		return
 
 	match chant_phase:
@@ -158,7 +160,8 @@ func _advance_chant(delta: float) -> void:
 				current_frame += 1
 				if current_frame >= chant_frames.size():
 					chant_phase = ChantPhase.LOOP
-					current_frame = 13
+					# 默认循环最后两帧，也兼容素材缺帧的情况。
+					current_frame = maxi(0, chant_frames.size() - 2)
 				sprite.texture = chant_frames[current_frame]
 
 		ChantPhase.LOOP:
@@ -166,8 +169,8 @@ func _advance_chant(delta: float) -> void:
 			if anim_timer >= CHANT_INTERVAL:
 				anim_timer -= CHANT_INTERVAL
 				current_frame += 1
-				if current_frame > 14:
-					current_frame = 13
+				if current_frame >= chant_frames.size():
+					current_frame = maxi(0, chant_frames.size() - 2)
 				sprite.texture = chant_frames[current_frame]
 
 		ChantPhase.REVERSE:
@@ -177,8 +180,11 @@ func _advance_chant(delta: float) -> void:
 				current_frame -= 1
 				if current_frame < 0:
 					state = AnimState.IDLE
+					current_frame = 0
+					anim_timer = 0.0
 					sprite.texture = stand_texture
 					_stop_chant_audio()
+					chant_effect.stop()
 				else:
 					sprite.texture = chant_frames[current_frame]
 
@@ -190,10 +196,14 @@ func request_idle() -> void:
 	footstep_timer = 0.0
 	sprite.texture = stand_texture
 	_stop_chant_audio()
+	chant_effect.stop()
 
 
 func request_walk() -> void:
 	if state != AnimState.WALK:
+		if state == AnimState.CHANT:
+			_stop_chant_audio()
+			chant_effect.stop()
 		state = AnimState.WALK
 		current_frame = 0
 		anim_timer = 0.0
@@ -204,6 +214,9 @@ func request_walk() -> void:
 
 func request_run() -> void:
 	if state != AnimState.RUN:
+		if state == AnimState.CHANT:
+			_stop_chant_audio()
+			chant_effect.stop()
 		state = AnimState.RUN
 		current_frame = 0
 		anim_timer = 0.0
@@ -218,8 +231,25 @@ func request_attack() -> void:
 	anim_timer = 0.0
 	footstep_timer = 0.0
 	_stop_chant_audio()
+	chant_effect.stop()
 	if not attack_frames.is_empty():
 		sprite.texture = attack_frames[0]
+
+
+func request_magic_blade() -> void:
+	# 魔法之刃复用普攻动作，但保留独立的蓄力释放特效。
+	state = AnimState.ATTACK
+	current_frame = 0
+	anim_timer = 0.0
+	footstep_timer = 0.0
+	_stop_chant_audio()
+	chant_effect.release_blade(sprite.flip_h)
+	if not attack_frames.is_empty():
+		sprite.texture = attack_frames[0]
+
+
+func can_release_magic_blade() -> bool:
+	return state == AnimState.CHANT and chant_effect.is_fully_charged()
 
 
 func request_chant() -> void:
@@ -232,13 +262,16 @@ func request_chant() -> void:
 		if not chant_frames.is_empty():
 			sprite.texture = chant_frames[0]
 		_start_chant_audio()
+		chant_effect.start(sprite.flip_h)
 	elif chant_phase == ChantPhase.REVERSE:
 		chant_phase = ChantPhase.FORWARD
+		chant_effect.start(sprite.flip_h)
 
 
 func request_chant_release() -> void:
 	if state == AnimState.CHANT and chant_phase != ChantPhase.REVERSE:
 		chant_phase = ChantPhase.REVERSE
+		chant_effect.stop()
 
 
 func is_attacking() -> bool:
@@ -255,6 +288,7 @@ func get_current_frame() -> int:
 
 func set_flip_h(h: bool) -> void:
 	sprite.flip_h = h
+	chant_effect.set_facing(h)
 
 
 func _play_random_footstep() -> void:

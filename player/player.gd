@@ -4,6 +4,7 @@ const SPEED = 100.0
 const RUN_SPEED = 400.0
 
 @onready var basic_attack: BasicAttack = $BasicAttack
+@onready var magic_blade: MagicBlade = $MagicBlade
 @onready var animation: PlayerAnimation = $PlayerAnimation
 
 # ==========================
@@ -43,18 +44,21 @@ func teleport_to(destination: Vector2) -> void:
 		camera.smooth_move_to(destination)
 
 func _physics_process(delta: float) -> void:
-	# 普攻输入
-	if Input.is_action_just_pressed("attack"):
-		basic_attack.try_attack()
+	# 攻击与吟唱严格互斥，避免同一帧覆盖动画后让技能永久卡在 busy。
+	if Input.is_action_just_pressed("attack") and not magic_blade.is_busy() and not animation.is_attacking():
+		# 满蓄力时攻击键优先释放魔法之刃，否则执行普通攻击。
+		if not magic_blade.try_release():
+			basic_attack.try_attack()
 
-	# 吟唱输入
+	# 攻击已经在本帧启动时，不再接受吟唱请求。
 	if Input.is_action_just_pressed("chant"):
-		animation.request_chant()
+		if not basic_attack.is_busy() and not magic_blade.is_busy() and not animation.is_attacking():
+			animation.request_chant()
 	elif Input.is_action_just_released("chant"):
 		animation.request_chant_release()
 
-	# 普攻 / 吟唱期间禁止移动
-	if basic_attack.is_busy() or animation.is_chanting():
+	# 普攻、吟唱及魔法之刃释放期间禁止移动。
+	if basic_attack.is_busy() or magic_blade.is_busy() or animation.is_chanting():
 		velocity.x = 0.0
 		move_and_slide()
 		return
