@@ -65,7 +65,7 @@ func close() -> void:
 	queue_free()
 
 
-func _unhandled_key_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not is_open:
 		return
 
@@ -81,6 +81,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			return
 
 		if waiting_for_key:
+			# 捕获所有按键（包括方向键），阻止 UI 导航消费它们
 			SettingsManager.set_key_binding(waiting_action, event.keycode)
 			binding_buttons[waiting_action].text = OS.get_keycode_string(event.keycode)
 			waiting_for_key = false

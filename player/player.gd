@@ -47,8 +47,14 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("attack"):
 		basic_attack.try_attack()
 
-	# 普攻 / 冷却期间禁止移动
-	if basic_attack.is_busy():
+	# 吟唱输入
+	if Input.is_action_just_pressed("chant"):
+		animation.request_chant()
+	elif Input.is_action_just_released("chant"):
+		animation.request_chant_release()
+
+	# 普攻 / 吟唱期间禁止移动
+	if basic_attack.is_busy() or animation.is_chanting():
 		velocity.x = 0.0
 		move_and_slide()
 		return
@@ -89,8 +95,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		# 停止移动
 		velocity.x = 0.0
-		# 攻击动画正在播放时，不要让自动 idle 打断它
-		if not animation.is_attacking():
+		# 攻击 / 吟唱动画正在播放时，不要让自动 idle 打断它
+		if not animation.is_attacking() and not animation.is_chanting():
 			animation.request_idle()
 		# 松开方向键退出疾跑
 		is_running = false
