@@ -18,16 +18,22 @@ config/icon="res://icon.svg"
 [autoload]
 
 SettingsManager="*res://scripts/settings_manager.tscn"
+AudioManager="*uid://mjosvi46fmbd"
 SceneManager="*res://scripts/scene_manager.tscn"
 PauseMenu="*res://ui/pause_menu.tscn"
 SaveManager="*res://scripts/save_manager.gd"
 PlotlineManager="*res://scripts/plotline_manager.tscn"
+ButtonFeedback="*uid://b6mqwnmlg422n"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/button_feedback/plugin.cfg")
 
 [gui]
 

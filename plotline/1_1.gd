@@ -5,8 +5,10 @@ extends Node
 func play() -> void:
 	PlotlineManager.chat_start()
 
-	await PlotlineManager.chat("雪影", "你好，我是雪影。", ["雪影"])
-	await PlotlineManager.chat("薇芯", "我是薇芯，很高兴认识你。", ["雪影", "薇芯"])
-	await PlotlineManager.chat("雪影", "我们一起来冒险吧！", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "我艹了，给我干哪儿来了，这还是国内吗？", ["雪影"])
+	await PlotlineManager.chat("雪影", "？", ["雪影"],"right")
+	await PlotlineManager.chat("薇芯", "你醒啦，你已经是女孩子啦！", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "我本来就是女的...", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "不对你谁啊？！", ["雪影", "薇芯"])
 
 	PlotlineManager.chat_end()

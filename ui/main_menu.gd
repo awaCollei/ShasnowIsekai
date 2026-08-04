@@ -13,6 +13,7 @@ var _pending_delete_slot: int = -1
 
 
 func _ready() -> void:
+	ButtonFeedback.setup_recursive(self)
 	new_game_button.pressed.connect(_on_new_game_pressed)
 	load_game_button.pressed.connect(_on_load_game_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)

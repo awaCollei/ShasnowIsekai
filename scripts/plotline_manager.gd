@@ -66,15 +66,43 @@ func chat_start() -> void:
 	_disable_player_controls()
 	_chat_ui.show_ui()
 
-
 ## 显示一句话，等待玩家确认后返回
 ## speaker: 说话者名称
 ## text: 对话文本
 ## illustrations: 立绘名称数组，0~2个元素
-func chat(speaker: String, text: String, illustrations: Array = []) -> void:
+## direction: 立绘方向，可选 "left", "right", "face_to_face", "back_to_back"
+##           单人时有效值为 "left"/"right"，默认为 "left"
+##           双人时有效值为 "face_to_face"/"back_to_back"，默认为 "face_to_face"
+func chat(speaker: String, text: String, illustrations: Array = [], direction: String = "auto") -> void:
 	_ensure_chat_ui()
+	
+	# 自动选择方向
+	var final_direction = direction
+	if direction == "auto":
+		if illustrations.size() >= 2:
+			final_direction = "face_to_face"
+		else:
+			final_direction = "left"
+	
+	# 验证方向参数
+	var valid_directions = ["left", "right", "face_to_face", "back_to_back"]
+	if not final_direction in valid_directions:
+		push_warning("PlotlineManager: 无效的方向参数 '%s'，已回退为 'left'" % final_direction)
+		final_direction = "left"
+	
+	# 单人时限制有效方向
+	if illustrations.size() < 2 and final_direction in ["face_to_face", "back_to_back"]:
+		push_warning("PlotlineManager: 单人立绘不支持 '%s' 方向，已回退为 'left'" % final_direction)
+		final_direction = "left"
+	
+	# 双人时限制有效方向
+	if illustrations.size() >= 2 and final_direction in ["left", "right"]:
+		push_warning("PlotlineManager: 双人立绘不支持 '%s' 方向，已回退为 'face_to_face'" % final_direction)
+		final_direction = "face_to_face"
+	
 	_chat_ui.set_speaker(speaker)
 	_chat_ui.set_illustrations(illustrations, speaker)
+	_chat_ui.set_illustration_direction(final_direction)
 	_chat_ui.set_text(text)
 	await _chat_ui.advance_confirmed
 

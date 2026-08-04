@@ -118,6 +118,23 @@ func set_illustrations(illust_names: Array, speaker: String) -> void:
 			_show_illust(_illust_left, illust_names[0], illust_names[0] == speaker)
 			_show_illust(_illust_right, illust_names[1], illust_names[1] == speaker)
 
+## 设置立绘方向
+## direction: "left", "right", "face_to_face", "back_to_back"
+func set_illustration_direction(direction: String) -> void:
+	# 方向映射表：每个方向对应三个立绘的翻转状态 [左, 中, 右]
+	# 注意：这里的状态是 "是否翻转"，true=翻折朝右，false=默认朝左
+	var direction_map = {
+		"left": [false, false, false],
+		"right": [true, true, true],
+		"face_to_face": [true, true, false],  # 左朝右，中朝右，右朝左
+		"back_to_back": [false, false, true]   # 左朝左，中朝左，右朝右
+	}
+	
+	var states = direction_map.get(direction, [false, false, false])
+	
+	_illust_left.flip_h = states[0]
+	_illust_center.flip_h = states[1]
+	_illust_right.flip_h = states[2]
 
 func clear_all() -> void:
 	_full_text = ""
@@ -197,6 +214,7 @@ func _input(event: InputEvent) -> void:
 
 	get_viewport().set_input_as_handled()
 
+	AudioManager.play_sfx("res://assets/sound_effects/next.mp3")
 	if _is_typing:
 		skip_typewriter()
 	elif _can_advance:
