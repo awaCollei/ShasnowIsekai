@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://baro0peocov28" path="res://base/base.gd" id="6_base_script"]
 [ext_resource type="PackedScene" uid="uid://bhk8g7l1pse8f" path="res://components/portal.tscn" id="7_portal"]
 [ext_resource type="PackedScene" uid="uid://cmg4bseg87hut" path="res://components/wall.tscn" id="8_wall"]
+[ext_resource type="PackedScene" path="res://components/investigation_point.tscn" id="8_xejcm"]
 
 [node name="Main" type="Node2D" unique_id=1532273606]
 script = ExtResource("6_base_script")
@@ -103,8 +104,30 @@ sub_scene = "indoor"
 position = Vector2(-528, 176)
 sub_scene = "floor2"
 
+[node name="RightWall4" parent="IndoorArea" unique_id=1584115363 instance=ExtResource("8_wall")]
+position = Vector2(3088, 623)
+sub_scene = "outdoor"
+
+[node name="LeftWall4" parent="IndoorArea" unique_id=1782813909 instance=ExtResource("8_wall")]
+position = Vector2(-2928, 623)
+sub_scene = "outdoor"
+
 [node name="RightWall2" parent="IndoorArea" unique_id=602538165 instance=ExtResource("8_wall")]
 position = Vector2(366, 200)
 sub_scene = "floor2"
+
+[node name="InvestigationPoint" type="Node2D" parent="." unique_id=347995260]
+
+[node name="InvestigationPoint2" parent="InvestigationPoint" unique_id=1226843391 instance=ExtResource("8_xejcm")]
+position = Vector2(-2905, 639)
+investigation_id = "2"
+message = "前面的区域，以后再来探索吧"
+sub_scene = "outdoor"
+
+[node name="InvestigationPoint" parent="InvestigationPoint" unique_id=890606900 instance=ExtResource("8_xejcm")]
+position = Vector2(3071, 652)
+investigation_id = "1"
+message = "前面的区域，以后再来探索吧"
+sub_scene = "outdoor"
 
 [node name="InteractionSystem" parent="." unique_id=1326238021 instance=ExtResource("5_interaction")]

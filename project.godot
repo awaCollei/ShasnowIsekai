@@ -24,6 +24,7 @@ PauseMenu="*res://ui/pause_menu.tscn"
 SaveManager="*res://scripts/save_manager.gd"
 PlotlineManager="*res://scripts/plotline_manager.tscn"
 ButtonFeedback="*uid://b6mqwnmlg422n"
+MessageDisplayManager="*uid://4s02o7kcgpvp"
 
 [display]
 
