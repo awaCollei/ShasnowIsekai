@@ -75,8 +75,26 @@ func chat_start() -> void:
 ## direction: 立绘方向，可选 "left", "right", "face_to_face", "back_to_back"
 ##           单人时有效值为 "left"/"right"，默认为 "left"
 ##           双人时有效值为 "face_to_face"/"back_to_back"，默认为 "face_to_face"
-func chat(speaker: String, text: String, illustrations: Array = [], direction: String = "auto") -> void:
+func chat(speaker: Variant, text: String, illustrations: Array = [], direction: String = "auto") -> void:
 	_ensure_chat_ui()
+	
+	# 解析 speaker 参数
+	var display_name: String
+	var character_id: String
+	
+	if typeof(speaker) == TYPE_STRING:
+		# 如果是字符串，显示名和角色ID都用它
+		display_name = speaker
+		character_id = speaker
+	elif typeof(speaker) == TYPE_ARRAY and speaker.size() >= 2:
+		# 如果是数组（元组），第一个是显示名，第二个是角色ID
+		display_name = str(speaker[0])
+		character_id = str(speaker[1])
+	else:
+		# 无效参数，报错并回退
+		push_error("PlotlineManager: 无效的 speaker 参数类型: %s" % typeof(speaker))
+		display_name = "Unknown"
+		character_id = "unknown"
 	
 	# 自动选择方向
 	var final_direction = direction
@@ -102,8 +120,8 @@ func chat(speaker: String, text: String, illustrations: Array = [], direction: S
 		push_warning("PlotlineManager: 双人立绘不支持 '%s' 方向，已回退为 'face_to_face'" % final_direction)
 		final_direction = "face_to_face"
 	
-	_chat_ui.set_speaker(speaker)
-	_chat_ui.set_illustrations(illustrations, speaker)
+	_chat_ui.set_speaker(display_name)
+	_chat_ui.set_illustrations(illustrations, character_id)
 	_chat_ui.set_illustration_direction(final_direction)
 	_chat_ui.set_text(text)
 	await _chat_ui.advance_confirmed
