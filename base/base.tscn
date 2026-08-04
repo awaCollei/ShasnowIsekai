@@ -118,6 +118,13 @@ sub_scene = "floor2"
 
 [node name="InvestigationPoint" type="Node2D" parent="." unique_id=347995260]
 
+[node name="InvestigationPoint3" parent="InvestigationPoint" unique_id=1963218689 instance=ExtResource("8_xejcm")]
+position = Vector2(284, 540)
+investigation_id = "3"
+message = "你有驾照吗？"
+sub_scene = "indoor"
+investigation_name = "驾驶室"
+
 [node name="InvestigationPoint2" parent="InvestigationPoint" unique_id=1226843391 instance=ExtResource("8_xejcm")]
 position = Vector2(-2905, 639)
 investigation_id = "2"

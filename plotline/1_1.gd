@@ -9,7 +9,7 @@ func play() -> void:
 
 	PlotlineManager.chat_start()
 	await PlotlineManager.chat("雪影", "陌生的天花板...", [])
-	await PlotlineManager.chat("雪影", "不对这是天空", [])
+	await PlotlineManager.chat("雪影", "不对这是天空...", [])
 	await PlotlineManager.chat("雪影", "...", ["雪影"])
 	await PlotlineManager.chat("雪影", "我艹了，给我干哪儿来了，这还是国内吗？", ["雪影"])
 	await PlotlineManager.chat("雪影", "？", ["雪影"],"right")

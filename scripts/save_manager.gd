@@ -103,6 +103,7 @@ func load_game(slot: int) -> void:
 	if pause_menu and pause_menu.is_open:
 		pause_menu.close()
 
+	_restore_quest_progress(info)
 	# 切换场景
 	var err := get_tree().change_scene_to_file(info.scene_path)
 	if err != OK:
@@ -115,7 +116,6 @@ func load_game(slot: int) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_restore_player(info)
-	_restore_quest_progress(info)
 
 
 # 开始新游戏
