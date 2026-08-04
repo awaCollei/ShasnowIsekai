@@ -3,6 +3,10 @@ extends Node
 ## 示例剧情 1_1 — 演示基础的 chat_start / chat / chat_end 用法
 
 func play() -> void:
+	await PlotlineManager.black_fade_in(0)
+	await PlotlineManager.show_black_text("你，宅，便利店，女孩，大运，懂？")
+	await PlotlineManager.black_fade_out()
+
 	PlotlineManager.chat_start()
 
 	await PlotlineManager.chat("雪影", "我艹了，给我干哪儿来了，这还是国内吗？", ["雪影"])

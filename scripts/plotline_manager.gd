@@ -16,6 +16,8 @@ signal plot_ended
 var is_playing: bool = false    # 是否正在播放剧情
 var _chat_ui = null              # ChatUI 实例
 var _chat_ui_scene = preload("res://plot/chat_ui.tscn")
+var _black_sui = null            # BlackScreen 实例
+var _black_sui_scene = preload("res://plot/black_screen.tscn")
 
 
 # ==========================
@@ -115,6 +117,32 @@ func chat_end() -> void:
 
 
 # ==========================
+# 黑屏过渡方法
+# ==========================
+
+## 淡入黑屏，await 后表示过渡完成
+func black_fade_in(duration: float = 0.5) -> void:
+	_ensure_black_ui()
+	if not _black_sui.visible:
+		_disable_player_controls()
+	await _black_sui.fade_in(duration)
+
+## 淡出黑屏，await 后表示过渡完成
+func black_fade_out(duration: float = 0.5) -> void:
+	if _black_sui:
+		await _black_sui.fade_out(duration)
+	_restore_player_controls()
+
+## 在黑屏上显示居中文本，等待玩家确认后自动清除
+func show_black_text(text: String) -> void:
+	_ensure_black_ui()
+	_black_sui.set_text(text)
+	_black_sui.set_can_advance(true)
+	await _black_sui.advance_confirmed
+	_black_sui.clear_text()
+
+
+# ==========================
 # 内部
 # ==========================
 
@@ -123,6 +151,13 @@ func _ensure_chat_ui() -> void:
 		return
 	_chat_ui = _chat_ui_scene.instantiate()
 	get_tree().root.add_child(_chat_ui)
+
+
+func _ensure_black_ui() -> void:
+	if _black_sui:
+		return
+	_black_sui = _black_sui_scene.instantiate()
+	get_tree().root.add_child(_black_sui)
 
 
 func _disable_player_controls() -> void:
