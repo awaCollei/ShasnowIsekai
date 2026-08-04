@@ -30,6 +30,7 @@ func _ready() -> void:
 
 	# 生成训练木桩
 	_spawn_training_dummy()
+	PlotlineManager.play_plot("1_1")
 
 func _spawn_training_dummy() -> void:
 	var dummy: Enemy = training_dummy_scene.instantiate()

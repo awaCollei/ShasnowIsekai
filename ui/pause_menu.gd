@@ -4,7 +4,7 @@ extends CanvasLayer
 const BINDING_ACTIONS: Array[String] = [
 	"move_up", "move_down", "move_left", "move_right",
 	"interact", "select_prev", "select_next", "menu",
-	"attack", "chant", "dodge"
+	"attack", "chant", "dodge", "confirm"
 ]
 
 # UI 引用（从场景获取）

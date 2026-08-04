@@ -13,6 +13,7 @@ const DEFAULT_KEY_BINDINGS: Dictionary = {
 	"attack": KEY_Z,
 	"chant": KEY_X,
 	"dodge": KEY_SHIFT,
+	"confirm": KEY_SPACE,
 }
 
 # 键位显示名称
@@ -28,6 +29,7 @@ const KEY_BINDING_NAMES: Dictionary = {
 	"attack": "攻击",
 	"chant": "吟唱",
 	"dodge": "闪避",
+	"confirm": "确认/推进对话",
 }
 
 # 当前键位绑定

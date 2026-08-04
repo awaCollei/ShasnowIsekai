@@ -22,6 +22,9 @@ var was_direction_pressed := false
 @export var current_sub_scene: String = "outdoor"
 
 func _ready() -> void:
+	# 加入 player 组，供 PlotlineManager 等系统查找
+	add_to_group("player")
+
 	# 获取当前场景
 	var scene_manager = get_node_or_null("/root/SceneManager")
 	if scene_manager:

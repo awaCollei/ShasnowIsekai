@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://h86aeev0ldqi"]
+
+[ext_resource type="Script" uid="uid://cgb0i4b2b1gwd" path="res://plot/chat_ui.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c2lp0pnwxnjul" path="res://assets/illustration/薇芯.png" id="2_18ra7"]
+[ext_resource type="Texture2D" uid="uid://dt0uiemua0ggi" path="res://assets/illustration/雪影.png" id="3_ao5tr"]
+[ext_resource type="StyleBox" path="res://plot/chat_ui_styles.tres" id="3_speaker_style"]
+
+[node name="ChatUI" type="CanvasLayer" unique_id=859839791]
+layer = 100
+script = ExtResource("1_script")
+
+[node name="RootControl" type="Control" parent="." unique_id=395376546]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="IllustrationArea" type="Control" parent="RootControl" unique_id=2009566630]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="IllustLeft" type="TextureRect" parent="RootControl/IllustrationArea" unique_id=297760102]
+visible = false
+texture_filter = 2
+layout_mode = 0
+offset_left = 120.0
+offset_top = 60.0
+offset_right = 663.0
+offset_bottom = 784.0
+scale = Vector2(0.92, 0.92)
+mouse_filter = 2
+texture = ExtResource("2_18ra7")
+stretch_mode = 1
+
+[node name="IllustCenter" type="TextureRect" parent="RootControl/IllustrationArea" unique_id=769841370]
+visible = false
+texture_filter = 2
+layout_mode = 0
+offset_left = 400.0
+offset_top = 60.0
+offset_right = 943.0
+offset_bottom = 784.0
+scale = Vector2(0.92, 0.92)
+mouse_filter = 2
+texture = ExtResource("2_18ra7")
+stretch_mode = 1
+
+[node name="IllustRight" type="TextureRect" parent="RootControl/IllustrationArea" unique_id=428912612]
+visible = false
+texture_filter = 2
+layout_mode = 0
+offset_left = 700.0
+offset_top = 60.0
+offset_right = 1243.0
+offset_bottom = 784.0
+scale = Vector2(0.92, 0.92)
+mouse_filter = 2
+texture = ExtResource("3_ao5tr")
+stretch_mode = 1
+
+[node name="DialogPanel" type="Panel" parent="RootControl" unique_id=1685559193]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -210.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = ExtResource("3_speaker_style")
+
+[node name="SpeakerBg" type="Panel" parent="RootControl/DialogPanel" unique_id=718101336]
+layout_mode = 0
+offset_left = 24.0
+offset_top = -18.0
+offset_right = 224.0
+offset_bottom = 32.0
+theme_override_styles/panel = ExtResource("3_speaker_style")
+
+[node name="SpeakerLabel" type="Label" parent="RootControl/DialogPanel" unique_id=320269940]
+layout_mode = 0
+offset_left = 70.0
+offset_top = -15.0
+offset_right = 170.0
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "名字"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextLabel" type="Label" parent="RootControl/DialogPanel" unique_id=1505961110]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 41.0
+offset_right = 33.0
+offset_bottom = 65.0
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_font_sizes/font_size = 30
+autowrap_mode = 3
+
+[node name="NextIndicator" type="Label" parent="RootControl/DialogPanel" unique_id=1061374257]
+layout_mode = 0
+offset_left = 1149.0
+offset_top = 121.0
+offset_right = 1189.0
+offset_bottom = 169.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 40
+text = "▼"
