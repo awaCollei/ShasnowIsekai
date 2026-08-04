@@ -11,7 +11,6 @@ var is_open: bool = false
 
 # 对话框
 var overwrite_confirm: ConfirmationDialog
-var save_success_dialog: AcceptDialog
 
 # 待保存的槽位（覆盖确认用）
 var _pending_save_slot: int = -1
@@ -38,12 +37,6 @@ func _ready() -> void:
 	overwrite_confirm.dialog_text = "该槽位已有存档，是否覆盖？"
 	overwrite_confirm.confirmed.connect(_on_overwrite_confirmed)
 	add_child(overwrite_confirm)
-
-	# 创建保存成功对话框
-	save_success_dialog = AcceptDialog.new()
-	save_success_dialog.title = "提示"
-	save_success_dialog.dialog_text = "保存成功！"
-	add_child(save_success_dialog)
 
 
 func _on_overwrite_confirmed() -> void:
@@ -178,5 +171,4 @@ func _do_save(slot: int) -> void:
 		return
 
 	if save_manager.save_game(slot):
-		save_success_dialog.popup_centered()
 		_show_main_menu()

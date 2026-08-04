@@ -244,6 +244,10 @@ func _restore_player(info: SaveData) -> void:
 	var player := _find_player()
 	if player:
 		player.global_position = info.player_position
+		# 镜头立即就位，跳过传送平滑过渡
+		var camera := player.get_node_or_null("Camera2D") as PlayerCamera
+		if camera:
+			camera.snap_to(info.player_position)
 		if player.get("current_sub_scene") != null:
 			player.current_sub_scene = info.player_sub_scene
 		# 通知 base 更新纹理

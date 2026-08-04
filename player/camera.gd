@@ -85,6 +85,12 @@ func smooth_move_to(new_position: Vector2) -> void:
 		print("[PlayerCamera] pan start: ", global_position, " -> ", target_position,
 				" (", teleport_pan_duration, "s)")
 
+func snap_to(new_position: Vector2) -> void:
+	target_position = new_position + camera_offset
+	global_position = target_position
+	_last_follow_position = new_position
+	is_smoothing = false
+
 func set_target(target: Node2D) -> void:
 	if target:
 		smooth_move_to(target.global_position)
