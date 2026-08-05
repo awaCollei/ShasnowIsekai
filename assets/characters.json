@@ -55,7 +55,7 @@
       },
       "walk": {
         "path": "res://assets/vising/walk/",
-        "frames": 29,
+        "frames": 26,
         "prefix": "walk_",
         "interval": 0.04,
         "looping": true
