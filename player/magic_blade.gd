@@ -11,7 +11,7 @@ signal finished
 @export var hit_frame: int = 5
 @export var forward_offset: float = 50.0
 
-@onready var player: CharacterBody2D = get_parent()
+@onready var player: Player = get_parent()
 @onready var animation: PlayerAnimation = player.get_node("PlayerAnimation")
 @onready var hit_area: Area2D = player.get_node("MagicBladeArea")
 

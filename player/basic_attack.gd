@@ -4,7 +4,7 @@ class_name BasicAttack
 signal attack_started
 signal attack_ended
 
-@onready var player: CharacterBody2D = get_parent()
+@onready var player: Player = get_parent()
 @onready var animation: PlayerAnimation = player.get_node("PlayerAnimation")
 @onready var attack_area: Area2D = player.get_node("AttackArea")
 

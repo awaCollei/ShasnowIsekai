@@ -15,7 +15,7 @@ func _ready() -> void:
 
 func _on_node_added(node: Node) -> void:
 	# 当玩家节点被添加到场景时，更新其场景信息
-	if node is CharacterBody2D and node.has_method("set_scene_info"):
+	if node is Player:
 		node.set_scene_info(current_scene)
 
 func get_current_scene() -> String:

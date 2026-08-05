@@ -1,13 +1,12 @@
-extends Node
+extends CharacterAnimation
 class_name PlayerAnimation
 
-## 统一管理角色的所有动画（待机、行走、疾跑、攻击）
-## 同一时间只允许一个动画播放，后来的请求打断当前动画
+## 统一管理玩家角色的所有动画（待机、行走、疾跑、攻击、吟唱）
+## 继承自 CharacterAnimation，扩展战斗相关动画逻辑。
 
 signal attack_finished
 
-@onready var player: CharacterBody2D = get_parent()
-@onready var sprite: Sprite2D = player.get_node("Sprite2D")
+@onready var player: Player = get_parent()
 @onready var chant_effect: MagicChantEffect = player.get_node("MagicChantEffect")
 
 # 动画帧
@@ -22,8 +21,6 @@ var footstep_streams: Array[AudioStream] = []
 var chant_player: AudioStreamPlayer
 
 # 动画参数
-var current_frame: int = 0
-var anim_timer: float = 0.0
 var footstep_timer: float = 0.0
 
 const WALK_INTERVAL: float = 0.04

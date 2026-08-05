@@ -13,7 +13,7 @@ class_name InvestigationPoint
 @onready var sprite: Sprite2D = $Sprite2D
 
 # 状态
-var player_ref: CharacterBody2D = null
+var player_ref: Player = null
 var _last_interact_time: float = 0.0  # 上次调查时间
 
 
@@ -28,14 +28,14 @@ func _ready() -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body is CharacterBody2D and body.has_method("set_scene_info"):
+	if body is Player:
 		player_ref = body
 		if can_interact():
 			add_interaction_option()
 
 
 func _on_body_exited(body: Node2D) -> void:
-	if body is CharacterBody2D and body.has_method("set_scene_info"):
+	if body is Player:
 		player_ref = null
 		remove_interaction_option()
 

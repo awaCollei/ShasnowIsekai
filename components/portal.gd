@@ -15,7 +15,7 @@ class_name Portal
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 # 状态
-var player_ref: CharacterBody2D = null
+var player_ref: Player = null
 
 func _ready() -> void:
 	# 设置显示
@@ -34,14 +34,14 @@ func _ready() -> void:
 	body_exited.connect(_on_body_exited)
 
 func _on_body_entered(body: Node2D) -> void:
-	if body is CharacterBody2D and body.has_method("set_scene_info"):
+	if body is Player:
 		player_ref = body
 		# 检查sub_scene是否匹配
 		if can_interact():
 			add_interaction_option()
 
 func _on_body_exited(body: Node2D) -> void:
-	if body is CharacterBody2D and body.has_method("set_scene_info"):
+	if body is Player:
 		player_ref = null
 		remove_interaction_option()
 

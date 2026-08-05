@@ -33,12 +33,12 @@ func _process(_delta: float) -> void:
 		if sprite:
 			sprite.visible = should_active
 
-func find_player_node() -> CharacterBody2D:
+func find_player_node() -> Player:
 	var root = get_tree().root
 	return find_player_node_recursive(root)
 
-func find_player_node_recursive(node: Node) -> CharacterBody2D:
-	if node is CharacterBody2D and node.has_method("set_scene_info"):
+func find_player_node_recursive(node: Node) -> Player:
+	if node is Player:
 		return node
 	for child in node.get_children():
 		var result = find_player_node_recursive(child)

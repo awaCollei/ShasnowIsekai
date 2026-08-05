@@ -217,6 +217,58 @@ func get_quests_in_chapter(chapter_id: String) -> Array:
 
 
 # ==========================
+# 角色演出（地图角色，非立绘）
+# ==========================
+
+## 在地图上创建一个角色（剧情 NPC），返回 Character 实例
+func create_character(character_id: String, position: Vector2) -> Character:
+	var char := Character.new()
+	char.name = "PlotChar_" + character_id
+
+	# 创建必要的子节点
+	var sprite := Sprite2D.new()
+	sprite.name = "Sprite2D"
+	char.add_child(sprite)
+
+	var anim := CharacterAnimation.new()
+	anim.name = "CharacterAnimation"
+	char.add_child(anim)
+
+	# 添加到当前场景
+	var scene_root := get_tree().current_scene
+	if scene_root:
+		scene_root.add_child(char)
+
+	# 初始化（必须在 add_child 之后，因为 @onready 依赖场景树）
+	char.initialize(character_id)
+	char.global_position = position
+	return char
+
+
+## 让角色移动到目标位置，await 完成后返回
+## move_type: "walk" | "run" | "translate" | "teleport"
+func character_move(character: Character, target: Vector2, move_type: String = "walk") -> void:
+	if not is_instance_valid(character):
+		push_error("PlotlineManager: 角色已失效，无法移动")
+		return
+	await character.move_to(target, move_type)
+
+
+## 设置角色朝向（"left" / "right"）
+func character_set_direction(character: Character, direction: String) -> void:
+	if not is_instance_valid(character):
+		push_error("PlotlineManager: 角色已失效，无法设置方向")
+		return
+	character.set_direction(direction)
+
+
+## 销毁地图上的角色
+func destroy_character(character: Character) -> void:
+	if is_instance_valid(character):
+		character.queue_free()
+
+
+# ==========================
 # 内部
 # ==========================
 
@@ -284,7 +336,7 @@ func _get_player():
 	if players.size() > 0:
 		return players[0]
 
-	# 回退：查找 CharacterBody2D
+	# 回退：递归查找 Player
 	var root := tree.root
 	for child in root.get_children():
 		if child is CanvasLayer or child is Node and child == self:
@@ -296,7 +348,7 @@ func _get_player():
 
 
 func _find_player_recursive(node: Node):
-	if node is CharacterBody2D and node.has_method("teleport_to"):
+	if node is Player:
 		return node
 	for child in node.get_children():
 		var found = _find_player_recursive(child)

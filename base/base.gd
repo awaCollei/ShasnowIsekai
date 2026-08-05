@@ -12,7 +12,7 @@ var damage_number_scene: PackedScene = preload("res://ui/damage_number.tscn")
 
 # 节点引用
 @onready var rv_sprite: Sprite2D = $RV
-@onready var player: CharacterBody2D = $Player
+@onready var player: Player = $Player
 @onready var near_bg: Sprite2D = $NearBackground
 @onready var far_bg: Sprite2D = $FarBackground
 @onready var camera: Camera2D = $Player/Camera2D

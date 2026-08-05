@@ -1,7 +1,5 @@
-extends CharacterBody2D
-
-const SPEED = 100.0
-const RUN_SPEED = 400.0
+extends Character
+class_name Player
 
 @onready var basic_attack: BasicAttack = $BasicAttack
 @onready var magic_blade: MagicBlade = $MagicBlade
@@ -23,6 +21,10 @@ var was_direction_pressed := false
 @export var current_sub_scene: String = "outdoor"
 
 func _ready() -> void:
+	# 初始化角色基类
+	character_id = "shasnow"
+	initialize("shasnow")
+
 	# 加入 player 组，供 PlotlineManager 等系统查找
 	add_to_group("player")
 
@@ -38,7 +40,7 @@ func set_scene_info(scene: String) -> void:
 # 传送
 # ==========================
 func teleport_to(destination: Vector2) -> void:
-	global_position = destination
+	super.teleport_to(destination)
 	var camera := get_node_or_null("Camera2D") as PlayerCamera
 	if camera:
 		camera.smooth_move_to(destination)
@@ -88,7 +90,7 @@ func _physics_process(delta: float) -> void:
 	# ======================
 	if direction != 0.0:
 		var effective_running := is_running or always_run
-		var current_speed = RUN_SPEED if effective_running else SPEED
+		var current_speed = run_speed if effective_running else walk_speed
 		velocity.x = direction * current_speed
 		animation.set_flip_h(direction > 0.0)
 

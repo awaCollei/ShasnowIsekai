@@ -1,0 +1,58 @@
+{
+  "shasnow": {
+    "name": "雪影",
+    "walk_speed": 150.0,
+    "run_speed": 400.0,
+    "animations": {
+      "idle": {
+        "path": "res://assets/shasnow/stand/",
+        "frames": 1,
+        "prefix": "stand_",
+        "interval": 0.0,
+        "looping": false
+      },
+      "walk": {
+        "path": "res://assets/shasnow/walk/",
+        "frames": 24,
+        "prefix": "walk_",
+        "interval": 0.04,
+        "looping": true
+      },
+      "run": {
+        "path": "res://assets/shasnow/run/",
+        "frames": 16,
+        "prefix": "run_",
+        "interval": 0.04,
+        "looping": true
+      },
+      "attack": {
+        "path": "res://assets/shasnow/basic_attack/",
+        "frames": 32,
+        "prefix": "basic_attack_",
+        "interval": 0.025,
+        "looping": false
+      },
+      "chant": {
+        "path": "res://assets/shasnow/chanting/",
+        "frames": 15,
+        "prefix": "chanting_",
+        "interval": 0.05,
+        "looping": false
+      }
+    }
+  },
+  "vising": {
+    "name": "薇芯",
+    "walk_speed": 150.0,
+    "run_speed": 400.0,
+    "animations": {
+      "idle": {
+        "path": "res://assets/vising/stand/",
+        "frames": 1,
+        "prefix": "stand_",
+        "interval": 0.0,
+        "looping": false
+      }
+    }
+  }
+}

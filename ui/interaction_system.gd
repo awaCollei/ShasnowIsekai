@@ -18,7 +18,7 @@ var is_visible: bool = false
 var input_cooldown: float = 0.0
 const INPUT_COOLDOWN_TIME: float = 0.15
 
-var player_ref: CharacterBody2D
+var player_ref: Player
 var _last_debug_position := Vector2.ZERO
 var _has_debug_position := false
 
@@ -173,7 +173,7 @@ func update_position() -> void:
 		_last_debug_position = options_container.position
 		_has_debug_position = true
 
-func _get_player_canvas_bounds(player: CharacterBody2D) -> Rect2:
+func _get_player_canvas_bounds(player: Player) -> Rect2:
 	var player_sprite := player.get_node_or_null("Sprite2D") as Sprite2D
 	if player_sprite and player_sprite.texture:
 		return _transform_rect(player_sprite.get_global_transform_with_canvas(), player_sprite.get_rect())
@@ -193,8 +193,8 @@ func _transform_rect(transform: Transform2D, rect: Rect2) -> Rect2:
 		bounds = bounds.expand(transform * corner)
 	return bounds
 
-func find_player_node(node: Node) -> CharacterBody2D:
-	if node is CharacterBody2D and node.has_method("set_scene_info"):
+func find_player_node(node: Node) -> Player:
+	if node is Player:
 		return node
 
 	for child in node.get_children():

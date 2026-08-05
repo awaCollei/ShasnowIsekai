@@ -232,8 +232,8 @@ func _find_player() -> Node:
 	if scene == null:
 		return null
 
-	# 递归查找 CharacterBody2D 类型的玩家
-	var players := scene.find_children("*", "CharacterBody2D", true, false)
+	# 递归查找 Player 类型的玩家
+	var players := scene.find_children("*", "Player", true, false)
 	for p in players:
 		if p.has_method("set_scene_info"):
 			return p
