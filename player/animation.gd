@@ -8,6 +8,7 @@ signal attack_finished
 
 @onready var player: Player = get_parent()
 @onready var chant_effect: MagicChantEffect = player.get_node("MagicChantEffect")
+@onready var run_wind_effect: RunWindEffect = player.get_node("RunWindEffect")
 
 # 动画帧
 var walk_frames: Array[Texture2D] = []
@@ -192,11 +193,13 @@ func request_idle() -> void:
 	anim_timer = 0.0
 	footstep_timer = 0.0
 	sprite.texture = stand_texture
+	run_wind_effect.set_running(false, sprite.flip_h)
 	_stop_chant_audio()
 	chant_effect.stop()
 
 
 func request_walk() -> void:
+	run_wind_effect.set_running(false, sprite.flip_h)
 	if state != AnimState.WALK:
 		if state == AnimState.CHANT:
 			_stop_chant_audio()
@@ -210,6 +213,7 @@ func request_walk() -> void:
 
 
 func request_run() -> void:
+	run_wind_effect.set_running(true, sprite.flip_h)
 	if state != AnimState.RUN:
 		if state == AnimState.CHANT:
 			_stop_chant_audio()
@@ -227,6 +231,7 @@ func request_attack() -> void:
 	current_frame = 0
 	anim_timer = 0.0
 	footstep_timer = 0.0
+	run_wind_effect.set_running(false, sprite.flip_h)
 	_stop_chant_audio()
 	chant_effect.stop()
 	if not attack_frames.is_empty():
@@ -239,8 +244,9 @@ func request_magic_blade() -> void:
 	current_frame = 0
 	anim_timer = 0.0
 	footstep_timer = 0.0
+	run_wind_effect.set_running(false, sprite.flip_h)
 	_stop_chant_audio()
-	chant_effect.release_blade(sprite.flip_h)
+	chant_effect.consume_charge()
 	if not attack_frames.is_empty():
 		sprite.texture = attack_frames[0]
 
@@ -250,6 +256,7 @@ func can_release_magic_blade() -> bool:
 
 
 func request_chant() -> void:
+	run_wind_effect.set_running(false, sprite.flip_h)
 	if state != AnimState.CHANT:
 		state = AnimState.CHANT
 		current_frame = 0
@@ -286,6 +293,7 @@ func get_current_frame() -> int:
 func set_flip_h(h: bool) -> void:
 	sprite.flip_h = h
 	chant_effect.set_facing(h)
+	run_wind_effect.set_facing(h)
 
 
 func _play_random_footstep() -> void:
