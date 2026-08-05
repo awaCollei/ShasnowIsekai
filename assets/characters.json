@@ -52,6 +52,13 @@
         "prefix": "stand_",
         "interval": 0.0,
         "looping": false
+      },
+      "walk": {
+        "path": "res://assets/vising/walk/",
+        "frames": 29,
+        "prefix": "walk_",
+        "interval": 0.04,
+        "looping": true
       }
     }
   }
