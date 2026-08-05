@@ -6,6 +6,7 @@ class_name InvestigationPoint
 @export var message: String = ""  # 调查时显示的消息
 @export var sub_scene: String = ""  # 所在子场景（留空表示所有子场景）
 @export var investigation_name: String = ""  # 调查点名称，用于交互显示
+@export_enum("open_map") var special_action: String = ""  # 特殊操作；非空时不播报 message
 @export var cooldown_time: float = 2.0  # 调查冷却时间（秒）
 
 # 组件引用
@@ -77,12 +78,22 @@ func find_interaction_system_node(node: Node) -> Node:
 
 
 func interact() -> void:
-	if message == "":
-		return
-	
-	var now = Time.get_ticks_msec() / 1000.0
+	var now := Time.get_ticks_msec() / 1000.0
 	if now - _last_interact_time < cooldown_time:
 		return
 	_last_interact_time = now
-	
-	MessageDisplayManager.show_info_message(message)
+
+	# 特定调查点可以执行操作而不是显示调查文本。
+	# ID=3 是现有“驾驶室”的兼容规则；新调查点应在 tscn 中设置 special_action。
+	var action := special_action
+	if action.is_empty() and investigation_id == "3":
+		action = "open_map"
+
+	if action == "open_map":
+		var scene_manager := get_node_or_null("/root/SceneManager")
+		if scene_manager:
+			scene_manager.open_map()
+		return
+
+	if not message.is_empty():
+		MessageDisplayManager.show_info_message(message)

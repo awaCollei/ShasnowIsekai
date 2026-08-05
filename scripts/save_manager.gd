@@ -121,7 +121,7 @@ func load_game(slot: int) -> void:
 # 开始新游戏
 func start_new_game() -> void:
 	current_slot = -1
-	current_scene_path = "res://base/base.tscn"
+	current_scene_path = "res://scenes/base.tscn"
 
 	# 重置任务进度
 	_reset_quest_progress()

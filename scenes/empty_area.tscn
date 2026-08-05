@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://player/player.tscn" id="1_player"]
+[ext_resource type="Texture2D" path="res://assets/base/background2.png" id="2_background"]
+[ext_resource type="PackedScene" path="res://ui/interaction_system.tscn" id="3_interaction"]
+[ext_resource type="PackedScene" path="res://components/wall.tscn" id="4_wall"]
+[ext_resource type="PackedScene" path="res://components/investigation_point.tscn" id="5_investigation"]
+[ext_resource type="Script" path="res://scripts/world_scene.gd" id="6_world_scene"]
+
+[node name="EmptyArea" type="Node2D"]
+script = ExtResource("6_world_scene")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(0, 225)
+texture = ExtResource("2_background")
+modulate = Color(0.72, 0.78, 0.82, 1)
+
+[node name="AreaTitle" type="Label" parent="."]
+offset_left = -225.0
+offset_top = 90.0
+offset_right = 225.0
+offset_bottom = 130.0
+theme_override_colors/font_color = Color(0.82, 0.86, 0.9, 1)
+theme_override_font_sizes/font_size = 24
+text = "空旷区域 · 场景占位"
+horizontal_alignment = 1
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(0, 630)
+current_sub_scene = "outdoor"
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Boundaries" type="Node2D" parent="."]
+
+[node name="LeftWall" parent="Boundaries" instance=ExtResource("4_wall")]
+position = Vector2(-760, 630)
+sub_scene = "outdoor"
+
+[node name="RightWall" parent="Boundaries" instance=ExtResource("4_wall")]
+position = Vector2(760, 630)
+sub_scene = "outdoor"
+
+[node name="MapTerminal" parent="." instance=ExtResource("5_investigation")]
+position = Vector2(300, 630)
+investigation_id = "empty_area_map"
+investigation_name = "查看地图"
+message = ""
+sub_scene = "outdoor"
+special_action = "open_map"
+
+[node name="InteractionSystem" parent="." instance=ExtResource("3_interaction")]
