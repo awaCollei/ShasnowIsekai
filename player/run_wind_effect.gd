@@ -39,7 +39,7 @@ var _rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
-	z_index = 1
+	z_index = 3
 	visible = false
 	set_process(false)
 	_rng.randomize()

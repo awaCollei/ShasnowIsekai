@@ -67,13 +67,12 @@ func play_plot(plot_id: String) -> void:
 # 对话方法
 # ==========================
 
-## 开始对话：显示聊天UI，禁用玩家控制
+## 开始对话：显示聊天UI
 func chat_start() -> void:
 	if _chat_ui and _chat_ui.visible:
 		push_warning("PlotlineManager: chat_start() 被重复调用，已忽略")
 		return
 	_ensure_chat_ui()
-	_disable_player_controls()
 	_chat_ui.show_ui()
 
 ## 显示一句话，等待玩家确认后返回
@@ -130,11 +129,10 @@ func chat(speaker: Variant, text: String, illustrations: Array = [], direction: 
 	await _chat_ui.advance_confirmed
 
 
-## 结束对话：关闭聊天UI，恢复玩家控制
+## 结束对话：关闭聊天UI
 func chat_end() -> void:
 	if _chat_ui:
 		_chat_ui.hide_ui()
-	_restore_player_controls()
 
 
 # ==========================
@@ -144,15 +142,12 @@ func chat_end() -> void:
 ## 淡入黑屏，await 后表示过渡完成
 func black_fade_in(duration: float = 0.5) -> void:
 	_ensure_black_ui()
-	if not _black_sui.visible:
-		_disable_player_controls()
 	await _black_sui.fade_in(duration)
 
 ## 淡出黑屏，await 后表示过渡完成
 func black_fade_out(duration: float = 0.5) -> void:
 	if _black_sui:
 		await _black_sui.fade_out(duration)
-	_restore_player_controls()
 
 ## 在黑屏上显示居中文本，等待玩家确认后自动清除
 func show_black_text(text: String) -> void:
@@ -262,6 +257,18 @@ func destroy_character(character: Character) -> void:
 	if is_instance_valid(character):
 		character.queue_free()
 
+
+# ==========================
+# 玩家操作锁定
+# ==========================
+
+## 锁定玩家操作（移动、攻击、菜单等）
+func lock_player() -> void:
+	_disable_player_controls()
+
+## 解锁玩家操作
+func unlock_player() -> void:
+	_restore_player_controls()
 
 # ==========================
 # 内部
