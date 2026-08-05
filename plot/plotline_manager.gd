@@ -123,11 +123,6 @@ func chat(speaker: Variant, text: String, illustrations: Array = [], direction: 
 		push_warning("PlotlineManager: 单人立绘不支持 '%s' 方向，已回退为 'left'" % final_direction)
 		final_direction = "left"
 	
-	# 双人时限制有效方向
-	if illustrations.size() >= 2 and final_direction in ["left", "right"]:
-		push_warning("PlotlineManager: 双人立绘不支持 '%s' 方向，已回退为 'face_to_face'" % final_direction)
-		final_direction = "face_to_face"
-	
 	_chat_ui.set_speaker(display_name)
 	_chat_ui.set_illustrations(illustrations, character_id)
 	_chat_ui.set_illustration_direction(final_direction)

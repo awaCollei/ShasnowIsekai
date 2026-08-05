@@ -26,6 +26,8 @@ func _ready() -> void:
 	delete_confirm.confirmed.connect(_on_delete_confirmed)
 	add_child(delete_confirm)
 
+	AudioManager.play_bgm("res://assets/bgm.mp3")
+
 
 func _on_new_game_pressed() -> void:
 	var save_manager = get_node_or_null("/root/SaveManager")
