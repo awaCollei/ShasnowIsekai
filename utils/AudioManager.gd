@@ -70,12 +70,18 @@ func play_looping_sfx(stream: Variant, volume_override: float = -1.0) -> AudioSt
 
 
 ## 停止循环游戏音效并释放播放器
-func stop_looping_sfx(player: AudioStreamPlayer) -> void:
+func stop_looping_sfx(player: AudioStreamPlayer, fade_out_time: float = 3) -> void:
     if player == null:
         return
     _looping_sfx_players.erase(player)
-    player.stop()
-    player.queue_free()
+    if fade_out_time > 0:
+        var tween := create_tween()
+        tween.tween_property(player, "volume_db", -80.0, fade_out_time)
+        tween.tween_callback(player.stop)
+        tween.tween_callback(player.queue_free)
+    else:
+        player.stop()
+        player.queue_free()
 
 
 ## 播放 UI 音效（支持重叠播放）

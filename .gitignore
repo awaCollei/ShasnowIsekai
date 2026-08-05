@@ -4,3 +4,6 @@
 video_processor/output_frames/
 /android/
 temp/
+*.zip
+*.exe
+*.apk
