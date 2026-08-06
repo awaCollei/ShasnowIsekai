@@ -13,8 +13,10 @@ func play() -> void:
 	await PlotlineManager.black_fade_out()
 	PlotlineManager.chat_start()
 	await PlotlineManager.chat("雪影", "...", [])
-	await PlotlineManager.chat("雪影", "...", ["雪影"])
-	await PlotlineManager.chat("雪影", "我艹了，给我干哪儿来了，这还是国内吗？", ["雪影"])
+	await PlotlineManager.chat("雪影", "（你望着贴图一般的天空）", ["雪影"])
+	await PlotlineManager.chat("雪影", "***，你大爷呀，给我干哪儿来了，这还是国内吗？", ["雪影"])
+	await PlotlineManager.chat("雪影", "不对这是我声音吗？", ["雪影"])
+	await PlotlineManager.chat("雪影", "...", [])
 	PlotlineManager.chat_end()
 	await get_tree().create_timer(1.0).timeout
 	PlotlineManager.character_set_direction(player, "right")
@@ -25,10 +27,14 @@ func play() -> void:
 	await PlotlineManager.character_move(vising, Vector2(-1800, 630), "walk")
 	await get_tree().create_timer(1.0).timeout
 	await PlotlineManager.chat(["？？？","薇芯"], "你醒啦，你已经是女孩子啦！", ["雪影", "薇芯"])
-	await PlotlineManager.chat("雪影", "我本来就是女的...", ["雪影", "薇芯"])
-	await PlotlineManager.chat("雪影", "不对你谁啊？！", ["雪影", "薇芯"])
-	await PlotlineManager.chat("薇芯", "我也是撞大运来的，比你早几天", ["雪影", "薇芯"])
-	await PlotlineManager.chat("薇芯", "走，先去基地", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "这是好事啊（", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "不对...你谁啊？！这画风还是人类吗?", ["雪影", "薇芯"])
+	await PlotlineManager.chat("薇芯", "我是薇芯，还记得那辆大运吗？", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "...?", ["雪影", "薇芯"])
+	await PlotlineManager.chat("薇芯", "记得就行，大运为了躲你失控侧翻了，当场给我干成纸片人，比你死得还早。", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "...", ["雪影", "薇芯"])
+	await PlotlineManager.chat("雪影", "抱歉，微心", ["雪影", "薇芯"])
+	await PlotlineManager.chat("薇芯", "...上辈子的事别提了，走，先去基地,外面不是很安全。", ["雪影", "薇芯"])
 	PlotlineManager.chat_end()
 	await PlotlineManager.character_move(vising, Vector2(-150, 630), "teleport")
 	PlotlineManager.character_set_direction(vising, "right")
@@ -36,7 +42,7 @@ func play() -> void:
 	await get_tree().create_timer(2.0).timeout
 
 	await PlotlineManager.black_fade_in()
-	await PlotlineManager.show_black_text("你雪影姐只用了一秒就接受了异世界有房车这个事实")
+	await PlotlineManager.show_black_text("你雪影姐只用了一秒就接受了异世界有房车这件事")
 	await PlotlineManager.black_fade_out()
 
 	PlotlineManager.destroy_character(vising)
