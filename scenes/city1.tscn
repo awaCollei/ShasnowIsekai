@@ -1,17 +1,17 @@
 [gd_scene format=3 uid="uid://25nv0k7a7jcf"]
 
+[ext_resource type="Script" uid="uid://br3ri72xswqpd" path="res://scenes/city1.gd" id="1_k07h7"]
 [ext_resource type="PackedScene" uid="uid://p0wi07vi4f5b" path="res://player/player.tscn" id="1_player"]
 [ext_resource type="Texture2D" uid="uid://0ggn5ox3tul" path="res://assets/city1/background2.png" id="2_uroyp"]
 [ext_resource type="Texture2D" uid="uid://gqd5rr4b2jq3" path="res://assets/rv.png" id="3_q1uc1"]
 [ext_resource type="Texture2D" uid="uid://2wy4of72kit2" path="res://assets/city1/background1.png" id="3_ss0ao"]
 [ext_resource type="PackedScene" uid="uid://c17nidagjr5ef" path="res://ui/interaction_system.tscn" id="5_interaction"]
-[ext_resource type="Script" uid="uid://baro0peocov28" path="res://scenes/base.gd" id="6_base_script"]
 [ext_resource type="PackedScene" uid="uid://bhk8g7l1pse8f" path="res://components/portal.tscn" id="7_portal"]
 [ext_resource type="PackedScene" uid="uid://cmg4bseg87hut" path="res://components/wall.tscn" id="8_wall"]
 [ext_resource type="PackedScene" path="res://components/investigation_point.tscn" id="8_xejcm"]
 
 [node name="Main" type="Node2D" unique_id=1532273606]
-script = ExtResource("6_base_script")
+script = ExtResource("1_k07h7")
 
 [node name="FarBackground" type="Sprite2D" parent="." unique_id=343704136]
 position = Vector2(0, 225)
