@@ -37,6 +37,22 @@ func bind(target: Player) -> void:
 	queue_redraw()
 
 
+func hide_animated() -> void:
+	var t := create_tween()
+	t.set_parallel(true)
+	t.tween_property(self, "position:y", position.y + 60.0, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	t.tween_property(self, "modulate:a", 0.0, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+
+func show_animated() -> void:
+	var t := create_tween()
+	t.set_parallel(true)
+	t.tween_property(self, "position:y", position.y - 60.0, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	t.tween_property(self, "modulate:a", 1.0, 0.35).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	set_process(true)
+	queue_redraw()
+
+
 func _on_hp_changed(_hp: float, _max_hp: float) -> void:
 	var ratio := player.get_hp_ratio()
 	if ratio < _hp_buffer:

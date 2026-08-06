@@ -300,6 +300,7 @@ func _disable_player_controls() -> void:
 	if player:
 		player.set_physics_process(false)
 		player.set_process(false)
+		player.status_hud.hide_animated()
 
 	# 禁止暂停菜单
 	var pause_menu = get_node_or_null("/root/PauseMenu")
@@ -312,6 +313,7 @@ func _restore_player_controls() -> void:
 	if player:
 		player.set_physics_process(true)
 		player.set_process(true)
+		player.status_hud.show_animated()
 
 	var pause_menu = get_node_or_null("/root/PauseMenu")
 	if pause_menu and not pause_menu.is_open:
