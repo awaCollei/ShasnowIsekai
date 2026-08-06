@@ -4,7 +4,6 @@ extends Node
 
 func play() -> void:
 	var player = PlotlineManager._get_player()
-	var vising = PlotlineManager.create_character("vising", Vector2(-1400, 630))
 	PlotlineManager.lock_player()
 	await PlotlineManager.character_move(player, Vector2(-2000, 630), "teleport")
 	await PlotlineManager.black_fade_in(0)
@@ -22,6 +21,7 @@ func play() -> void:
 	await get_tree().create_timer(1.0).timeout
 	PlotlineManager.chat_start()
 	await PlotlineManager.chat("雪影", "？", ["雪影",""],"right")
+	var vising = PlotlineManager.create_character("vising", Vector2(-1400, 630))
 	PlotlineManager.character_set_direction(vising, "left")
 	await PlotlineManager.character_move(vising, Vector2(-1800, 630), "walk")
 	await get_tree().create_timer(1.0).timeout

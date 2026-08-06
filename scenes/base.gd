@@ -11,7 +11,6 @@ const CHAPTER1_PLOT_ID: String = "1-1-1"
 
 func _ready() -> void:
 	super._ready()
-	PlotlineManager.plot_ended.connect(_on_plot_ended)
 
 
 func _spawn_scene_entities() -> void:
@@ -20,10 +19,6 @@ func _spawn_scene_entities() -> void:
 
 func _trigger_scene_plot() -> void:
 	if not PlotlineManager.is_quest_completed(INTRO_PLOT_ID):
-		PlotlineManager.play_plot(INTRO_PLOT_ID)
-
-
-func _on_plot_ended() -> void:
-	# 0-0-1 完成后自动触发 1-1-1
-	if PlotlineManager.is_quest_completed(INTRO_PLOT_ID) and not PlotlineManager.is_quest_completed(CHAPTER1_PLOT_ID):
-		PlotlineManager.play_plot(CHAPTER1_PLOT_ID)
+		await PlotlineManager.play_plot(INTRO_PLOT_ID)
+	if not PlotlineManager.is_quest_completed(CHAPTER1_PLOT_ID):
+		await PlotlineManager.play_plot(CHAPTER1_PLOT_ID)
