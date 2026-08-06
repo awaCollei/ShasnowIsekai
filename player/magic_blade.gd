@@ -9,6 +9,7 @@ signal finished
 
 @export_group("战斗")
 @export var damage: int = 150
+@export var mp_cost: float = 30.0
 @export var hit_frame: int = 5
 @export var forward_offset: float = 50.0
 
@@ -48,6 +49,10 @@ func _ready() -> void:
 
 func try_release() -> bool:
 	if _busy or not animation.can_release_magic_blade():
+		return false
+
+	# 到达满吟唱后才把预扣缓冲结算为真实 MP 消耗。
+	if not player.commit_magic_chant():
 		return false
 
 	_busy = true

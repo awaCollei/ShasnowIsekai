@@ -1,6 +1,8 @@
 extends Node2D
 class_name MagicChantEffect
 
+signal charge_changed(progress: float)
+
 ## 无贴图的吟唱特效。
 ## 后续有正式素材时，可保留这里的运动逻辑，只替换 _draw() 中的程序化图形。
 
@@ -19,7 +21,7 @@ class_name MagicChantEffect
 const TAU_F := TAU
 const FADE_IN_TIME := 0.28
 const FADE_OUT_TIME := 0.42
-const CHARGE_TIME := 0.5#2.4
+const CHARGE_TIME := 2.4
 
 var _active := false
 var _facing_right := true
@@ -47,6 +49,7 @@ func start(facing_right: bool) -> void:
 		visible = true
 		_time = 0.0
 		_charge = 0.0
+		charge_changed.emit(_charge)
 	set_process(true)
 	queue_redraw()
 
@@ -63,6 +66,7 @@ func consume_charge() -> void:
 	_active = false
 	_visibility = 0.0
 	_charge = 0.0
+	charge_changed.emit(_charge)
 	visible = false
 	set_process(false)
 	queue_redraw()
@@ -84,7 +88,16 @@ func _process(delta: float) -> void:
 	_time += delta
 	if _active:
 		_visibility = minf(1.0, _visibility + delta / FADE_IN_TIME)
-		_charge = minf(1.0, _charge + delta / CHARGE_TIME)
+		var previous_charge := _charge
+		var charge_limit := 1.0
+		var character := get_parent()
+		if character and character.has_method("get_magic_chant_progress_limit"):
+			charge_limit = character.get_magic_chant_progress_limit()
+		# 正常速度推进，但绝不越过当前实际 MP 可承担的进度。
+		# MP 不足时停在上限；自然恢复提高上限后，进度会自动继续。
+		_charge = minf(charge_limit, _charge + delta / CHARGE_TIME)
+		if not is_equal_approx(previous_charge, _charge):
+			charge_changed.emit(_charge)
 	else:
 		_visibility = maxf(0.0, _visibility - delta / FADE_OUT_TIME)
 		if _visibility <= 0.0:

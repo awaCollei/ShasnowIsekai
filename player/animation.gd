@@ -37,6 +37,7 @@ var state: AnimState = AnimState.IDLE
 
 enum ChantPhase { FORWARD, LOOP, REVERSE }
 var chant_phase: ChantPhase = ChantPhase.FORWARD
+var _chant_cancel_start_frame: int = 0
 
 
 func _ready() -> void:
@@ -173,21 +174,29 @@ func _advance_chant(delta: float) -> void:
 
 		ChantPhase.REVERSE:
 			anim_timer += delta
-			if anim_timer >= CHANT_INTERVAL:
+			while anim_timer >= CHANT_INTERVAL:
 				anim_timer -= CHANT_INTERVAL
 				current_frame -= 1
 				if current_frame < 0:
+					player.cancel_magic_chant()
 					state = AnimState.IDLE
 					current_frame = 0
 					anim_timer = 0.0
 					sprite.texture = stand_texture
 					_stop_chant_audio()
 					chant_effect.stop()
-				else:
-					sprite.texture = chant_frames[current_frame]
+					return
+				sprite.texture = chant_frames[current_frame]
+			# 使用“当前逆播帧 + 帧内进度”连续归还；它仍由动画进度唯一驱动。
+			var fractional_frame := clampf(anim_timer / CHANT_INTERVAL, 0.0, 1.0)
+			var remaining_frames := maxf(0.0, float(current_frame + 1) - fractional_frame)
+			var remaining := remaining_frames / float(maxi(_chant_cancel_start_frame + 1, 1))
+			player.update_magic_chant_cancel(remaining)
 
 
 func request_idle() -> void:
+	if state == AnimState.CHANT:
+		player.cancel_magic_chant()
 	state = AnimState.IDLE
 	current_frame = 0
 	anim_timer = 0.0
@@ -202,6 +211,7 @@ func request_walk() -> void:
 	run_wind_effect.set_running(false, sprite.flip_h)
 	if state != AnimState.WALK:
 		if state == AnimState.CHANT:
+			player.cancel_magic_chant()
 			_stop_chant_audio()
 			chant_effect.stop()
 		state = AnimState.WALK
@@ -216,6 +226,7 @@ func request_run() -> void:
 	run_wind_effect.set_running(true, sprite.flip_h)
 	if state != AnimState.RUN:
 		if state == AnimState.CHANT:
+			player.cancel_magic_chant()
 			_stop_chant_audio()
 			chant_effect.stop()
 		state = AnimState.RUN
@@ -227,6 +238,9 @@ func request_run() -> void:
 
 
 func request_attack() -> void:
+	# 未满蓄力时按下普攻会打断吟唱；此时没有取消收招动画，直接归还全部预扣 MP。
+	if state == AnimState.CHANT:
+		player.cancel_magic_chant()
 	state = AnimState.ATTACK
 	current_frame = 0
 	anim_timer = 0.0
@@ -258,6 +272,8 @@ func can_release_magic_blade() -> bool:
 func request_chant() -> void:
 	run_wind_effect.set_running(false, sprite.flip_h)
 	if state != AnimState.CHANT:
+		if not player.begin_magic_chant(player.magic_blade.mp_cost):
+			return
 		state = AnimState.CHANT
 		current_frame = 0
 		anim_timer = 0.0
@@ -268,13 +284,24 @@ func request_chant() -> void:
 		_start_chant_audio()
 		chant_effect.start(sprite.flip_h)
 	elif chant_phase == ChantPhase.REVERSE:
+		# 收招期间重新按下时，从吟唱起手帧重新开始，避免帧画面与预扣进度错位。
+		player.cancel_magic_chant()
+		if not player.begin_magic_chant(player.magic_blade.mp_cost):
+			return
 		chant_phase = ChantPhase.FORWARD
+		current_frame = 0
+		anim_timer = 0.0
+		if not chant_frames.is_empty():
+			sprite.texture = chant_frames[0]
 		chant_effect.start(sprite.flip_h)
 
 
 func request_chant_release() -> void:
 	if state == AnimState.CHANT and chant_phase != ChantPhase.REVERSE:
 		chant_phase = ChantPhase.REVERSE
+		_chant_cancel_start_frame = current_frame
+		anim_timer = 0.0
+		player.begin_magic_chant_cancel()
 		chant_effect.stop()
 
 

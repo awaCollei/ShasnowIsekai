@@ -12,6 +12,10 @@ class SaveData:
 	var scene_path: String          # 当前场景路径
 	var player_position: Vector2     # 玩家位置
 	var player_sub_scene: String     # 玩家子场景
+	var player_hp: float = -1.0      # -1 表示旧存档中不存在该字段
+	var player_max_hp: float = -1.0
+	var player_mp: float = -1.0
+	var player_max_mp: float = -1.0
 	var timestamp: String            # 保存时间
 	var quest_progress: Dictionary = {}  # 任务进度
 	var has_data: bool = false
@@ -41,6 +45,10 @@ func save_game(slot: int) -> bool:
 	config.set_value("save", "player_position_x", data.player_position.x)
 	config.set_value("save", "player_position_y", data.player_position.y)
 	config.set_value("save", "player_sub_scene", data.player_sub_scene)
+	config.set_value("player_status", "hp", data.player_hp)
+	config.set_value("player_status", "max_hp", data.player_max_hp)
+	config.set_value("player_status", "mp", data.player_mp)
+	config.set_value("player_status", "max_mp", data.player_max_mp)
 	config.set_value("save", "timestamp", data.timestamp)
 
 	# 保存任务进度
@@ -76,6 +84,11 @@ func load_save_info(slot: int) -> SaveData:
 		config.get_value("save", "player_position_y", 0.0)
 	)
 	data.player_sub_scene = config.get_value("save", "player_sub_scene", "outdoor")
+	# 使用 -1 保持旧存档兼容：旧存档读档时由 Player 使用场景默认满状态。
+	data.player_hp = float(config.get_value("player_status", "hp", -1.0))
+	data.player_max_hp = float(config.get_value("player_status", "max_hp", -1.0))
+	data.player_mp = float(config.get_value("player_status", "mp", -1.0))
+	data.player_max_mp = float(config.get_value("player_status", "max_mp", -1.0))
 	data.timestamp = config.get_value("save", "timestamp", "")
 	data.has_data = true
 
@@ -208,6 +221,13 @@ func _collect_save_data(slot: int) -> SaveData:
 	if player:
 		data.player_position = player.global_position
 		data.player_sub_scene = player.get("current_sub_scene") if player.get("current_sub_scene") != null else "outdoor"
+		var typed_player := player as Player
+		if typed_player:
+			# 保存实际 MP，而不是吟唱期间的可视 MP；临时预扣不进入存档。
+			data.player_hp = typed_player.hp
+			data.player_max_hp = typed_player.max_hp
+			data.player_mp = typed_player.mp
+			data.player_max_mp = typed_player.max_mp
 	else:
 		data.player_position = Vector2.ZERO
 		data.player_sub_scene = "outdoor"
@@ -250,6 +270,9 @@ func _restore_player(info: SaveData) -> void:
 			camera.snap_to(info.player_position)
 		if player.get("current_sub_scene") != null:
 			player.current_sub_scene = info.player_sub_scene
+		var typed_player := player as Player
+		if typed_player and (info.player_hp >= 0.0 or info.player_mp >= 0.0):
+			typed_player.restore_status(info.player_hp, info.player_max_hp, info.player_mp, info.player_max_mp)
 		# 通知 base 更新纹理
 		var base := get_tree().current_scene
 		if base and base.has_method("update_rv_texture"):

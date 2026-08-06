@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://enemies/slime.gd" id="1_slime"]
+[ext_resource type="Texture2D" path="res://assets/slime/walk/walk_1.png" id="2_texture"]
+[ext_resource type="Script" path="res://utils/character_animation.gd" id="3_animation"]
+
+[sub_resource type="CapsuleShape2D" id="SlimeShape"]
+radius = 43.0
+height = 62.0
+
+[node name="Slime" type="Area2D"]
+script = ExtResource("1_slime")
+max_hp = 80
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 18)
+shape = SubResource("SlimeShape")
+
+[node name="CharacterAnimation" type="Node" parent="."]
+script = ExtResource("3_animation")

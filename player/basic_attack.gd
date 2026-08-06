@@ -38,7 +38,8 @@ func _ready() -> void:
 	animation.attack_finished.connect(_on_attack_animation_finished)
 
 func is_busy() -> bool:
-	return cooldown_remaining > 0.0
+	# 动作占用和冷却都必须阻止移动/新动作；攻击动画长于冷却时间。
+	return state == State.ATTACKING or cooldown_remaining > 0.0
 
 func try_attack() -> bool:
 	if cooldown_remaining > 0:
