@@ -13,7 +13,7 @@ config_version=5
 config/name="ShasnowIsekai"
 run/main_scene="res://ui/main_menu.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="uid://baki8ty2ye6o3"
 
 [autoload]
 
