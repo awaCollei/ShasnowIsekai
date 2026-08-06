@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://p0wi07vi4f5b" path="res://player/player.tscn" id="1_player"]
 [ext_resource type="Texture2D" uid="uid://bhoj2nob5cvie" path="res://assets/base/background2.png" id="2_q1uc2"]
 [ext_resource type="Texture2D" uid="uid://bqt42mbhpq1l2" path="res://assets/base/background1.png" id="3_c3xta"]
-[ext_resource type="Texture2D" path="res://assets/rv.png" id="3_q1uc1"]
+[ext_resource type="Texture2D" uid="uid://gqd5rr4b2jq3" path="res://assets/rv.png" id="3_q1uc1"]
 [ext_resource type="PackedScene" uid="uid://c17nidagjr5ef" path="res://ui/interaction_system.tscn" id="5_interaction"]
 [ext_resource type="Script" uid="uid://baro0peocov28" path="res://scenes/base.gd" id="6_base_script"]
 [ext_resource type="PackedScene" uid="uid://bhk8g7l1pse8f" path="res://components/portal.tscn" id="7_portal"]
@@ -36,7 +36,7 @@ position = Vector2(0, 467)
 texture = ExtResource("3_q1uc1")
 
 [node name="Player" parent="." unique_id=592892824 instance=ExtResource("1_player")]
-position = Vector2(400, 630)
+position = Vector2(-115, 542)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1857066094]
 

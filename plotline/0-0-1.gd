@@ -41,10 +41,11 @@ func play() -> void:
 	await get_tree().create_timer(2.0).timeout
 
 	await PlotlineManager.black_fade_in()
+	await PlotlineManager.show_black_text("......")
 	await PlotlineManager.show_black_text("你雪影姐只用了一秒就接受了异世界有房车这件事")
 	await PlotlineManager.black_fade_out()
 
 	PlotlineManager.destroy_character(vising)
 	PlotlineManager.unlock_player()
 
-	PlotlineManager.mark_quest_completed("0-1")
+	PlotlineManager.mark_quest_completed("0-0-1")
