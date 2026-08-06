@@ -8,8 +8,3 @@ const SLIME_SCENE: PackedScene = preload("res://enemies/slime.tscn")
 
 func _spawn_scene_entities() -> void:
 	spawn_enemy(SLIME_SCENE, Vector2(900.0, 700.0))
-
-
-func _trigger_scene_plot() -> void:
-	if not PlotlineManager.is_quest_completed(INTRO_PLOT_ID):
-		PlotlineManager.play_plot(INTRO_PLOT_ID)

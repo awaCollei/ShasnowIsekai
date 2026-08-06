@@ -8,7 +8,7 @@ func play() -> void:
 	PlotlineManager.lock_player()
 	await PlotlineManager.character_move(player, Vector2(-2000, 630), "teleport")
 	await PlotlineManager.black_fade_in(0)
-	await PlotlineManager.show_black_text("16岁，500天，18岁，懂？")
+	await PlotlineManager.show_black_text("16岁，500天，21岁，懂？")
 	await PlotlineManager.show_black_text("你，宅，便利店，女孩，大运，懂？")
 	await PlotlineManager.black_fade_out()
 	PlotlineManager.chat_start()
