@@ -10,7 +10,7 @@ const DEFAULT_CITY_ZONE := "1,2"
 @export var building_origin: Vector2 = Vector2(-250.0, 735.0)
 ## 传送门和敌人相对本层地板向上的高度（正数向上）。
 @export var stair_portal_height: float = 105.0
-@export var enemy_height_above_floor: float = 30.0
+@export var enemy_height_above_floor: float = 40.0
 
 @export_group("Building Size")
 @export_range(1, 20, 1) var floor_count: int = 3

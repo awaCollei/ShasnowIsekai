@@ -59,8 +59,9 @@ func register_rooms() -> void:
 		},
 		{
 			"id": "empty",
-			"width": 640.0,
-			"weight": 1.0,
+			"texture": "res://assets/city1/rooms/空房间.png",
+			"width": 938.0,
+			"weight": 0.5,
 		},
 		{
 			"id": "room1",
@@ -192,13 +193,17 @@ func _create_layout() -> Array:
 			var selected := _choose_room(floor_index, remaining)
 			if selected.is_empty():
 				break
-			var width := minf(float(selected.get("width", remaining)), remaining)
+			var width: float
+			if String(selected.get("id", "")) == "empty":
+				width = minf(float(selected.get("width", remaining)), remaining)
+			else:
+				width = float(selected.get("width", remaining))
 			row.append({"id": String(selected.get("id", "empty")), "width_px": width, "entered": false})
 			used_width += width
 
 		if used_width < building_width:
-			# 最后一间吸收余量，保证每层严格等宽，不留下边界裂缝。
-			if row.size() == 1:
+			# 空房间吸收余量；如果最后一间不是空房间则追加一间空房间。
+			if row.size() == 1 or String(row[row.size() - 1].get("id", "")) != "empty":
 				row.append({"id": "empty", "width_px": building_width - used_width, "entered": false})
 			else:
 				row[row.size() - 1]["width_px"] = float(row[row.size() - 1]["width_px"]) + building_width - used_width
@@ -212,7 +217,7 @@ func _choose_room(floor_index: int, remaining_width: float) -> Dictionary:
 	for room in room_registry:
 		if String(room.get("id", "")) == "stairwell":
 			continue
-		if float(room.get("width", 0.0)) > remaining_width:
+		if String(room.get("id", "")) != "empty" and float(room.get("width", 0.0)) > remaining_width:
 			continue
 		var weight := room_probability(room, floor_index)
 		if weight > 0.0:
@@ -307,6 +312,15 @@ func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, 
 		sprite.name = "RoomImage"
 		sprite.texture = load(texture_path) as Texture2D
 		sprite.position = Vector2(room_width * 0.5, -225.0)
+		# 空房间缩窄时裁剪贴图，两侧等量裁切以保持居中
+		if room_id == "empty":
+			var natural_width := float(room_data.get("width", 938.0))
+			if room_width < natural_width:
+				var tex := sprite.texture
+				if tex:
+					var half_diff := (tex.get_width() - room_width) / 2.0
+					sprite.region_enabled = true
+					sprite.region_rect = Rect2(half_diff, 0, room_width, tex.get_height())
 		content.add_child(sprite)
 
 	for pt in room_data.get("investigation_points", []):
