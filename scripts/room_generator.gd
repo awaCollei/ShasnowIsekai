@@ -9,9 +9,9 @@ signal room_entered(floor_index: int, room_index: int)
 @export_group("Building")
 @export_range(1, 20, 1) var floor_count: int = 3
 @export_range(100.0, 10000.0, 10.0) var building_width: float = 3200.0
-@export_range(100.0, 1000.0, 10.0) var room_height: float = 400.0
+@export_range(100.0, 1000.0, 10.0) var room_height: float = 450.0
 @export_range(0.0, 200.0, 1.0) var floor_separator_height: float = 50.0
-@export_range(200.0, 2000.0, 1.0) var stairwell_width: float = 792.0
+@export_range(200.0, 2000.0, 1.0) var stairwell_width: float = 953.0
 
 @export_group("Rooms")
 @export_range(2, 20, 1) var max_rooms_per_floor: int = 5
@@ -36,6 +36,7 @@ var zone_state: Dictionary = {}
 const AIR_WALL_SCENE: PackedScene = preload("res://components/wall.tscn")
 const TEXTURED_WALL_SCENE: PackedScene = preload("res://components/textured_wall.tscn")
 const PORTAL_SCENE: PackedScene = preload("res://components/portal.tscn")
+const INVESTIGATION_POINT_SCENE: PackedScene = preload("res://components/investigation_point.tscn")
 const LAYOUT_VERSION := 2
 const GROUND_ENTRANCE_HEIGHT := 240.0
 
@@ -51,10 +52,44 @@ func _ready() -> void:
 ## width 的单位是像素，不再是“槽位数量”。地图子类可以覆写此表。
 func register_rooms() -> void:
 	room_registry = [
-		{"id": "stairwell", "scene": "res://rooms/city1/stairwell.tscn", "weight": 0.0},
-		{"id": "empty", "scene": "res://rooms/city1/empty.tscn", "width": 640.0, "weight": 3.0},
-		{"id": "room1", "scene": "res://rooms/city1/room1.tscn", "width": 823.0, "weight": 1.0},
-		{"id": "room2", "scene": "res://rooms/city1/room2.tscn", "width": 1222.0, "weight": 1.0},
+		{
+			"id": "stairwell",
+			"texture": "res://assets/city1/rooms/楼梯间.png",
+			"weight": 0.0,
+		},
+		{
+			"id": "empty",
+			"width": 640.0,
+			"weight": 1.0,
+		},
+		{
+			"id": "room1",
+			"texture": "res://assets/city1/rooms/茶水间.png",
+			"width": 943.0,
+			"weight": 1.0,
+			"investigation_points": [
+				{
+					"position": Vector2(320, -40),
+					"investigation_id": "city1_sample",
+					"message": "这里是 city1 的调查点示例。",
+					"investigation_name": "调查房间",
+				},
+			],
+		},
+		{
+			"id": "room2",
+			"texture": "res://assets/city1/rooms/办公室.png",
+			"width": 1329.0,
+			"weight": 1.0,
+			"investigation_points": [
+				{
+					"position": Vector2(320, -40),
+					"investigation_id": "city1_sample",
+					"message": "这里是 city1 的调查点示例。",
+					"investigation_name": "调查房间",
+				},
+			],
+		},
 	]
 
 
@@ -209,12 +244,7 @@ func _spawn_room(data: Dictionary, floor_index: int, room_index: int) -> void:
 	background.z_index = -10
 	room_root.add_child(background)
 
-	var room_scene := _find_room_scene(room_id)
-	if room_scene:
-		var instance := room_scene.instantiate()
-		instance.name = "Content"
-		room_root.add_child(instance)
-		_apply_sub_scene(instance, floor_sub_scene(floor_index))
+	_create_room_content(room_root, room_id, floor_index, width)
 
 	# 每间房拥有自己右侧的无碰撞贴图墙；外墙由 _add_outer_walls 单独创建。
 	if room_index < (zone_state["rooms"][floor_index] as Array).size() - 1:
@@ -247,6 +277,46 @@ func _spawn_room(data: Dictionary, floor_index: int, room_index: int) -> void:
 		"width": width,
 		"entered": bool(data.get("entered", false)),
 	})
+
+
+func _find_room_data(room_id: String) -> Dictionary:
+	for room in room_registry:
+		if String(room.get("id", "")) == room_id:
+			return room
+	return {}
+
+
+func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, room_width: float) -> void:
+	var room_data := _find_room_data(room_id)
+	if room_data.is_empty():
+		return
+
+	var content := Node2D.new()
+	content.name = "Content"
+	room_root.add_child(content)
+
+	var sub := floor_sub_scene(floor_index)
+
+	var texture_path := String(room_data.get("texture", ""))
+	if not texture_path.is_empty():
+		var sprite := Sprite2D.new()
+		sprite.name = "RoomImage"
+		sprite.texture = load(texture_path) as Texture2D
+		sprite.position = Vector2(room_width * 0.5, -225.0)
+		content.add_child(sprite)
+
+	for pt in room_data.get("investigation_points", []):
+		if not pt is Dictionary:
+			continue
+		var ip := INVESTIGATION_POINT_SCENE.instantiate() as InvestigationPoint
+		if not ip:
+			continue
+		ip.position = pt.get("position", Vector2.ZERO)
+		ip.investigation_id = String(pt.get("investigation_id", ""))
+		ip.message = String(pt.get("message", ""))
+		ip.investigation_name = String(pt.get("investigation_name", ""))
+		ip.sub_scene = sub
+		content.add_child(ip)
 
 
 func _room_x(floor_index: int, room_index: int) -> float:
@@ -342,23 +412,3 @@ func _room_id_exists(room_id: String) -> bool:
 		if String(room.get("id", "")) == room_id:
 			return true
 	return false
-
-
-func _find_room_scene(room_id: String) -> PackedScene:
-	for room in room_registry:
-		if String(room.get("id", "")) != room_id:
-			continue
-		var path := String(room.get("scene", ""))
-		if not path.is_empty() and ResourceLoader.exists(path):
-			return load(path) as PackedScene
-	return null
-
-
-## 将楼层 sub_scene 下发给 Portal、Wall、调查点等已有组件。
-func _apply_sub_scene(root: Node, value: String) -> void:
-	for property in root.get_property_list():
-		if String(property.get("name", "")) == "sub_scene":
-			root.set("sub_scene", value)
-			break
-	for child in root.get_children():
-		_apply_sub_scene(child, value)

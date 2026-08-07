@@ -14,7 +14,7 @@
 
 [node name="Main" type="Node2D" unique_id=1532273606]
 script = ExtResource("1_k07h7")
-building_origin = Vector2(800, 720)
+building_origin = Vector2(800, 750)
 stair_portal_height = 80.0
 enemy_height_above_floor = 50.0
 outer_wall_texture = ExtResource("10_building_wall")

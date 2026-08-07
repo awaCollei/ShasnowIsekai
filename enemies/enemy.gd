@@ -16,6 +16,7 @@ var hp: int
 var _active_in_sub_scene := true
 
 func _ready() -> void:
+	z_index = 1
 	hp = max_hp
 	monitoring = false
 	_update_sub_scene_state()
