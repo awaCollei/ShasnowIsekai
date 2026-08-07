@@ -13,7 +13,8 @@ signal auto_save_completed(success: bool, reason: String)
 # 存档数据结构
 class SaveData:
 	var slot: int
-	var scene_path: String          # 当前场景路径
+	var scene_path: String          # 当前场景路径（scene 类型）
+	var zone_id: String = "0,2"     # 当前世界地图格子
 	var player_position: Vector2     # 玩家位置
 	var player_sub_scene: String     # 玩家子场景
 	var player_hp: float = -1.0      # -1 表示旧存档中不存在该字段
@@ -24,6 +25,7 @@ class SaveData:
 	var quest_progress: Dictionary = {}  # 任务进度
 	## key 为地图场景路径；即使 enemies 为空也代表该地图已初始化/已清理。
 	var enemy_maps: Dictionary = {}
+	var map_state: Dictionary = {}
 	var has_data: bool = false
 
 # 当前是否在游戏中（非主菜单）
@@ -34,9 +36,11 @@ var current_slot: int = -1
 
 # 当前场景路径（由场景切换时更新）
 var current_scene_path: String = ""
+var current_zone_id: String = "0,2"
 
 ## 当前游戏会话的地图敌人快照。切图时先写入这里，正式保存时整体持久化。
 var runtime_enemy_maps: Dictionary = {}
+var runtime_map_state: Dictionary = {}
 var is_loading_game := false
 var _auto_save_pending := false
 
@@ -54,6 +58,7 @@ func save_game(slot: int) -> bool:
 
 	var config := ConfigFile.new()
 	config.set_value("save", "scene_path", data.scene_path)
+	config.set_value("save", "zone_id", data.zone_id)
 	config.set_value("save", "player_position_x", data.player_position.x)
 	config.set_value("save", "player_position_y", data.player_position.y)
 	config.set_value("save", "player_sub_scene", data.player_sub_scene)
@@ -64,6 +69,7 @@ func save_game(slot: int) -> bool:
 	config.set_value("save", "timestamp", data.timestamp)
 	# 整体保存可保留此前访问过的其他地图；空 enemies 数组也是有效状态。
 	config.set_value("enemy_maps", "states", data.enemy_maps)
+	config.set_value("world_map", "state", data.map_state)
 
 	# 保存任务进度
 	for quest_id in data.quest_progress:
@@ -127,6 +133,8 @@ func load_save_info(slot: int) -> SaveData:
 		return data
 
 	data.scene_path = config.get_value("save", "scene_path", "")
+	var default_zone := "0,2" if data.scene_path == "res://scenes/city1.tscn" else MapState.BASE_ZONE
+	data.zone_id = String(config.get_value("save", "zone_id", default_zone))
 	data.player_position = Vector2(
 		config.get_value("save", "player_position_x", 0.0),
 		config.get_value("save", "player_position_y", 0.0)
@@ -140,6 +148,8 @@ func load_save_info(slot: int) -> SaveData:
 	data.timestamp = config.get_value("save", "timestamp", "")
 	var saved_enemy_maps = config.get_value("enemy_maps", "states", {})
 	data.enemy_maps = saved_enemy_maps.duplicate(true) if saved_enemy_maps is Dictionary else {}
+	var saved_map_state = config.get_value("world_map", "state", {})
+	data.map_state = saved_map_state.duplicate(true) if saved_map_state is Dictionary else {}
 	data.has_data = true
 
 	# 读取任务进度
@@ -160,7 +170,9 @@ func load_game(slot: int) -> void:
 
 	current_slot = slot if slot != AUTO_SAVE_SLOT else -1
 	current_scene_path = info.scene_path
+	current_zone_id = info.zone_id
 	runtime_enemy_maps = info.enemy_maps.duplicate(true)
+	runtime_map_state = MapState.ensure(info.map_state.duplicate(true))
 	is_loading_game = true
 
 	# 关闭暂停菜单
@@ -190,7 +202,9 @@ func start_new_game() -> void:
 	is_loading_game = false
 	current_slot = -1
 	current_scene_path = "res://scenes/base.tscn"
+	current_zone_id = MapState.BASE_ZONE
 	runtime_enemy_maps.clear()
+	runtime_map_state = MapState.create_new()
 
 	# 重置任务进度
 	_reset_quest_progress()
@@ -211,7 +225,9 @@ func return_to_main_menu() -> void:
 	is_in_game = false
 	current_slot = -1
 	current_scene_path = ""
+	current_zone_id = MapState.BASE_ZONE
 	runtime_enemy_maps.clear()
+	runtime_map_state.clear()
 
 	# 先关闭暂停菜单
 	var pause_menu = get_node_or_null("/root/PauseMenu")
@@ -273,6 +289,9 @@ func capture_current_enemy_map() -> void:
 
 func capture_enemy_map(world: WorldScene) -> void:
 	if not is_instance_valid(world) or world.scene_file_path.is_empty():
+		return
+	if world.has_method("capture_zone_state"):
+		world.capture_zone_state()
 		return
 	var enemies: Array[Dictionary] = []
 	for node in world.find_children("*", "Enemy", true, false):
@@ -384,6 +403,7 @@ func _collect_save_data(slot: int) -> SaveData:
 		push_error("无法获取当前场景")
 		return null
 	data.scene_path = scene.scene_file_path
+	data.zone_id = current_zone_id
 
 	# 获取玩家位置
 	var player := _find_player()
@@ -408,6 +428,7 @@ func _collect_save_data(slot: int) -> SaveData:
 		dt["hour"], dt["minute"], dt["second"]
 	]
 	data.enemy_maps = runtime_enemy_maps.duplicate(true)
+	data.map_state = MapState.ensure(runtime_map_state.duplicate(true))
 
 	# 收集任务进度
 	var plot_mgr = get_node_or_null("/root/PlotlineManager")

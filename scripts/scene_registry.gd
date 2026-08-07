@@ -6,6 +6,8 @@ class_name SceneRegistry
 const SCENES: Dictionary = {
 	"base": {
 		"display_name": "房车营地",
+		"region": "base",
+		"is_base_zone": true,
 		"scene_path": "res://scenes/base.tscn",
 		"default_sub_scene": "outdoor",
 		"description": "房车与周边营地。",
@@ -13,6 +15,8 @@ const SCENES: Dictionary = {
 	},
 	"city1": {
 		"display_name": "临海市",
+		"region": "city1",
+		"map_grid": Vector2i(7, 5),
 		"scene_path": "res://scenes/city1.tscn",
 		"default_sub_scene": "outdoor",
 		"description": "临海市",

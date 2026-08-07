@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dsdrx7onvbsys"]
+
+[node name="EmptyRoom" type="Node2D" unique_id=633635249]
+metadata/_edit_group_ = true
+metadata/room_width = 1
+metadata/room_type = "empty"

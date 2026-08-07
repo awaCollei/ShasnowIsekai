@@ -8,7 +8,6 @@ class_name Slime
 @export var pursuit_range := 560.0
 @export var attack_range := 82.0
 @export var vertical_detection_tolerance := 120.0
-@export var sub_scene := "outdoor"
 
 @export_group("战斗")
 @export var move_speed := 105.0

@@ -10,12 +10,29 @@ signal died
 @export var battle_damage: float = 10.0
 @export var battle_enabled: bool = true
 @export var max_hp: int = 100
+## 空字符串表示所有子场景；建筑内敌人由房间生成器写入对应楼层。
+@export var sub_scene: String = ""
 var hp: int
+var _active_in_sub_scene := true
 
 func _ready() -> void:
 	hp = max_hp
 	monitoring = false
-	monitorable = true
+	_update_sub_scene_state()
+
+
+func _process(_delta: float) -> void:
+	_update_sub_scene_state()
+
+
+func _update_sub_scene_state() -> void:
+	var player := get_tree().get_first_node_in_group("player") as Player
+	var active := player == null or sub_scene.is_empty() or player.current_sub_scene == sub_scene
+	if active == _active_in_sub_scene and visible == active:
+		return
+	_active_in_sub_scene = active
+	visible = active
+	monitorable = active
 
 func take_damage(amount: int) -> void:
 	hp = max(0, hp - amount)

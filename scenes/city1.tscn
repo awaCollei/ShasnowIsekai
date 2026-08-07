@@ -9,9 +9,17 @@
 [ext_resource type="PackedScene" uid="uid://bhk8g7l1pse8f" path="res://components/portal.tscn" id="7_portal"]
 [ext_resource type="PackedScene" uid="uid://cmg4bseg87hut" path="res://components/wall.tscn" id="8_wall"]
 [ext_resource type="PackedScene" path="res://components/investigation_point.tscn" id="8_xejcm"]
+[ext_resource type="Texture2D" path="res://assets/city1/floor.png" id="9_building_floor"]
+[ext_resource type="Texture2D" path="res://assets/city1/wall.png" id="10_building_wall"]
 
 [node name="Main" type="Node2D" unique_id=1532273606]
 script = ExtResource("1_k07h7")
+building_origin = Vector2(800, 720)
+stair_portal_height = 80.0
+enemy_height_above_floor = 50.0
+outer_wall_texture = ExtResource("10_building_wall")
+interior_wall_texture = ExtResource("10_building_wall")
+floor_texture = ExtResource("9_building_floor")
 
 [node name="FarBackground" type="Sprite2D" parent="." unique_id=343704136]
 position = Vector2(0, 225)
@@ -107,7 +115,7 @@ position = Vector2(-528, 176)
 sub_scene = "floor2"
 
 [node name="RightWall4" parent="IndoorArea" unique_id=1584115363 instance=ExtResource("8_wall")]
-position = Vector2(3088, 623)
+position = Vector2(4300, 623)
 sub_scene = "outdoor"
 
 [node name="LeftWall4" parent="IndoorArea" unique_id=1782813909 instance=ExtResource("8_wall")]
@@ -135,7 +143,7 @@ message = "前面的区域，以后再来探索吧"
 sub_scene = "outdoor"
 
 [node name="InvestigationPoint" parent="InvestigationPoint" unique_id=890606900 instance=ExtResource("8_xejcm")]
-position = Vector2(3071, 652)
+position = Vector2(4250, 652)
 investigation_id = "1"
 message = "前面的区域，以后再来探索吧"
 sub_scene = "outdoor"

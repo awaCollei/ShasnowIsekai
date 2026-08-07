@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://c64ogd8pyahg8"]
+
+[ext_resource type="Texture2D" uid="uid://b46dk2cjnfvkq" path="res://assets/city1/rooms/茶水间.png" id="1_ykhbm"]
+[ext_resource type="PackedScene" path="res://components/investigation_point.tscn" id="2_point"]
+
+[node name="InvestigationRoom" type="Node2D" unique_id=1353567018]
+metadata/room_width = 1
+metadata/room_type = "investigation"
+
+[node name="RoomImage" type="Sprite2D" parent="." unique_id=1764984497]
+position = Vector2(412, -200)
+texture = ExtResource("1_ykhbm")
+
+[node name="InvestigationPoint" parent="." unique_id=1587574361 instance=ExtResource("2_point")]
+position = Vector2(320, -40)
+investigation_id = "city1_sample"
+message = "这里是 city1 的调查点示例。"
+investigation_name = "调查房间"

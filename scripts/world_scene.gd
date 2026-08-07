@@ -38,7 +38,7 @@ func _ready() -> void:
 	_initialize_common_visuals()
 
 	# 有地图快照时完整恢复（包括“0 个敌人”的已清理状态）；首次进入才执行默认刷新。
-	var restored := SaveManager.restore_enemy_map(self)
+	var restored := false if has_method("uses_zone_state") else SaveManager.restore_enemy_map(self)
 	if not restored:
 		_spawn_scene_entities()
 		# 立即登记运行时状态，避免未保存时往返地图造成重复刷新。
@@ -119,7 +119,8 @@ func spawn_enemy(enemy_scene: PackedScene, spawn_position: Vector2, parent: Node
 		target_parent = self
 
 	target_parent.add_child(enemy)
-	enemy.position = spawn_position
+	# spawn_position 的公开约定是世界坐标，避免 Enemies 容器带变换时发生偏移。
+	enemy.global_position = spawn_position
 	_connect_enemy_feedback(enemy)
 	return enemy
 

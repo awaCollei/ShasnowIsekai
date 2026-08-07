@@ -54,7 +54,7 @@ text = "关闭  Esc"
 layout_mode = 2
 
 [node name="MapPlaceholder" type="PanelContainer" parent="Margin/Panel/ContentMargin/VBox"]
-custom_minimum_size = Vector2(0, 160)
+custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -62,7 +62,7 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_override_colors/font_color = Color(0.66, 0.7, 0.76, 1)
 theme_override_font_sizes/font_size = 20
-text = "地图素材占位区\nPNG 完成后可替换此区域，不影响场景切换逻辑"
+text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 

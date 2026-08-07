@@ -37,12 +37,14 @@ func set_scene_info(scene_id: String) -> void:
 			player.set_scene_info(scene_id)
 
 
-func change_to_scene(scene_id: String) -> bool:
+func change_to_scene(scene_id: String, zone_id: String = "") -> bool:
 	if not SceneRegistry.has_scene(scene_id):
 		push_error("未注册的场景 ID: %s" % scene_id)
 		return false
 
 	var info := SceneRegistry.get_scene_info(scene_id)
+	if not zone_id.is_empty():
+		SaveManager.current_zone_id = zone_id
 	var scene_path: String = info.get("scene_path", "")
 	if scene_path.is_empty() or not ResourceLoader.exists(scene_path):
 		push_error("场景资源不存在: %s" % scene_path)
