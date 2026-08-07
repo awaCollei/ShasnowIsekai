@@ -112,8 +112,12 @@ func generate(state: Dictionary, id: String) -> void:
 		var row: Array = layouts[floor_index]
 		for room_index in range(row.size()):
 			_spawn_room(row[room_index], floor_index, room_index)
-		_add_floor_separator(floor_index)
+		if floor_index > 0:
+			_add_floor_separator(floor_index)
 		_add_stair_portal(floor_index)
+
+	# 最顶上添加一层 floor separator
+	_add_floor_separator(floor_count)
 
 	_add_outer_walls()
 
@@ -376,15 +380,27 @@ func _add_outer_walls() -> void:
 
 
 func _add_outer_wall(wall_position: Vector2, size: Vector2) -> void:
+	# 碰撞墙（不可见）
 	var wall := AIR_WALL_SCENE.instantiate() as Wall
 	if not wall:
 		return
 	wall.position = wall_position
 	wall.wall_size = size
 	wall.use_top_left_origin = true
-	wall.visible_texture = outer_wall_texture
 	wall.z_index = 30
 	add_child(wall)
+
+	# 视觉墙：用 TextureRect 平铺，避免 region_rect 超出纹理尺寸导致黑色区域
+	if outer_wall_texture:
+		var visual := TextureRect.new()
+		visual.name = "OuterWallVisual"
+		visual.texture = outer_wall_texture
+		visual.position = wall_position
+		visual.size = size
+		visual.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+		visual.stretch_mode = TextureRect.STRETCH_TILE
+		visual.z_index = 29
+		add_child(visual)
 
 
 func _add_stair_portal(floor_index: int) -> void:
@@ -393,10 +409,10 @@ func _add_stair_portal(floor_index: int) -> void:
 		return
 	var row: Array = zone_state["rooms"][floor_index]
 	var actual_stairwell_width := float(row[0].get("width_px", building_width))
-	portal.position = Vector2(actual_stairwell_width * 0.5, floor_y(floor_index) - stair_portal_height)
+	portal.position = Vector2(actual_stairwell_width * 0.25, floor_y(floor_index) - stair_portal_height)
 	portal.portal_id = _portal_id(floor_index)
 	portal.sub_scene = floor_sub_scene(floor_index)
-	portal.portal_name = "%d 楼楼梯" % (floor_index + 1)
+	portal.portal_name = "前往%d 楼" % (floor_index + 1)
 	for target_floor in range(floor_count):
 		if target_floor != floor_index:
 			portal.target_portal_ids.append(_portal_id(target_floor))

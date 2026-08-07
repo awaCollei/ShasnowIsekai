@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://25nv0k7a7jcf"]
 
 [ext_resource type="Script" uid="uid://br3ri72xswqpd" path="res://scenes/city1.gd" id="1_k07h7"]
 [ext_resource type="PackedScene" uid="uid://p0wi07vi4f5b" path="res://player/player.tscn" id="1_player"]
@@ -9,8 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://bhk8g7l1pse8f" path="res://components/portal.tscn" id="7_portal"]
 [ext_resource type="PackedScene" uid="uid://cmg4bseg87hut" path="res://components/wall.tscn" id="8_wall"]
 [ext_resource type="PackedScene" path="res://components/investigation_point.tscn" id="8_xejcm"]
-[ext_resource type="Texture2D" path="res://assets/city1/floor.png" id="9_building_floor"]
-[ext_resource type="Texture2D" path="res://assets/city1/wall.png" id="10_building_wall"]
+[ext_resource type="Texture2D" uid="uid://d14hpxbbpps67" path="res://assets/city1/floor.png" id="9_building_floor"]
+[ext_resource type="Texture2D" uid="uid://dfadjvocjwvbf" path="res://assets/city1/wall.png" id="10_building_wall"]
 
 [node name="Main" type="Node2D" unique_id=1532273606]
 script = ExtResource("1_k07h7")
@@ -37,82 +37,82 @@ position = Vector2(0, 260)
 texture = ExtResource("3_ss0ao")
 
 [node name="RV" type="Sprite2D" parent="." unique_id=512291946]
-position = Vector2(0, 467)
+position = Vector2(-1802, 467)
 texture = ExtResource("3_q1uc1")
 
 [node name="Player" parent="." unique_id=592892824 instance=ExtResource("1_player")]
-position = Vector2(400, 630)
+position = Vector2(-1402, 630)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1857066094]
 
 [node name="Portals" type="Node2D" parent="." unique_id=1838196847]
 
 [node name="RVF2" parent="Portals" unique_id=1259496356 instance=ExtResource("7_portal")]
-position = Vector2(-510, 205)
+position = Vector2(-2312, 205)
 portal_id = "rv_f2"
 target_portal_ids = Array[String](["rv_ladder"])
 sub_scene = "floor2"
-portal_name = "回到地面"
+portal_name = "爬上车顶"
 
 [node name="RVLadder" parent="Portals" unique_id=1809704570 instance=ExtResource("7_portal")]
-position = Vector2(-509, 630)
+position = Vector2(-2311, 630)
 portal_id = "rv_ladder"
 target_portal_ids = Array[String](["rv_f2"])
 sub_scene = "outdoor"
-portal_name = "爬上车顶"
+portal_name = "回到地面"
 
 [node name="RVDoor" parent="Portals" unique_id=491037065 instance=ExtResource("7_portal")]
-position = Vector2(208, 630)
+position = Vector2(-1594, 630)
 portal_id = "rv_door"
 target_portal_ids = Array[String](["indoor_exit"])
 sub_scene = "outdoor"
-portal_name = "进入房车"
+portal_name = "离开房车"
 
 [node name="Bedroom2" parent="Portals" unique_id=1893318234 instance=ExtResource("7_portal")]
-position = Vector2(-289, 516)
+position = Vector2(-2091, 516)
 portal_id = "bedin"
 target_portal_ids = Array[String](["bedout"])
 sub_scene = "indoor"
-portal_name = "进入车厢"
+portal_name = "进入卧室"
 
 [node name="Bedroom1" parent="Portals" unique_id=119496946 instance=ExtResource("7_portal")]
-position = Vector2(-251, 533)
+position = Vector2(-2053, 533)
 portal_id = "bedout"
 target_portal_ids = Array[String](["bedin"])
 sub_scene = "indoor"
-portal_name = "进入卧室"
+portal_name = "进入车厢"
 
 [node name="IndoorExit" parent="Portals" unique_id=1223855119 instance=ExtResource("7_portal")]
-position = Vector2(208, 542)
+position = Vector2(-1594, 542)
 portal_id = "indoor_exit"
 target_portal_ids = Array[String](["rv_door"])
 sub_scene = "indoor"
-portal_name = "离开房车"
+portal_name = "进入房车"
 
 [node name="IndoorArea" type="Node2D" parent="." unique_id=1504914284]
 
 [node name="LeftWall3" parent="IndoorArea" unique_id=1510559998 instance=ExtResource("8_wall")]
-position = Vector2(-493, 497)
+position = Vector2(-2295, 497)
 sub_scene = "indoor"
 
 [node name="RightWall3" parent="IndoorArea" unique_id=1906190237 instance=ExtResource("8_wall")]
-position = Vector2(-278, 476)
+position = Vector2(-2080, 476)
 sub_scene = "indoor"
 
 [node name="LeftWall" parent="IndoorArea" unique_id=602497122 instance=ExtResource("8_wall")]
-position = Vector2(-268, 492)
+position = Vector2(-2070, 492)
 sub_scene = "indoor"
 
 [node name="RightWall" parent="IndoorArea" unique_id=20527721 instance=ExtResource("8_wall")]
-position = Vector2(287, 510)
+position = Vector2(-1515, 510)
 sub_scene = "indoor"
 
 [node name="LeftWall2" parent="IndoorArea" unique_id=660381117 instance=ExtResource("8_wall")]
-position = Vector2(-528, 176)
+position = Vector2(-2330, 176)
 sub_scene = "floor2"
 
 [node name="RightWall4" parent="IndoorArea" unique_id=1584115363 instance=ExtResource("8_wall")]
-position = Vector2(4300, 623)
+position = Vector2(3090, 630)
 sub_scene = "outdoor"
 
 [node name="LeftWall4" parent="IndoorArea" unique_id=1782813909 instance=ExtResource("8_wall")]
@@ -120,13 +120,13 @@ position = Vector2(-2928, 623)
 sub_scene = "outdoor"
 
 [node name="RightWall2" parent="IndoorArea" unique_id=602538165 instance=ExtResource("8_wall")]
-position = Vector2(366, 200)
+position = Vector2(-1436, 200)
 sub_scene = "floor2"
 
 [node name="InvestigationPoint" type="Node2D" parent="." unique_id=347995260]
 
 [node name="InvestigationPoint3" parent="InvestigationPoint" unique_id=1963218689 instance=ExtResource("8_xejcm")]
-position = Vector2(284, 540)
+position = Vector2(-1518, 540)
 investigation_id = "3"
 message = "你有驾照吗？"
 sub_scene = "indoor"
@@ -140,7 +140,7 @@ message = "前面的区域，以后再来探索吧"
 sub_scene = "outdoor"
 
 [node name="InvestigationPoint" parent="InvestigationPoint" unique_id=890606900 instance=ExtResource("8_xejcm")]
-position = Vector2(4250, 652)
+position = Vector2(3040, 659)
 investigation_id = "1"
 message = "前面的区域，以后再来探索吧"
 sub_scene = "outdoor"
