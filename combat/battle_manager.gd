@@ -142,6 +142,9 @@ func _on_battle_resolved(victory: bool, defeated_enemies: Array[Enemy]) -> void:
 	_battle_scene = null
 	_participants.clear()
 	battle_finished.emit(victory)
+	if victory:
+		# defeated_enemies 已结算为 0 HP，下一帧捕获地图时会正确记录已清理状态。
+		SaveManager.request_auto_save("战斗胜利")
 
 
 func _on_battle_scene_exited(scene: BattleScene) -> void:

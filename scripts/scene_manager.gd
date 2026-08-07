@@ -88,6 +88,8 @@ func _on_tree_scene_changed() -> void:
 		return
 	_apply_scene_defaults()
 	scene_changed.emit(current_scene)
+	# 新场景及其 WorldScene._ready() 已完成，再由 SaveManager 延后一帧写入自动存档。
+	SaveManager.request_auto_save("切换场景：%s" % current_scene)
 
 
 func _sync_current_scene() -> bool:

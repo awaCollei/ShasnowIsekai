@@ -1,10 +1,14 @@
 extends Node
 
-# 存档槽位数量
+# 手动存档槽位数量；自动存档使用独立的 0 号虚拟槽位和文件。
 const MAX_SLOTS: int = 5
+const AUTO_SAVE_SLOT: int = 0
+const AUTO_SAVE_PATH: String = "user://autosave.cfg"
 
 # 存档文件路径前缀
 const SAVE_PATH_PREFIX: String = "user://save_slot_"
+
+signal auto_save_completed(success: bool, reason: String)
 
 # 存档数据结构
 class SaveData:
@@ -33,6 +37,8 @@ var current_scene_path: String = ""
 
 ## 当前游戏会话的地图敌人快照。切图时先写入这里，正式保存时整体持久化。
 var runtime_enemy_maps: Dictionary = {}
+var is_loading_game := false
+var _auto_save_pending := false
 
 
 func _ready() -> void:
@@ -69,9 +75,43 @@ func save_game(slot: int) -> bool:
 		push_error("保存失败: 槽位 %d, 错误码 %d" % [slot, err])
 		return false
 
-	current_slot = slot
+	# 自动存档不改变玩家当前选择的手动槽位。
+	if slot != AUTO_SAVE_SLOT:
+		current_slot = slot
 	current_scene_path = data.scene_path
 	return true
+
+
+## 请求在当前帧的场景/战斗清理全部完成后自动保存。连续请求会合并为一次。
+func request_auto_save(reason: String = "") -> void:
+	if not is_in_game or is_loading_game or _auto_save_pending:
+		return
+	_auto_save_pending = true
+	call_deferred("_perform_auto_save", reason)
+
+
+func _perform_auto_save(reason: String) -> void:
+	# 再等一帧，确保 scene_changed 后的玩家、敌人和默认子场景均已初始化。
+	await get_tree().process_frame
+	_auto_save_pending = false
+	if not is_in_game or is_loading_game or not (get_tree().current_scene is WorldScene):
+		auto_save_completed.emit(false, reason)
+		return
+	var success := save_game(AUTO_SAVE_SLOT)
+	auto_save_completed.emit(success, reason)
+	if success:
+		print("自动保存完成：%s" % reason)
+
+
+func get_auto_save_info() -> SaveData:
+	return load_save_info(AUTO_SAVE_SLOT)
+
+
+## 读取页面使用：自动存档固定在第一项，后面是 1–5 号手动槽位。
+func get_all_load_save_infos() -> Array[SaveData]:
+	var result: Array[SaveData] = [get_auto_save_info()]
+	result.append_array(get_all_save_infos())
+	return result
 
 
 # 从指定槽位加载存档信息
@@ -118,9 +158,10 @@ func load_game(slot: int) -> void:
 		push_error("槽位 %d 没有存档数据" % slot)
 		return
 
-	current_slot = slot
+	current_slot = slot if slot != AUTO_SAVE_SLOT else -1
 	current_scene_path = info.scene_path
 	runtime_enemy_maps = info.enemy_maps.duplicate(true)
+	is_loading_game = true
 
 	# 关闭暂停菜单
 	var pause_menu = get_node_or_null("/root/PauseMenu")
@@ -131,6 +172,7 @@ func load_game(slot: int) -> void:
 	# 切换场景
 	var err := get_tree().change_scene_to_file(info.scene_path)
 	if err != OK:
+		is_loading_game = false
 		push_error("无法加载场景: %s" % info.scene_path)
 		return
 
@@ -140,10 +182,12 @@ func load_game(slot: int) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_restore_player(info)
+	is_loading_game = false
 
 
 # 开始新游戏
 func start_new_game() -> void:
+	is_loading_game = false
 	current_slot = -1
 	current_scene_path = "res://scenes/base.tscn"
 	runtime_enemy_maps.clear()
@@ -162,6 +206,8 @@ func start_new_game() -> void:
 
 # 返回主菜单
 func return_to_main_menu() -> void:
+	is_loading_game = false
+	_auto_save_pending = false
 	is_in_game = false
 	current_slot = -1
 	current_scene_path = ""
@@ -206,6 +252,8 @@ func has_any_save() -> bool:
 	var dir := DirAccess.open("user://")
 	if dir == null:
 		return false
+	if dir.file_exists(AUTO_SAVE_PATH):
+		return true
 	for i in range(1, MAX_SLOTS + 1):
 		if dir.file_exists(_get_slot_path(i)):
 			return true
@@ -321,6 +369,8 @@ func refresh_enemy_map(scene_id_or_path: String, slot: int = -1) -> bool:
 # ---- 内部方法 ----
 
 func _get_slot_path(slot: int) -> String:
+	if slot == AUTO_SAVE_SLOT:
+		return AUTO_SAVE_PATH
 	return SAVE_PATH_PREFIX + str(slot) + ".cfg"
 
 

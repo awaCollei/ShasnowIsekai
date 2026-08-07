@@ -66,7 +66,7 @@ func _show_save_slots() -> void:
 	if not save_manager:
 		return
 
-	var infos = save_manager.get_all_save_infos()
+	var infos = save_manager.get_all_load_save_infos()
 	for info in infos:
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 12)
@@ -74,10 +74,11 @@ func _show_save_slots() -> void:
 		var label := Label.new()
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		label.add_theme_font_size_override("font_size", 16)
+		var slot_name := "自动存档" if info.slot == SaveManager.AUTO_SAVE_SLOT else "存档 %d" % info.slot
 		if info.has_data:
-			label.text = "存档 %d - %s - %s" % [info.slot, info.scene_path.get_file(), info.timestamp]
+			label.text = "%s - %s - %s" % [slot_name, info.scene_path.get_file(), info.timestamp]
 		else:
-			label.text = "存档 %d - （空）" % info.slot
+			label.text = "%s - （空）" % slot_name
 
 		var load_btn := Button.new()
 		load_btn.text = "读取"
@@ -111,13 +112,14 @@ func _on_slot_delete_pressed(slot: int) -> void:
 		return
 
 	var info = save_manager.load_save_info(slot)
-	delete_confirm.dialog_text = "确定要删除存档 %d（%s）吗？此操作不可撤销。" % [slot, info.timestamp]
+	var slot_name := "自动存档" if slot == SaveManager.AUTO_SAVE_SLOT else "存档 %d" % slot
+	delete_confirm.dialog_text = "确定要删除%s（%s）吗？此操作不可撤销。" % [slot_name, info.timestamp]
 	_pending_delete_slot = slot
 	delete_confirm.popup_centered()
 
 
 func _on_delete_confirmed() -> void:
-	if _pending_delete_slot < 1:
+	if _pending_delete_slot < 0:
 		return
 	var save_manager = get_node_or_null("/root/SaveManager")
 	if save_manager:
