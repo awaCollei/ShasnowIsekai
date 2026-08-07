@@ -85,18 +85,9 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		velocity = Vector2.ZERO
 		return
-	# 攻击与吟唱严格互斥，避免同一帧覆盖动画后让技能永久卡在 busy。
-	if Input.is_action_just_pressed("attack") and not magic_blade.is_busy() and not animation.is_attacking():
-		# 满蓄力时攻击键优先释放魔法之刃，否则执行普通攻击。
-		if not magic_blade.try_release():
-			basic_attack.try_attack()
-
-	# 攻击已经在本帧启动时，不再接受吟唱请求。
-	if Input.is_action_just_pressed("chant"):
-		if not basic_attack.is_busy() and not magic_blade.is_busy() and not animation.is_attacking():
-			animation.request_chant()
-	elif Input.is_action_just_released("chant"):
-		animation.request_chant_release()
+	# 局外只保留普通攻击。吟唱素材和 MagicBlade 节点继续保留，供回合制技能/未来大招复用。
+	if Input.is_action_just_pressed("attack") and not basic_attack.is_busy() and not animation.is_attacking():
+		basic_attack.try_attack()
 
 	# 普攻、吟唱及魔法之刃释放期间禁止移动。
 	if basic_attack.is_busy() or magic_blade.is_busy() or animation.is_chanting():
@@ -175,6 +166,25 @@ func get_hp_ratio() -> float:
 
 func get_visible_mp() -> float:
 	return maxf(0.0, mp - reserved_mp)
+
+
+## 回合制技能直接消费实际 MP；局外吟唱预扣期间不允许并行消费。
+func spend_mp(amount: float) -> bool:
+	amount = maxf(0.0, amount)
+	if amount <= 0.0:
+		return true
+	if reserved_mp > 0.0 or mp + 0.001 < amount:
+		return false
+	mp = maxf(0.0, mp - amount)
+	mp_changed.emit(mp, max_mp, reserved_mp)
+	return true
+
+
+func gain_mp(amount: float) -> void:
+	if amount <= 0.0:
+		return
+	mp = minf(max_mp, mp + amount)
+	mp_changed.emit(mp, max_mp, reserved_mp)
 
 
 ## 读档专用：只恢复持久资源，吟唱预扣属于临时状态，不跨存档保存。

@@ -18,6 +18,8 @@ class SaveData:
 	var player_max_mp: float = -1.0
 	var timestamp: String            # 保存时间
 	var quest_progress: Dictionary = {}  # 任务进度
+	## key 为地图场景路径；即使 enemies 为空也代表该地图已初始化/已清理。
+	var enemy_maps: Dictionary = {}
 	var has_data: bool = false
 
 # 当前是否在游戏中（非主菜单）
@@ -29,6 +31,9 @@ var current_slot: int = -1
 # 当前场景路径（由场景切换时更新）
 var current_scene_path: String = ""
 
+## 当前游戏会话的地图敌人快照。切图时先写入这里，正式保存时整体持久化。
+var runtime_enemy_maps: Dictionary = {}
+
 
 func _ready() -> void:
 	pass
@@ -36,6 +41,7 @@ func _ready() -> void:
 
 # 保存游戏到指定槽位
 func save_game(slot: int) -> bool:
+	capture_current_enemy_map()
 	var data := _collect_save_data(slot)
 	if data == null:
 		return false
@@ -50,6 +56,8 @@ func save_game(slot: int) -> bool:
 	config.set_value("player_status", "mp", data.player_mp)
 	config.set_value("player_status", "max_mp", data.player_max_mp)
 	config.set_value("save", "timestamp", data.timestamp)
+	# 整体保存可保留此前访问过的其他地图；空 enemies 数组也是有效状态。
+	config.set_value("enemy_maps", "states", data.enemy_maps)
 
 	# 保存任务进度
 	for quest_id in data.quest_progress:
@@ -90,6 +98,8 @@ func load_save_info(slot: int) -> SaveData:
 	data.player_mp = float(config.get_value("player_status", "mp", -1.0))
 	data.player_max_mp = float(config.get_value("player_status", "max_mp", -1.0))
 	data.timestamp = config.get_value("save", "timestamp", "")
+	var saved_enemy_maps = config.get_value("enemy_maps", "states", {})
+	data.enemy_maps = saved_enemy_maps.duplicate(true) if saved_enemy_maps is Dictionary else {}
 	data.has_data = true
 
 	# 读取任务进度
@@ -110,6 +120,7 @@ func load_game(slot: int) -> void:
 
 	current_slot = slot
 	current_scene_path = info.scene_path
+	runtime_enemy_maps = info.enemy_maps.duplicate(true)
 
 	# 关闭暂停菜单
 	var pause_menu = get_node_or_null("/root/PauseMenu")
@@ -135,6 +146,7 @@ func load_game(slot: int) -> void:
 func start_new_game() -> void:
 	current_slot = -1
 	current_scene_path = "res://scenes/base.tscn"
+	runtime_enemy_maps.clear()
 
 	# 重置任务进度
 	_reset_quest_progress()
@@ -153,6 +165,7 @@ func return_to_main_menu() -> void:
 	is_in_game = false
 	current_slot = -1
 	current_scene_path = ""
+	runtime_enemy_maps.clear()
 
 	# 先关闭暂停菜单
 	var pause_menu = get_node_or_null("/root/PauseMenu")
@@ -199,6 +212,112 @@ func has_any_save() -> bool:
 	return false
 
 
+# ==========================
+# 地图敌人快照
+# ==========================
+
+## 在离开地图和保存游戏前调用。记录空列表同样表示地图已经清理。
+func capture_current_enemy_map() -> void:
+	var scene := get_tree().current_scene
+	if scene is WorldScene:
+		capture_enemy_map(scene as WorldScene)
+
+
+func capture_enemy_map(world: WorldScene) -> void:
+	if not is_instance_valid(world) or world.scene_file_path.is_empty():
+		return
+	var enemies: Array[Dictionary] = []
+	for node in world.find_children("*", "Enemy", true, false):
+		var enemy := node as Enemy
+		if not enemy or not is_instance_valid(enemy) or enemy.hp <= 0:
+			continue
+		var packed_scene_path := enemy.scene_file_path
+		if packed_scene_path.is_empty():
+			push_warning("无法保存没有 scene_file_path 的敌人: %s" % enemy.name)
+			continue
+		var state := {
+			"scene_path": packed_scene_path,
+			"position": enemy.global_position,
+			"hp": enemy.hp,
+			"max_hp": enemy.max_hp,
+		}
+		var sub_scene_value = enemy.get("sub_scene")
+		if sub_scene_value != null:
+			state["sub_scene"] = String(sub_scene_value)
+		enemies.append(state)
+	runtime_enemy_maps[world.scene_file_path] = {
+		"initialized": true,
+		"enemies": enemies,
+	}
+
+
+## 返回 true 表示存在该地图记录；即使 enemies 为空，也不会调用地图默认刷新逻辑。
+func restore_enemy_map(world: WorldScene) -> bool:
+	if not is_instance_valid(world):
+		return false
+	var map_path := world.scene_file_path
+	if map_path.is_empty() or not runtime_enemy_maps.has(map_path):
+		return false
+	var map_state = runtime_enemy_maps[map_path]
+	if not map_state is Dictionary or not bool(map_state.get("initialized", false)):
+		return false
+
+	# 存档快照是完整列表，先移除 tscn 中可能预放置的敌人，避免重复。
+	for node in world.find_children("*", "Enemy", true, false):
+		var existing := node as Enemy
+		if existing:
+			existing.get_parent().remove_child(existing)
+			existing.free()
+
+	var saved_enemies = map_state.get("enemies", [])
+	if not saved_enemies is Array:
+		push_warning("地图敌人数据格式无效，将按已清理状态恢复: %s" % map_path)
+		return true
+	for raw_state in saved_enemies:
+		if not raw_state is Dictionary:
+			continue
+		var enemy_scene_path := String(raw_state.get("scene_path", ""))
+		if enemy_scene_path.is_empty() or not ResourceLoader.exists(enemy_scene_path):
+			push_warning("存档中的敌人场景不存在: %s" % enemy_scene_path)
+			continue
+		var packed := load(enemy_scene_path) as PackedScene
+		if not packed:
+			continue
+		var enemy := world.spawn_enemy(packed, Vector2.ZERO)
+		if not enemy:
+			continue
+		enemy.global_position = raw_state.get("position", Vector2.ZERO)
+		enemy.max_hp = maxi(1, int(raw_state.get("max_hp", enemy.max_hp)))
+		enemy.hp = clampi(int(raw_state.get("hp", enemy.max_hp)), 1, enemy.max_hp)
+		if raw_state.has("sub_scene") and enemy.get("sub_scene") != null:
+			enemy.set("sub_scene", String(raw_state["sub_scene"]))
+	return true
+
+
+## 删除指定地图的敌人快照；下次进入该地图时会重新执行默认刷新。
+## scene_id_or_path 可传 SceneRegistry ID（如 city1）或 res:// 场景路径。
+func refresh_enemy_map(scene_id_or_path: String, slot: int = -1) -> bool:
+	var map_path := scene_id_or_path
+	if SceneRegistry.has_scene(scene_id_or_path):
+		map_path = String(SceneRegistry.get_scene_info(scene_id_or_path).get("scene_path", ""))
+	if map_path.is_empty():
+		return false
+	runtime_enemy_maps.erase(map_path)
+
+	var target_slot := current_slot if slot < 0 else slot
+	if target_slot < 1:
+		return true
+	var config := ConfigFile.new()
+	var error := config.load(_get_slot_path(target_slot))
+	if error != OK:
+		return false
+	var saved_states = config.get_value("enemy_maps", "states", {})
+	if saved_states is Dictionary:
+		saved_states.erase(map_path)
+		config.set_value("enemy_maps", "states", saved_states)
+	return config.save(_get_slot_path(target_slot)) == OK
+
+
 # ---- 内部方法 ----
 
 func _get_slot_path(slot: int) -> String:
@@ -238,6 +357,7 @@ func _collect_save_data(slot: int) -> SaveData:
 		dt["year"], dt["month"], dt["day"],
 		dt["hour"], dt["minute"], dt["second"]
 	]
+	data.enemy_maps = runtime_enemy_maps.duplicate(true)
 
 	# 收集任务进度
 	var plot_mgr = get_node_or_null("/root/PlotlineManager")

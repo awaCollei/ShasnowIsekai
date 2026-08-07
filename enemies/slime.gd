@@ -29,6 +29,8 @@ var _facing_right := false
 
 
 func _ready() -> void:
+	battle_name = "史莱姆"
+	battle_visual_id = "slime"
 	super._ready()
 	_facing_right = starts_facing_right
 	animation.add_frame_animation("walk", "res://assets/slime/walk/", "walk_", 11, 0.08, true)
@@ -76,7 +78,9 @@ func _physics_process(delta: float) -> void:
 			_hit_dealt = true
 			var still_in_front := (dx >= 0.0) == _facing_right
 			if distance <= attack_range * 1.15 and still_in_front:
-				_player.take_damage(attack_damage)
+				# 敌人命中只负责开启战斗；伤害在回合制场景中结算。
+				if not BattleManager.is_in_battle:
+					BattleManager.begin_battle(_player, self, false)
 		return
 
 	_face_towards(dx)
@@ -113,6 +117,10 @@ func _on_animation_finished(anim_name: String) -> void:
 		animation.play_animation("walk")
 	elif anim_name == "death":
 		queue_free()
+
+
+func get_battle_damage() -> float:
+	return attack_damage
 
 
 func die() -> void:

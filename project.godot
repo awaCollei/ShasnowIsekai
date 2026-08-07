@@ -25,6 +25,7 @@ SaveManager="*res://scripts/save_manager.gd"
 PlotlineManager="*res://plot/plotline_manager.tscn"
 ButtonFeedback="*uid://b6mqwnmlg422n"
 MessageDisplayManager="*uid://4s02o7kcgpvp"
+BattleManager="*res://combat/battle_manager.gd"
 
 [display]
 

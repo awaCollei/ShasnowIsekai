@@ -48,6 +48,11 @@ func change_to_scene(scene_id: String) -> bool:
 		push_error("场景资源不存在: %s" % scene_path)
 		return false
 
+	# 当前地图离开前先把敌人位置、HP 和空地图状态写入运行时快照。
+	var save_manager := get_node_or_null("/root/SaveManager")
+	if save_manager:
+		save_manager.capture_current_enemy_map()
+
 	var previous_scene := current_scene
 	var was_paused := get_tree().paused
 	current_scene = scene_id
@@ -60,7 +65,6 @@ func change_to_scene(scene_id: String) -> bool:
 		push_error("切换场景失败: %s（错误码 %d）" % [scene_path, error])
 		return false
 
-	var save_manager := get_node_or_null("/root/SaveManager")
 	if save_manager:
 		save_manager.current_scene_path = scene_path
 		save_manager.is_in_game = true

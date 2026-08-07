@@ -106,4 +106,10 @@ func _end_attack() -> void:
 func _on_attack_area_entered(area: Area2D) -> void:
 	if area is Enemy and not hit_enemies.has(area):
 		hit_enemies.append(area)
-		area.take_damage(DAMAGE)
+		var enemy := area as Enemy
+		# 训练设施等明确禁用回合制的对象继续使用原本的受击反馈。
+		if not enemy.battle_enabled:
+			enemy.take_damage(DAMAGE)
+		else:
+			# 局外命中不再直接扣血，而是携带我方先手进入回合制战斗。
+			BattleManager.begin_battle(player, enemy, true)

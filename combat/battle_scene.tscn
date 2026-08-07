@@ -1,0 +1,270 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://combat/battle_scene.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.055, 0.035, 0.11, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.57, 1, 0.82)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="ActionStyle"]
+bg_color = Color(0.12, 0.075, 0.22, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.63, 0.47, 0.9, 0.78)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="HoverStyle"]
+bg_color = Color(0.28, 0.18, 0.48, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.82, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="DisabledStyle"]
+bg_color = Color(0.07, 0.06, 0.1, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.28, 0.25, 0.35, 0.65)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StatusStyle"]
+bg_color = Color(0.035, 0.025, 0.075, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.56, 0.7, 1, 0.76)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="HPFill"]
+bg_color = Color(0.92, 0.18, 0.32, 0.88)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="MPFill"]
+bg_color = Color(0.32, 0.58, 1, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="BattleScene" type="CanvasLayer"]
+layer = 50
+process_mode = 3
+script = ExtResource("1_script")
+
+[node name="BattleRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Backdrop" type="ColorRect" parent="BattleRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.018, 0.055, 1)
+mouse_filter = 2
+
+[node name="Battlefield" type="TextureRect" parent="BattleRoot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SkyGlow" type="Polygon2D" parent="BattleRoot"]
+polygon = PackedVector2Array(1280, 0, 1280, 360, 600, 490, 0, 290, 0, 0)
+color = Color(0.18, 0.1, 0.34, 0.2)
+
+[node name="GroundLine" type="Line2D" parent="BattleRoot"]
+points = PackedVector2Array(0, 610, 1280, 350)
+width = 3.0
+default_color = Color(0.68, 0.5, 1, 0.36)
+
+[node name="ActorLayer" type="Node2D" parent="BattleRoot"]
+
+[node name="UILayer" type="Control" parent="BattleRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="WaveLabel" type="Label" parent="BattleRoot/UILayer"]
+layout_mode = 0
+offset_left = 1040.0
+offset_top = 28.0
+offset_right = 1248.0
+offset_bottom = 62.0
+theme_override_colors/font_color = Color(0.9, 0.84, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "第 1 / 1 波"
+horizontal_alignment = 2
+
+[node name="StatusPanel" type="PanelContainer" parent="BattleRoot/UILayer"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 32.0
+offset_right = 320.0
+offset_bottom = 164.0
+theme_override_styles/panel = SubResource("StatusStyle")
+
+[node name="VBox" type="VBoxContainer" parent="BattleRoot/UILayer/StatusPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HP" type="Label" parent="BattleRoot/UILayer/StatusPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.78, 1)
+theme_override_font_sizes/font_size = 18
+text = "HP  100 / 100"
+
+[node name="HPBar" type="ProgressBar" parent="BattleRoot/UILayer/StatusPanel/VBox"]
+custom_minimum_size = Vector2(250, 12)
+layout_mode = 2
+theme_override_styles/fill = SubResource("HPFill")
+show_percentage = false
+
+[node name="MP" type="Label" parent="BattleRoot/UILayer/StatusPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.82, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "MP  100 / 100"
+
+[node name="MPBar" type="ProgressBar" parent="BattleRoot/UILayer/StatusPanel/VBox"]
+custom_minimum_size = Vector2(250, 12)
+layout_mode = 2
+theme_override_styles/fill = SubResource("MPFill")
+show_percentage = false
+
+[node name="ActionPanel" type="VBoxContainer" parent="BattleRoot/UILayer"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 452.0
+offset_right = 286.0
+offset_bottom = 690.0
+theme_override_constants/separation = 7
+theme_override_styles/normal = SubResource("ActionStyle")
+theme_override_styles/hover = SubResource("HoverStyle")
+theme_override_styles/pressed = SubResource("HoverStyle")
+theme_override_styles/disabled = SubResource("DisabledStyle")
+
+[node name="TargetPanel" type="VBoxContainer" parent="BattleRoot/UILayer"]
+visible = false
+layout_mode = 0
+offset_left = 36.0
+offset_top = 440.0
+offset_right = 286.0
+offset_bottom = 690.0
+theme_override_constants/separation = 7
+theme_override_styles/normal = SubResource("ActionStyle")
+theme_override_styles/hover = SubResource("HoverStyle")
+theme_override_styles/pressed = SubResource("HoverStyle")
+
+[node name="MessagePanel" type="PanelContainer" parent="BattleRoot/UILayer"]
+layout_mode = 0
+offset_left = 350.0
+offset_top = 625.0
+offset_right = 930.0
+offset_bottom = 692.0
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Message" type="Label" parent="BattleRoot/UILayer/MessagePanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "战斗开始"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Transition" type="Control" parent="BattleRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Veil" type="ColorRect" parent="BattleRoot/Transition"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.008, 0.005, 0.018, 1)
+
+[node name="Band" type="ColorRect" parent="BattleRoot/Transition"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 290.0
+offset_bottom = 430.0
+grow_horizontal = 2
+pivot_offset = Vector2(640, 70)
+color = Color(0.18, 0.08, 0.32, 0.98)
+
+[node name="Title" type="Label" parent="BattleRoot/Transition"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -310.0
+offset_top = -46.0
+offset_right = 310.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.35, 0.15, 0.6, 0.9)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 48
+text = "战斗开始"
+horizontal_alignment = 1
+vertical_alignment = 1

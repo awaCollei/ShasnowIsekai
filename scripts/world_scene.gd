@@ -36,10 +36,16 @@ var _last_rv_sub_scene: String = ""
 func _ready() -> void:
 	_resolve_common_nodes()
 	_initialize_common_visuals()
+
+	# 有地图快照时完整恢复（包括“0 个敌人”的已清理状态）；首次进入才执行默认刷新。
+	var restored := SaveManager.restore_enemy_map(self)
+	if not restored:
+		_spawn_scene_entities()
+		# 立即登记运行时状态，避免未保存时往返地图造成重复刷新。
+		SaveManager.capture_enemy_map(self)
 	_bind_existing_enemies()
 
 	# 多态扩展点：子场景只覆写自己需要的部分。
-	_spawn_scene_entities()
 	_trigger_scene_plot()
 	_on_world_ready()
 
