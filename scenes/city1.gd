@@ -17,7 +17,7 @@ const DEFAULT_CITY_ZONE := "1,2"
 @export var building_width: float = 3200.0
 @export var room_height: float = 400.0
 @export var floor_separator_height: float = 50.0
-@export var stairwell_width: float = 640.0
+@export var stairwell_width: float = 792.0
 @export_range(2, 20, 1) var max_rooms_per_floor: int = 5
 
 @export_group("Building Resources")

@@ -11,9 +11,9 @@ signal room_entered(floor_index: int, room_index: int)
 @export_range(100.0, 10000.0, 10.0) var building_width: float = 3200.0
 @export_range(100.0, 1000.0, 10.0) var room_height: float = 400.0
 @export_range(0.0, 200.0, 1.0) var floor_separator_height: float = 50.0
+@export_range(200.0, 2000.0, 1.0) var stairwell_width: float = 792.0
 
 @export_group("Rooms")
-@export_range(100.0, 2000.0, 10.0) var stairwell_width: float = 640.0
 @export_range(2, 20, 1) var max_rooms_per_floor: int = 5
 @export var unseen_color := Color(0.0, 0.0, 0.0, 1.0)
 @export var revealed_room_color := Color("252535")
@@ -51,9 +51,10 @@ func _ready() -> void:
 ## width 的单位是像素，不再是“槽位数量”。地图子类可以覆写此表。
 func register_rooms() -> void:
 	room_registry = [
-		{"id": "stairwell", "scene": "res://rooms/city1/stairwell.tscn", "width": stairwell_width, "weight": 0.0},
+		{"id": "stairwell", "scene": "res://rooms/city1/stairwell.tscn", "weight": 0.0},
 		{"id": "empty", "scene": "res://rooms/city1/empty.tscn", "width": 640.0, "weight": 3.0},
-		{"id": "investigation", "scene": "res://rooms/city1/investigation.tscn", "width": 800.0, "weight": 1.0},
+		{"id": "room1", "scene": "res://rooms/city1/room1.tscn", "width": 823.0, "weight": 1.0},
+		{"id": "room2", "scene": "res://rooms/city1/room2.tscn", "width": 1222.0, "weight": 1.0},
 	]
 
 
@@ -126,7 +127,7 @@ func _layout_is_current(layouts: Array) -> bool:
 			return false
 		if String(row[0].get("id", "")) != "stairwell":
 			return false
-		if not is_equal_approx(float(row[0].get("width_px", 0.0)), minf(stairwell_width, building_width)):
+		if not is_equal_approx(float(row[0].get("width_px", 0.0)) , stairwell_width):
 			return false
 		var total_width := 0.0
 		for data in row:
@@ -143,7 +144,7 @@ func _create_layout() -> Array:
 	for floor_index in range(floor_count):
 		var row: Array = []
 		var used_width := 0.0
-		var first_width := minf(stairwell_width, building_width)
+		var first_width := stairwell_width
 		row.append({"id": "stairwell", "width_px": first_width, "entered": false})
 		used_width += first_width
 
@@ -321,7 +322,7 @@ func _add_stair_portal(floor_index: int) -> void:
 	if not portal:
 		return
 	var row: Array = zone_state["rooms"][floor_index]
-	var actual_stairwell_width := float(row[0].get("width_px", minf(stairwell_width, building_width)))
+	var actual_stairwell_width := float(row[0].get("width_px", building_width))
 	portal.position = Vector2(actual_stairwell_width * 0.5, floor_y(floor_index) - stair_portal_height)
 	portal.portal_id = _portal_id(floor_index)
 	portal.sub_scene = floor_sub_scene(floor_index)
