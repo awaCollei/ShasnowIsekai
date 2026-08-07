@@ -17,7 +17,7 @@ var _playing_attack := false
 
 func setup_player() -> void:
 	is_player = true
-	_create_nodes("夏雪")
+	_create_nodes("雪影")
 	_load_sequence(_idle_frames, "res://assets/shasnow/stand/stand_%d.png", 1)
 	_load_sequence(_attack_frames, "res://assets/shasnow/basic_attack/basic_attack_%d.png", 32)
 	_apply_first_frame()

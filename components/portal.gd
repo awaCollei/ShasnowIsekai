@@ -3,7 +3,7 @@ class_name Portal
 
 # 传送门属性
 @export var portal_id: String = ""  # 传送门唯一标识
-@export var target_portal_id: String = ""  # 目标传送门ID
+@export var target_portal_ids: Array[String] = []  # 目标传送门ID列表
 @export var sub_scene: String = ""  # 所在子场景（留空表示所有子场景）
 
 # 显示相关（可选）
@@ -36,35 +36,47 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 		player_ref = body
-		# 检查sub_scene是否匹配
 		if can_interact():
-			add_interaction_option()
+			add_interaction_options()
 
 func _on_body_exited(body: Node2D) -> void:
 	if body is Player:
 		player_ref = null
-		remove_interaction_option()
+		remove_interaction_options()
 
 func can_interact() -> bool:
-	# 检查玩家的sub_scene是否与传送门匹配
 	if not player_ref:
 		return false
-	# 如果传送门的sub_scene为空，表示任何子场景都能交互
 	if sub_scene == "":
 		return true
-	# 否则需要匹配玩家的sub_scene
 	return player_ref.current_sub_scene == sub_scene
 
-func add_interaction_option() -> void:
+func add_interaction_options() -> void:
 	var interaction_system = find_interaction_system()
-	if interaction_system and interaction_system.has_method("add_option"):
-		var option_text = portal_name if portal_name else "传送到 " + target_portal_id
-		interaction_system.add_option("portal_" + portal_id, option_text, self)
+	if not interaction_system or not interaction_system.has_method("add_option"):
+		return
+	
+	for tid in target_portal_ids:
+		var target_portal = find_portal_by_id(tid)
+		if not target_portal:
+			continue
+		var option_text = target_portal.portal_name if target_portal.portal_name else "传送到 " + tid
+		var proxy = PortalTarget.new()
+		proxy.portal_ref = self
+		proxy.target_id = tid
+		proxy.name = "PortalTarget_" + tid
+		add_child(proxy)
+		interaction_system.add_option("portal_" + portal_id + "_" + tid, option_text, proxy)
 
-func remove_interaction_option() -> void:
+func remove_interaction_options() -> void:
 	var interaction_system = find_interaction_system()
 	if interaction_system and interaction_system.has_method("remove_option"):
-		interaction_system.remove_option("portal_" + portal_id)
+		for tid in target_portal_ids:
+			interaction_system.remove_option("portal_" + portal_id + "_" + tid)
+	# 清理代理节点
+	for child in get_children():
+		if child is PortalTarget:
+			child.queue_free()
 
 func find_interaction_system() -> Node:
 	var root = get_tree().root
@@ -79,28 +91,23 @@ func find_interaction_system_node(node: Node) -> Node:
 			return result
 	return null
 
-func interact() -> void:
-	if not player_ref:
-		return
-	
-	# 查找目标传送门
-	var target_portal = find_target_portal()
-	if target_portal:
-		teleport_to(target_portal)
-
-func find_target_portal() -> Portal:
+func find_portal_by_id(id: String) -> Portal:
 	var portals = get_tree().get_nodes_in_group("portals")
 	for portal in portals:
-		if portal is Portal and portal.portal_id == target_portal_id:
+		if portal is Portal and portal.portal_id == id:
 			return portal
 	return null
 
-func teleport_to(target_portal: Portal) -> void:
+func teleport_to_id(target_id: String) -> void:
 	if not player_ref:
 		return
 	
+	var target_portal = find_portal_by_id(target_id)
+	if not target_portal:
+		return
+	
 	# 先移除当前传送门的交互选项
-	remove_interaction_option()
+	remove_interaction_options()
 	
 	# 改变玩家子场景为目标传送门所在的子场景
 	player_ref.current_sub_scene = target_portal.sub_scene
@@ -113,9 +120,18 @@ func teleport_to(target_portal: Portal) -> void:
 	if camera and camera.has_method("smooth_move_to"):
 		camera.smooth_move_to(target_portal.global_position)
 	
-	# 手动触发目标传送门的交互检查（因为玩家已经在其区域内，不会触发body_entered）
+	# 手动触发目标传送门的交互检查
 	target_portal.player_ref = player_ref
 	if target_portal.can_interact():
-		target_portal.add_interaction_option()
+		target_portal.add_interaction_options()
 	
 	print("玩家传送到: ", target_portal.portal_id)
+
+
+# 传送门代理节点，用于区分不同的目标传送门选项
+class PortalTarget extends Node:
+	var portal_ref: Portal
+	var target_id: String
+	
+	func interact() -> void:
+		portal_ref.teleport_to_id(target_id)
