@@ -1,0 +1,18 @@
+{
+  "base": {
+    "display_name": "房车营地",
+    "region": "base",
+    "scene_path": "res://scenes/base.tscn",
+    "default_sub_scene": "outdoor",
+    "description": "风雨中的安全据点，也是你在临海市的第一处落脚点。",
+    "region_types": ["shop", "camp", "garage"]
+  },
+  "city1": {
+    "display_name": "临海市",
+    "region": "city1",
+    "scene_path": "res://scenes/city1.tscn",
+    "default_sub_scene": "outdoor",
+    "description": "一座被灾变笼罩的海滨城市，街区里仍藏着有用的物资。",
+    "region_types": ["office", "hospital", "residential", "market"]
+  }
+}

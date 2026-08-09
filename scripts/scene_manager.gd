@@ -3,7 +3,7 @@ extends Node
 signal scene_change_started(scene_id: String)
 signal scene_changed(scene_id: String)
 
-const MAP_SCREEN_SCENE: PackedScene = preload("res://ui/map_screen.tscn")
+const MAP_SCREEN_SCENE: PackedScene = preload("res://map/map_screen.tscn")
 
 # 保留旧代码可能使用的实例引用；Autoload 名称本身不能作为类型标注。
 static var instance
