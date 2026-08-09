@@ -2,8 +2,7 @@ extends Node
 
 ## 剧情管理器 — Autoload 单例
 ## 提供 chat_start / chat / chat_end 等剧情演出方法。
-## 剧情脚本按三段式 ID（章-幕-节）分层存放：res://plotline/{章}/{章-幕}/{章-幕-节}.gd
-## 例：res://plotline/1/1-1/1-1-1.gd
+## 剧情脚本放在 res://plotline/ 下，由 play_plot() 按需加载。
 
 # ==========================
 # 信号
@@ -39,7 +38,7 @@ func play_plot(plot_id: String) -> void:
 		push_warning("PlotlineManager: 已有剧情正在播放")
 		return
 
-	var path := _resolve_plot_path(plot_id)
+	var path := "res://plotline/%s.gd" % plot_id
 	if not ResourceLoader.exists(path):
 		push_error("PlotlineManager: 找不到剧情脚本: " + path)
 		return
@@ -197,38 +196,13 @@ func reset_quest_progress() -> void:
 	_quest_completed.clear()
 
 
-## 根据章节 ID 获取该章节的所有场景列表（从 script.json 中读取，跨所有幕展平）
+## 根据章节 ID 获取该章节的任务列表（从 script.json 中读取）
 func get_quests_in_chapter(chapter_id: String) -> Array:
 	if not quest_book.has("chapters"):
 		return []
 	for chapter in quest_book["chapters"]:
 		if str(chapter.get("id", "")) == chapter_id:
-			var scenes: Array = []
-			for act in chapter.get("acts", []):
-				for scene in act.get("scenes", []):
-					scenes.append(scene)
-			return scenes
-	return []
-
-
-## 根据章节 ID 获取该章节的所有幕列表（从 script.json 中读取）
-func get_acts_in_chapter(chapter_id: String) -> Array:
-	if not quest_book.has("chapters"):
-		return []
-	for chapter in quest_book["chapters"]:
-		if str(chapter.get("id", "")) == chapter_id:
 			return chapter.get("acts", [])
-	return []
-
-
-## 根据幕 ID（如 "1-1"）获取该幕的所有场景列表
-func get_scenes_in_act(act_id: String) -> Array:
-	if not quest_book.has("chapters"):
-		return []
-	for chapter in quest_book["chapters"]:
-		for act in chapter.get("acts", []):
-			if str(act.get("id", "")) == act_id:
-				return act.get("scenes", [])
 	return []
 
 
@@ -359,17 +333,6 @@ func _load_quest_book() -> void:
 		push_error("PlotlineManager: script.json 解析失败")
 		return
 	quest_book = json.data
-
-
-## 根据三段式 ID（如 "1-1-1"）解析出脚本路径：res://plotline/{章}/{章-幕}/{id}.gd
-func _resolve_plot_path(plot_id: String) -> String:
-	var parts := plot_id.split("-")
-	if parts.size() >= 3:
-		var chapter := parts[0]
-		var act := "%s-%s" % [parts[0], parts[1]]
-		return "res://plotline/%s/%s/%s.gd" % [chapter, act, plot_id]
-	# 兼容旧式两段或不规范 ID，回退到扁平路径
-	return "res://plotline/%s.gd" % plot_id
 
 
 func _get_player():
