@@ -31,6 +31,18 @@ static func find_scene_id_by_path(scene_path: String) -> String:
 		if _scenes[id].get("scene_path", "") == scene_path: return id
 	return ""
 
+static func _find_region_type(region_type: String) -> Dictionary:
+	for scene_id in _scenes:
+		var info: Dictionary = _scenes[scene_id]
+		if not info is Dictionary: continue
+		for rt in info.get("region_types", []):
+			if rt.get("id", "") == region_type: return rt
+	return {}
+
 static func type_name(region_type: String) -> String:
 	_ensure_loaded()
-	return _scenes.get("type_names", {}).get(region_type, "未知区域")
+	return _find_region_type(region_type).get("name", "未知区域")
+
+static func region_description(region_type: String) -> String:
+	_ensure_loaded()
+	return _find_region_type(region_type).get("description", "一片尚待探索的区域。")

@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://csj45d7dxbssv" path="res://map/map_screen.gd" id="1"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n7nwo"]
+bg_color = Color(1, 1, 1, 0)
+
 [node name="MapScreen" type="CanvasLayer" unique_id=2046225184]
 process_mode = 3
 layer = 100
@@ -19,7 +22,7 @@ stretch_mode = 6
 unique_name_in_owner = true
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.015686275, 0.011764706, 0.023529412, 0.35686275)
+color = Color(0.015686275, 0.011764706, 0.023529412, 0.12941177)
 
 [node name="Margin" type="MarginContainer" parent="." unique_id=94962540]
 offset_right = 1280.0
@@ -76,6 +79,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(740, 500)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_n7nwo")
 
 [node name="GridMargin" type="MarginContainer" parent="Margin/Panel/Content/VBox/MapBody/GridFrame" unique_id=981434697]
 layout_mode = 2
@@ -155,5 +159,5 @@ text = "前往区域"
 [node name="Hint" type="Label" parent="Margin/Panel/Content/VBox" unique_id=577612459]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.54, 0.52, 0.64, 1)
-text = "◇ 未进入    ◆ 已进入       点击场景两侧箭头切换地图"
+text = "点击场景两侧箭头切换地图"
 horizontal_alignment = 1

@@ -49,7 +49,7 @@ func _refresh_scene() -> void:
 	left_button.disabled = _scene_index == 0; right_button.disabled = _scene_index == _scene_ids.size() - 1
 	var backdrop := $DimBackground as TextureRect
 	backdrop.texture = load("res://assets/%s/background2.png" % scene_id) as Texture2D
-	_set_map_background(scene_id); _build_grid(scene_id); _clear_detail()
+	_build_grid(scene_id); _clear_detail()
 	call_deferred("_place_position_marker", scene_id)
 
 func _change_scene(delta: int) -> void:
@@ -62,14 +62,6 @@ func _change_scene(delta: int) -> void:
 func _style_button(button: Button) -> void:
 	for state in ["normal", "hover", "pressed", "disabled"]:
 		var style := StyleBoxFlat.new(); style.corner_radius_top_left = 8; style.corner_radius_top_right = 8; style.corner_radius_bottom_left = 8; style.corner_radius_bottom_right = 8; style.set_border_width_all(1); style.border_color = Color("#397b9e") if state != "hover" else Color("#9be0ff"); style.bg_color = Color("#173b52", 0.9) if state != "disabled" else Color("#152330", 0.65); button.add_theme_stylebox_override(state, style)
-
-func _set_map_background(scene_id: String) -> void:
-	var frame := %GridFrame
-	for child in frame.get_children():
-		if child.name == "SceneMapBackdrop": child.queue_free()
-	var texture := load("res://assets/%s/background2.png" % scene_id) as Texture2D
-	if not texture: return
-	var backdrop := TextureRect.new(); backdrop.name = "SceneMapBackdrop"; backdrop.texture = texture; backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE; backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED; backdrop.modulate = Color(0.32, 0.52, 0.64, 0.24); backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE; backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); frame.add_child(backdrop); frame.move_child(backdrop, 0)
 
 func _build_grid(scene_id: String) -> void:
 	for child in grid_host.get_children(): child.queue_free()
@@ -112,13 +104,10 @@ func _cell_style(zone: Dictionary, hover: bool) -> StyleBoxFlat:
 
 func _select_zone(id: String) -> void:
 	if _selected_zone == id: _clear_detail(); return
-	_selected_zone = id; var zone: Dictionary = MapState.get_zone(SaveManager.runtime_map_state, id); var type := MapState.type_name(zone.get("region_type", "office")); detail_title.text = type; detail_desc.text = _description_for(type); detail_meta.text = "坐标 %s   ·   去过 %d 次" % [id, int(zone.get("visit_count", 0))]; travel_button.disabled = false
+	_selected_zone = id; var zone: Dictionary = MapState.get_zone(SaveManager.runtime_map_state, id); detail_title.text = MapState.type_name(zone.get("region_type", "office")); detail_desc.text = SceneRegistry.region_description(zone.get("region_type", "office")); detail_meta.text = "坐标 %s   ·   去过 %d 次" % [id, int(zone.get("visit_count", 0))]; travel_button.disabled = false
 
 func _clear_detail() -> void:
 	_selected_zone = ""; detail_title.text = "选择一个区域"; detail_desc.text = "点击地图上的格子查看详情。再次点击已选格子可取消选择。"; detail_meta.text = ""; travel_button.disabled = true
-
-func _description_for(type: String) -> String:
-	return {"医院":"药品与医疗物资，也许还有幸存者。", "写字楼":"高层建筑，可能藏有办公用品和补给。", "住宅区":"普通居民区，房间里可能留下生活物资。", "市场":"曾经热闹的街区，物资种类丰富但风险未知。", "商店":"营地里的补给商店。", "营地":"房车营地，安全而熟悉。", "车库":"可以修理和改造装备的地方。"}.get(type, "一片尚待探索的区域。")
 
 func _travel_selected() -> void:
 	if _selected_zone.is_empty(): return
