@@ -97,15 +97,19 @@ text = "名字"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TextLabel" type="Label" parent="RootControl/DialogPanel" unique_id=1505961110]
+[node name="TextLabel" type="RichTextLabel" parent="RootControl/DialogPanel" unique_id=1975370079]
 layout_mode = 0
 offset_left = 32.0
 offset_top = 41.0
 offset_right = 33.0
-offset_bottom = 65.0
-theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
-theme_override_font_sizes/font_size = 30
-autowrap_mode = 3
+offset_bottom = 77.0
+theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/bold_font_size = 30
+theme_override_font_sizes/bold_italics_font_size = 30
+theme_override_font_sizes/italics_font_size = 30
+theme_override_font_sizes/mono_font_size = 30
+bbcode_enabled = true
+autowrap_mode = 1
 
 [node name="NextIndicator" type="Label" parent="RootControl/DialogPanel" unique_id=1061374257]
 layout_mode = 0
