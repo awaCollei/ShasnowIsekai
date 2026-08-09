@@ -1,4 +1,13 @@
 {
+  "type_names": {
+    "office": "写字楼",
+    "hospital": "医院",
+    "residential": "住宅区",
+    "market": "市场",
+    "shop": "商店",
+    "camp": "营地",
+    "garage": "车库"
+  },
   "base": {
     "display_name": "房车营地",
     "region": "base",

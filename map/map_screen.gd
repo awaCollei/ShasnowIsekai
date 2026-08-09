@@ -84,13 +84,17 @@ func _build_grid(scene_id: String) -> void:
 	SaveManager.runtime_map_state = state
 	var n := 0
 	if is_base:
-		_add_map_cell(state.zones.get(MapState.BASE_ZONE, {}), MapState.BASE_ZONE, 1, 1, n)
+		# 在 3x3 网格中居中放置基地格子（位置 4）
+		for i in range(9):
+			if i == 4:
+				_add_map_cell(state.get("base", {}), MapState.BASE_ID, 1, 1, n)
+			else:
+				var ph := Control.new(); ph.custom_minimum_size = Vector2(100, 82); _grid.add_child(ph)
 	else:
-		# 只收集 city1 自己的区域并重新排布，不为 base 留空位。
 		for y in range(MapState.HEIGHT):
 			for x in range(MapState.WIDTH):
-				var id := MapState.zone_id(x, y); var zone: Dictionary = state.zones.get(id, {})
-				if zone.get("scene", "") != scene_id: continue
+				var id := MapState.zone_id(x, y)
+				var zone: Dictionary = state.zones.get(id, {})
 				_add_map_cell(zone, id, n % columns, int(n / columns), n); n += 1
 func _add_map_cell(zone: Dictionary, id: String, x: int, y: int, order: int) -> void:
 	var cell := Button.new(); cell.custom_minimum_size = Vector2(100, 82); cell.focus_mode = Control.FOCUS_ALL; cell.set_meta("zone_id", id)
@@ -108,7 +112,7 @@ func _cell_style(zone: Dictionary, hover: bool) -> StyleBoxFlat:
 
 func _select_zone(id: String) -> void:
 	if _selected_zone == id: _clear_detail(); return
-	_selected_zone = id; var zone: Dictionary = SaveManager.runtime_map_state.zones.get(id, {}); var type := MapState.type_name(zone.get("region_type", "office")); detail_title.text = type; detail_desc.text = _description_for(type); detail_meta.text = "坐标 %s   ·   去过 %d 次" % [id, int(zone.get("visit_count", 0))]; travel_button.disabled = false
+	_selected_zone = id; var zone: Dictionary = MapState.get_zone(SaveManager.runtime_map_state, id); var type := MapState.type_name(zone.get("region_type", "office")); detail_title.text = type; detail_desc.text = _description_for(type); detail_meta.text = "坐标 %s   ·   去过 %d 次" % [id, int(zone.get("visit_count", 0))]; travel_button.disabled = false
 
 func _clear_detail() -> void:
 	_selected_zone = ""; detail_title.text = "选择一个区域"; detail_desc.text = "点击地图上的格子查看详情。再次点击已选格子可取消选择。"; detail_meta.text = ""; travel_button.disabled = true
@@ -118,7 +122,7 @@ func _description_for(type: String) -> String:
 
 func _travel_selected() -> void:
 	if _selected_zone.is_empty(): return
-	var zone: Dictionary = SaveManager.runtime_map_state.zones.get(_selected_zone, {}); zone["discovered"] = true; zone["entered"] = true; zone["visit_count"] = int(zone.get("visit_count", 0)) + 1; SaveManager.runtime_map_state.zones[_selected_zone] = zone; SaveManager.current_zone_id = _selected_zone
+	var zone: Dictionary = MapState.get_zone(SaveManager.runtime_map_state, _selected_zone); zone["discovered"] = true; zone["entered"] = true; zone["visit_count"] = int(zone.get("visit_count", 0)) + 1; MapState.set_zone(SaveManager.runtime_map_state, _selected_zone, zone); SaveManager.current_zone_id = _selected_zone
 	var target_scene := String(zone.get("scene", "city1"))
 	await _animate_marker_to(_selected_zone, target_scene)
 	_travel_to(target_scene)
@@ -131,7 +135,7 @@ func _place_position_marker(scene_id: String) -> void:
 	_position_marker = Label.new(); _position_marker.text = "▼"; _position_marker.add_theme_color_override("font_color", Color("#ff4f55")); _position_marker.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9)); _position_marker.add_theme_constant_override("shadow_offset_x", 2); _position_marker.add_theme_constant_override("shadow_offset_y", 2); _position_marker.add_theme_font_size_override("font_size", 30); _position_marker.mouse_filter = Control.MOUSE_FILTER_IGNORE; grid_host.add_child(_position_marker)
 	var current_id := String(SaveManager.current_zone_id)
 	var cells := _grid.get_children(); var marker_index := -1
-	if scene_id == "base": marker_index = 4 if current_id == MapState.BASE_ZONE else -1
+	if scene_id == "base": marker_index = 4 if current_id == MapState.BASE_ID else -1
 	else:
 		for i in range(cells.size()):
 			if String(cells[i].get_meta("zone_id", "")) == current_id: marker_index = i; break

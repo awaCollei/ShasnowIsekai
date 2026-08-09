@@ -30,3 +30,7 @@ static func find_scene_id_by_path(scene_path: String) -> String:
 	for id in _scenes:
 		if _scenes[id].get("scene_path", "") == scene_path: return id
 	return ""
+
+static func type_name(region_type: String) -> String:
+	_ensure_loaded()
+	return _scenes.get("type_names", {}).get(region_type, "未知区域")

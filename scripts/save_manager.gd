@@ -14,7 +14,7 @@ signal auto_save_completed(success: bool, reason: String)
 class SaveData:
 	var slot: int
 	var scene_path: String          # 当前场景路径（scene 类型）
-	var zone_id: String = "0,2"     # 当前世界地图格子
+	var zone_id: String = "base"     # 当前世界地图格子
 	var player_position: Vector2     # 玩家位置
 	var player_sub_scene: String     # 玩家子场景
 	var player_hp: float = -1.0      # -1 表示旧存档中不存在该字段
@@ -36,7 +36,7 @@ var current_slot: int = -1
 
 # 当前场景路径（由场景切换时更新）
 var current_scene_path: String = ""
-var current_zone_id: String = "0,2"
+var current_zone_id: String = "base"
 
 ## 当前游戏会话的地图敌人快照。切图时先写入这里，正式保存时整体持久化。
 var runtime_enemy_maps: Dictionary = {}
@@ -133,7 +133,7 @@ func load_save_info(slot: int) -> SaveData:
 		return data
 
 	data.scene_path = config.get_value("save", "scene_path", "")
-	var default_zone := "0,2" if data.scene_path == "res://scenes/city1.tscn" else MapState.BASE_ZONE
+	var default_zone := "1,2" if data.scene_path == "res://scenes/city1.tscn" else MapState.BASE_ID
 	data.zone_id = String(config.get_value("save", "zone_id", default_zone))
 	data.player_position = Vector2(
 		config.get_value("save", "player_position_x", 0.0),
@@ -202,7 +202,7 @@ func start_new_game() -> void:
 	is_loading_game = false
 	current_slot = -1
 	current_scene_path = "res://scenes/base.tscn"
-	current_zone_id = MapState.BASE_ZONE
+	current_zone_id = MapState.BASE_ID
 	runtime_enemy_maps.clear()
 	runtime_map_state = MapState.create_new()
 
@@ -225,7 +225,7 @@ func return_to_main_menu() -> void:
 	is_in_game = false
 	current_slot = -1
 	current_scene_path = ""
-	current_zone_id = MapState.BASE_ZONE
+	current_zone_id = MapState.BASE_ID
 	runtime_enemy_maps.clear()
 	runtime_map_state.clear()
 
