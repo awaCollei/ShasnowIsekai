@@ -1,6 +1,5 @@
 extends Node
 
-## 示例剧情 1_1 — 演示基础的 chat_start / chat / chat_end 用法
 
 func play() -> void:
 	var player = PlotlineManager._get_player()
@@ -33,6 +32,7 @@ func play() -> void:
 	await PlotlineManager.chat("薇芯", "记得就行，大运为了躲你失控侧翻了，我应该是直接扁了，比你死得还早。", ["雪影", "薇芯"])
 	await PlotlineManager.chat("雪影", "...", ["雪影", "薇芯"])
 	await PlotlineManager.chat("雪影", "抱歉，微心", ["雪影", "薇芯"])
+	#此处薇芯名称错误为剧情设计，笨雪影忘关注薇芯是哪两个字了
 	await PlotlineManager.chat("薇芯", "...上辈子的事别提了，走，先去基地,外面不是很安全。", ["雪影", "薇芯"])
 	PlotlineManager.chat_end()
 	await PlotlineManager.character_move(vising, Vector2(-150, 630), "teleport")
