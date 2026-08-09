@@ -75,7 +75,7 @@ func _build_grid(scene_id: String) -> void:
 	for child in grid_host.get_children(): child.queue_free()
 	_grid = GridContainer.new()
 	var is_base := scene_id == "base"
-	var columns := 3 if is_base else 6
+	var columns := 3 if is_base else 7
 	var rows := 3 if is_base else 6
 	_grid.columns = columns
 	_grid.add_theme_constant_override("h_separation", 0); _grid.add_theme_constant_override("v_separation", 0)

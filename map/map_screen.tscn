@@ -19,7 +19,7 @@ stretch_mode = 6
 unique_name_in_owner = true
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.015, 0.012, 0.025, 0.72)
+color = Color(0.015686275, 0.011764706, 0.023529412, 0.35686275)
 
 [node name="Margin" type="MarginContainer" parent="." unique_id=94962540]
 offset_right = 1280.0
@@ -63,7 +63,6 @@ text = "关闭  Esc"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 24
 
 [node name="LeftButton" type="Button" parent="Margin/Panel/Content/VBox/MapBody" unique_id=1959804750]
 unique_name_in_owner = true
@@ -74,16 +73,16 @@ text = "‹"
 
 [node name="GridFrame" type="PanelContainer" parent="Margin/Panel/Content/VBox/MapBody" unique_id=1467605617]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(700, 500)
+custom_minimum_size = Vector2(740, 500)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="GridMargin" type="MarginContainer" parent="Margin/Panel/Content/VBox/MapBody/GridFrame" unique_id=981434697]
 layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 50
 
 [node name="GridHost" type="Control" parent="Margin/Panel/Content/VBox/MapBody/GridFrame/GridMargin" unique_id=589289912]
 unique_name_in_owner = true
@@ -95,6 +94,10 @@ custom_minimum_size = Vector2(64, 100)
 layout_mode = 2
 theme_override_font_sizes/font_size = 34
 text = "›"
+
+[node name="Spacer" type="Control" parent="Margin/Panel/Content/VBox/MapBody" unique_id=938745707]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
 
 [node name="Details" type="VBoxContainer" parent="Margin/Panel/Content/VBox/MapBody" unique_id=2095470542]
 custom_minimum_size = Vector2(260, 0)
@@ -113,6 +116,9 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.62, 0.78, 0.88, 1)
 autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Margin/Panel/Content/VBox/MapBody/Details" unique_id=1983871951]
+layout_mode = 2
 
 [node name="Eyebrow" type="Label" parent="Margin/Panel/Content/VBox/MapBody/Details" unique_id=1352363625]
 layout_mode = 2
