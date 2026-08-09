@@ -18,7 +18,10 @@ var _scene_ids: Array[String] = []
 var _scene_index := 0
 var _grid: GridContainer
 var _position_marker: Label
-const MARKER_X_CORRECTION := -6.0
+var _backdrop_a: TextureRect
+var _backdrop_b: TextureRect
+var _active_backdrop: TextureRect
+const MARKER_X_CORRECTION := -3.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -30,7 +33,15 @@ func _ready() -> void:
 	%CloseButton.pressed.connect(close); left_button.pressed.connect(func(): _change_scene(-1)); right_button.pressed.connect(func(): _change_scene(1))
 	travel_button.pressed.connect(_travel_selected)
 	_style_button(%CloseButton); _style_button(left_button); _style_button(right_button); _style_button(travel_button)
+	_backdrop_a = $DimBackground as TextureRect
+	_backdrop_b = _backdrop_a.duplicate()
+	_backdrop_b.name = "DimBackground2"
+	_backdrop_b.modulate.a = 0.0
+	var parent := _backdrop_a.get_parent()
+	var solid := ColorRect.new(); solid.name = "MapSolidBG"; solid.color = Color.BLACK; solid.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT); solid.mouse_filter = Control.MOUSE_FILTER_IGNORE; parent.add_child(solid); parent.move_child(solid, _backdrop_a.get_index()); parent.add_child(_backdrop_b); parent.move_child(_backdrop_b, _backdrop_a.get_index() + 1)
+	_active_backdrop = _backdrop_a
 	_refresh_scene()
+	_active_backdrop.texture = load("res://assets/%s/background2.png" % _scene_ids[_scene_index]) as Texture2D
 	panel.modulate.a = 0.0; panel.scale = Vector2(0.97, 0.97)
 	var intro := create_tween().set_parallel(true)
 	intro.tween_property(panel, "modulate:a", 1.0, 0.2); intro.tween_property(panel, "scale", Vector2.ONE, 0.28).set_trans(Tween.TRANS_QUAD)
@@ -47,17 +58,22 @@ func _refresh_scene() -> void:
 	scene_title.text = info.get("display_name", scene_id)
 	scene_desc.text = info.get("description", "")
 	left_button.disabled = _scene_index == 0; right_button.disabled = _scene_index == _scene_ids.size() - 1
-	var backdrop := $DimBackground as TextureRect
-	backdrop.texture = load("res://assets/%s/background2.png" % scene_id) as Texture2D
 	_build_grid(scene_id); _clear_detail()
 	call_deferred("_place_position_marker", scene_id)
 
 func _change_scene(delta: int) -> void:
 	if _scene_ids.is_empty(): return
 	_scene_index = clampi(_scene_index + delta, 0, _scene_ids.size() - 1)
-	var out := create_tween(); out.tween_property(%MapBody, "modulate:a", 0.0, 0.1); await out.finished
 	_refresh_scene()
-	%MapBody.modulate.a = 0.0; create_tween().tween_property(%MapBody, "modulate:a", 1.0, 0.18)
+	var new_scene_id := _scene_ids[_scene_index]
+	var inactive := _backdrop_b if _active_backdrop == _backdrop_a else _backdrop_a
+	inactive.texture = load("res://assets/%s/background2.png" % new_scene_id) as Texture2D
+	inactive.modulate.a = 0.0
+	var t := create_tween().set_parallel(true)
+	t.tween_property(_active_backdrop, "modulate:a", 0.0, 0.35)
+	t.tween_property(inactive, "modulate:a", 1.0, 0.35)
+	await t.finished
+	_active_backdrop = inactive
 
 func _style_button(button: Button) -> void:
 	for state in ["normal", "hover", "pressed", "disabled"]:
