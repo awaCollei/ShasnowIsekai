@@ -1,0 +1,64 @@
+import os
+from PIL import Image
+
+def resize_images_to_height(folder_path, target_height=450):
+    """
+    将文件夹中所有图片的高度压缩到目标高度，保持宽高比
+    跳过已经是目标高度的图片
+    """
+    # 支持的图片格式
+    image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.webp'}
+    
+    # 遍历当前目录下的所有文件
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        
+        # 检查是否为文件
+        if not os.path.isfile(file_path):
+            continue
+        
+        # 检查文件扩展名
+        ext = os.path.splitext(filename)[1].lower()
+        if ext not in image_extensions:
+            continue
+        
+        try:
+            # 打开图片
+            with Image.open(file_path) as img:
+                # 获取原始尺寸
+                width, height = img.size
+                
+                # 如果高度已经是目标高度，跳过
+                if height == target_height:
+                    print(f"跳过 {filename} (高度已是 {target_height}px)")
+                    continue
+                
+                # 计算新宽度（保持比例）
+                new_width = int(width * (target_height / height))
+                new_height = target_height
+                
+                # 调整图片大小
+                resized_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                
+                # 保存图片，覆盖原文件
+                resized_img.save(file_path, quality=95, optimize=True)
+                print(f"已调整 {filename}: {width}x{height} -> {new_width}x{new_height}")
+                
+        except Exception as e:
+            print(f"处理 {filename} 时出错: {e}")
+
+if __name__ == "__main__":
+    # 设置目标高度
+    TARGET_HEIGHT = 450
+    
+    # 获取当前目录
+    current_dir = os.getcwd()
+    
+    print(f"开始处理当前目录下的图片: {current_dir}")
+    print(f"目标高度: {TARGET_HEIGHT}px")
+    print("-" * 50)
+    
+    resize_images_to_height(current_dir, TARGET_HEIGHT)
+    
+    print("-" * 50)
+    print("处理完成！")

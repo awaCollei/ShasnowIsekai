@@ -54,18 +54,18 @@ func register_rooms() -> void:
 	room_registry = [
 		{
 			"id": "stairwell",
-			"texture": "res://assets/city1/rooms/楼梯间.png",
+			"texture": "res://assets/city1/rooms/offer_building/楼梯间.png",
 			"weight": 0.0,
 		},
 		{
 			"id": "empty",
-			"texture": "res://assets/city1/rooms/空房间.png",
+			"texture": "res://assets/city1/rooms/offer_building/empty.png",
 			"width": 938.0,
 			"weight": 0.5,
 		},
 		{
 			"id": "room1",
-			"texture": "res://assets/city1/rooms/茶水间.png",
+			"texture": "res://assets/city1/rooms/offer_building/茶水间.png",
 			"width": 943.0,
 			"weight": 1.0,
 			"investigation_points": [
@@ -79,7 +79,7 @@ func register_rooms() -> void:
 		},
 		{
 			"id": "room2",
-			"texture": "res://assets/city1/rooms/办公室.png",
+			"texture": "res://assets/city1/rooms/offer_building/办公室.png",
 			"width": 1329.0,
 			"weight": 1.0,
 			"investigation_points": [
