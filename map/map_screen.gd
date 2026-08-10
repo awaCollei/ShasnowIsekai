@@ -14,6 +14,7 @@ class_name MapScreen
 var _was_paused := false
 var _closing := false
 var _selected_zone := ""
+var _selected_cell: Button = null
 var _scene_ids: Array[String] = []
 var _scene_index := 0
 var _grid: GridContainer
@@ -81,6 +82,7 @@ func _style_button(button: Button) -> void:
 
 func _build_grid(scene_id: String) -> void:
 	for child in grid_host.get_children(): child.queue_free()
+	_selected_cell = null
 	_grid = GridContainer.new()
 	var is_base := scene_id == "base"
 	var columns := 3 if is_base else 7
@@ -118,12 +120,27 @@ func _cell_style(zone: Dictionary, hover: bool) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new(); s.bg_color = Color("#18334a") if zone.get("discovered", false) else Color("#101e2b"); s.border_color = Color("#8fd7ff") if hover else Color("#356985"); s.set_border_width_all(2 if hover else 1); s.corner_radius_top_left=0; s.corner_radius_top_right=0; s.corner_radius_bottom_left=0; s.corner_radius_bottom_right=0; s.content_margin_left=5; s.content_margin_right=5
 	return s
 
+func _selected_cell_style(zone: Dictionary) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new(); s.bg_color = Color("#1a4a5e") if zone.get("discovered", false) else Color("#162838"); s.border_color = Color("#ffcc44"); s.set_border_width_all(2); s.corner_radius_top_left=0; s.corner_radius_top_right=0; s.corner_radius_bottom_left=0; s.corner_radius_bottom_right=0; s.content_margin_left=5; s.content_margin_right=5
+	return s
+
+func _find_cell_for_zone(zone_id: String) -> Button:
+	if not is_instance_valid(_grid): return null
+	for cell in _grid.get_children():
+		if cell is Button and String(cell.get_meta("zone_id", "")) == zone_id:
+			return cell
+	return null
+
 func _select_zone(id: String) -> void:
 	if _selected_zone == id: _clear_detail(); return
+	if is_instance_valid(_selected_cell): _selected_cell.add_theme_stylebox_override("normal", _cell_style(MapState.get_zone(SaveManager.runtime_map_state, _selected_zone), false))
 	_selected_zone = id; var zone: Dictionary = MapState.get_zone(SaveManager.runtime_map_state, id); detail_title.text = MapState.type_name(zone.get("region_type", "office")); detail_desc.text = SceneRegistry.region_description(zone.get("region_type", "office")); detail_meta.text = "坐标 %s   ·   去过 %d 次" % [id, int(zone.get("visit_count", 0))]; travel_button.disabled = false
+	_selected_cell = _find_cell_for_zone(id)
+	if is_instance_valid(_selected_cell): _selected_cell.add_theme_stylebox_override("normal", _selected_cell_style(zone))
 
 func _clear_detail() -> void:
-	_selected_zone = ""; detail_title.text = "选择一个区域"; detail_desc.text = "点击地图上的格子查看详情。再次点击已选格子可取消选择。"; detail_meta.text = ""; travel_button.disabled = true
+	if is_instance_valid(_selected_cell): _selected_cell.add_theme_stylebox_override("normal", _cell_style(MapState.get_zone(SaveManager.runtime_map_state, _selected_zone), false))
+	_selected_zone = ""; _selected_cell = null; detail_title.text = "选择一个区域"; detail_desc.text = "点击地图上的格子查看详情。再次点击已选格子可取消选择。"; detail_meta.text = ""; travel_button.disabled = true
 
 func _travel_selected() -> void:
 	if _selected_zone.is_empty(): return
