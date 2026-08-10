@@ -1,24 +1,24 @@
 {
-  "箱子类型": {
+  "chest_types": {
     "warehouse": {
-      "生成方式": "无"
+      "generation": "none"
     },
     "office_supply": {
-      "容量": 24,
-      "生成方式": "逐格概率",
-      "每格规则": [
-        {"概率": 0.28, "物品": "电子元件_1", "最小数量": 1, "最大数量": 4},
-        {"概率": 0.12, "物品": "电子元件_2", "最小数量": 1, "最大数量": 2},
-        {"概率": 0.18, "物品": "钢材_1", "最小数量": 1, "最大数量": 3},
-        {"概率": 0.07, "物品": "魔素结晶_1", "最小数量": 1, "最大数量": 2}
+      "capacity": 24,
+      "generation": "per_slot_probability",
+      "rules": [
+        {"chance": 0.28, "item": "电子元件_1", "min_count": 1, "max_count": 4},
+        {"chance": 0.12, "item": "电子元件_2", "min_count": 1, "max_count": 2},
+        {"chance": 0.18, "item": "钢材_1", "min_count": 1, "max_count": 3},
+        {"chance": 0.07, "item": "魔素结晶_1", "min_count": 1, "max_count": 2}
       ]
     },
     "hospital_medicine": {
-      "容量": 18,
-      "生成方式": "逐格概率",
-      "每格规则": [
-        {"概率": 0.20, "物品": "魔素结晶_1", "最小数量": 1, "最大数量": 3},
-        {"概率": 0.08, "物品": "魔素结晶_2", "最小数量": 1, "最大数量": 1}
+      "capacity": 18,
+      "generation": "per_slot_probability",
+      "rules": [
+        {"chance": 0.20, "item": "魔素结晶_1", "min_count": 1, "max_count": 3},
+        {"chance": 0.08, "item": "魔素结晶_2", "min_count": 1, "max_count": 1}
       ]
     }
   }

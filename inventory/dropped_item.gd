@@ -47,12 +47,12 @@ func _refresh_option() -> void:
 	var should_show := player_ref != null and (sub_scene.is_empty() or player_ref.current_sub_scene == sub_scene)
 	if should_show == _option_active:
 		return
-	_option_active = should_show
 	var system := _find_interaction_system()
 	if not system:
 		return
+	_option_active = should_show
 	if should_show:
-		var item_name := String(InventoryManager.get_item(String(item_data.get("id", ""))).get("名称", item_data.get("id", "物品")))
+		var item_name := String(InventoryManager.get_item(String(item_data.get("id", ""))).get("name", item_data.get("id", "物品")))
 		system.add_option("drop_" + drop_id, "拾取 " + item_name, self)
 	else:
 		system.remove_option("drop_" + drop_id)

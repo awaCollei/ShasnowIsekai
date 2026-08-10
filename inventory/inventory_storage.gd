@@ -88,6 +88,25 @@ func set_slot(index: int, item) -> void:
 		slots[index] = item
 		changed.emit()
 
+func split_stack(index: int) -> bool:
+	if index < 0 or index >= slots.size() or not slots[index] is Dictionary:
+		return false
+	var source: Dictionary = slots[index]
+	var count := int(source.get("count", 1))
+	if count <= 1:
+		return false
+	var empty := _find_empty()
+	if empty < 0 and auto_expand:
+		_add_row()
+		empty = _find_empty()
+	if empty < 0:
+		return false
+	var split_count := int(count / 2)
+	source["count"] = count - split_count
+	slots[empty] = {"id": String(source.get("id", "")), "count": split_count}
+	changed.emit()
+	return true
+
 func ensure_trailing_row() -> void:
 	if not auto_expand:
 		return

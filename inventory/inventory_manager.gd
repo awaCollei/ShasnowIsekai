@@ -25,7 +25,7 @@ func _load_registry() -> void:
 		return
 	var parsed = JSON.parse_string(file.get_as_text())
 	if parsed is Dictionary:
-		registry = parsed.get("物品", {})
+		registry = parsed.get("items", {})
 	for item_id in registry:
 		var texture_path := get_texture_path(item_id)
 		if not ResourceLoader.exists(texture_path):
@@ -38,15 +38,15 @@ func _load_loot_tables() -> void:
 		return
 	var parsed = JSON.parse_string(file.get_as_text())
 	if parsed is Dictionary:
-		loot_tables = parsed.get("箱子类型", {})
+		loot_tables = parsed.get("chest_types", {})
 	for type_id in loot_tables:
-		var rules = loot_tables[type_id].get("每格规则", [])
+		var rules = loot_tables[type_id].get("rules", [])
 		var probability_sum := 0.0
 		for rule in rules:
 			if not rule is Dictionary:
 				continue
-			probability_sum += maxf(0.0, float(rule.get("概率", 0.0)))
-			var item_id := String(rule.get("物品", ""))
+			probability_sum += maxf(0.0, float(rule.get("chance", 0.0)))
+			var item_id := String(rule.get("item", ""))
 			if not has_item(item_id):
 				push_warning("箱子类型 %s 引用了未注册物品: %s" % [type_id, item_id])
 		if probability_sum > 1.0001:
@@ -59,7 +59,7 @@ func get_item(item_id: String) -> Dictionary:
 	return registry.get(item_id, {})
 
 func get_max_stack(item_id: String) -> int:
-	return maxi(1, int(get_item(item_id).get("最大堆叠", 99)))
+	return maxi(1, int(get_item(item_id).get("max_stack", 99)))
 
 func get_texture_path(item_id: String) -> String:
 	return ITEM_TEXTURE_DIR + item_id + ".png"
@@ -71,7 +71,7 @@ func get_chest(chest_id: String, chest_type: String = "", capacity: int = 24, in
 			chest_types[chest_id] = chest_type
 		return chests[chest_id]
 	var config: Dictionary = loot_tables.get(chest_type, {})
-	var actual_capacity := maxi(1, int(config.get("容量", capacity)))
+	var actual_capacity := maxi(1, int(config.get("capacity", capacity)))
 	var storage := InventoryStorage.new(actual_capacity, infinite)
 	chests[chest_id] = storage
 	chest_types[chest_id] = chest_type
@@ -83,9 +83,9 @@ func get_chest(chest_id: String, chest_type: String = "", capacity: int = 24, in
 ## 未命中任何规则时该格保持为空。
 func _generate_chest_loot(storage: InventoryStorage, chest_type: String, chest_id: String) -> void:
 	var config: Dictionary = loot_tables.get(chest_type, {})
-	if String(config.get("生成方式", "无")) != "逐格概率":
+	if String(config.get("generation", "none")) != "per_slot_probability":
 		return
-	var rules = config.get("每格规则", [])
+	var rules = config.get("rules", [])
 	if not rules is Array:
 		return
 	var rng := RandomNumberGenerator.new()
@@ -97,20 +97,25 @@ func _generate_chest_loot(storage: InventoryStorage, chest_type: String, chest_i
 		for raw_rule in rules:
 			if not raw_rule is Dictionary:
 				continue
-			cumulative += maxf(0.0, float(raw_rule.get("概率", 0.0)))
+			cumulative += maxf(0.0, float(raw_rule.get("chance", 0.0)))
 			if roll >= minf(cumulative, 1.0):
 				continue
-			var item_id := String(raw_rule.get("物品", ""))
+			var item_id := String(raw_rule.get("item", ""))
 			if has_item(item_id):
-				var minimum := maxi(1, int(raw_rule.get("最小数量", 1)))
-				var maximum := maxi(minimum, int(raw_rule.get("最大数量", minimum)))
+				var minimum := maxi(1, int(raw_rule.get("min_count", 1)))
+				var maximum := maxi(minimum, int(raw_rule.get("max_count", minimum)))
 				var amount := mini(rng.randi_range(minimum, maximum), get_max_stack(item_id))
 				storage.slots[slot_index] = {"id": item_id, "count": amount}
 			break
 	storage.changed.emit()
 
 func drop_from_inventory(slot_index: int, world_position: Vector2) -> bool:
-	var item := inventory.take_slot(slot_index)
+	return drop_from_storage(inventory, slot_index, world_position)
+
+func drop_from_storage(storage: InventoryStorage, slot_index: int, world_position: Vector2) -> bool:
+	if not storage:
+		return false
+	var item := storage.take_slot(slot_index)
 	if item.is_empty():
 		return false
 	var sub_scene := ""
@@ -122,7 +127,7 @@ func drop_from_inventory(slot_index: int, world_position: Vector2) -> bool:
 				sub_scene = player.current_sub_scene
 				break
 	if not spawn_drop(item, world_position, "", sub_scene):
-		inventory.put_slot(slot_index, item)
+		storage.put_slot(slot_index, item)
 		return false
 	SaveManager.request_auto_save("丢弃物品")
 	return true
