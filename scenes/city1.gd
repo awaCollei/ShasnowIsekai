@@ -13,7 +13,7 @@ const DEFAULT_CITY_ZONE := "1,2"
 @export var enemy_height_above_floor: float = 40.0
 
 @export_group("Building Size")
-@export_range(1, 20, 1) var floor_count: int = 3
+@export_range(1, 20, 1) var floor_count: int = 6
 @export var building_width: float = 3200.0
 @export var room_height: float = 450.0
 @export var floor_separator_height: float = 50.0

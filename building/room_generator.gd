@@ -7,7 +7,7 @@ class_name RoomGenerator
 signal room_entered(floor_index: int, room_index: int)
 
 @export_group("Building")
-@export_range(1, 20, 1) var floor_count: int = 3
+@export_range(1, 20, 1) var floor_count: int = 6
 @export_range(100.0, 10000.0, 10.0) var building_width: float = 3200.0
 @export_range(100.0, 1000.0, 10.0) var room_height: float = 450.0
 @export_range(0.0, 200.0, 1.0) var floor_separator_height: float = 50.0
@@ -464,9 +464,10 @@ func _add_stair_portal(floor_index: int) -> void:
 	portal.portal_id = _portal_id(floor_index)
 	portal.sub_scene = floor_sub_scene(floor_index)
 	portal.portal_name = "前往%d 楼" % (floor_index + 1)
-	for target_floor in range(floor_count):
-		if target_floor != floor_index:
-			portal.target_portal_ids.append(_portal_id(target_floor))
+	if floor_index < floor_count - 1:
+		portal.target_portal_ids.append(_portal_id(floor_index + 1))
+	if floor_index > 0:
+		portal.target_portal_ids.append(_portal_id(floor_index - 1))
 	add_child(portal)
 
 
