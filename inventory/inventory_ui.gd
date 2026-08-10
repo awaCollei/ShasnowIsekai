@@ -23,7 +23,6 @@ var selected_storage: InventoryStorage
 var selected_index := -1
 var _refresh_pending := false
 var _is_open := false
-var _was_paused := false
 
 func _ready() -> void:
 	hide_inventory()
@@ -69,9 +68,7 @@ func open_chest(chest_id: String, chest_type: String, display_name: String, capa
 
 func _begin_open() -> void:
 	if not _is_open:
-		_was_paused = get_tree().paused
 		_is_open = true
-		get_tree().paused = true
 
 func hide_inventory() -> void:
 	visible = false
@@ -80,7 +77,6 @@ func hide_inventory() -> void:
 	_clear_selection()
 	if _is_open:
 		_is_open = false
-		get_tree().paused = _was_paused
 
 func move_item(from: InventoryStorage, from_index: int, to: InventoryStorage, to_index: int) -> void:
 	if not from or not to or from_index == to_index and from == to:
