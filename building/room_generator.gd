@@ -8,6 +8,8 @@ signal room_entered(floor_index: int, room_index: int)
 
 @export_group("Building")
 @export_range(1, 20, 1) var floor_count: int = 6
+## 同一 zone 内存在多个建筑生成器时必须分别设置稳定值。
+@export var building_instance_id: String = "main"
 @export_range(100.0, 10000.0, 10.0) var building_width: float = 3200.0
 @export_range(100.0, 1000.0, 10.0) var room_height: float = 450.0
 @export_range(0.0, 200.0, 1.0) var floor_separator_height: float = 50.0
@@ -42,6 +44,7 @@ const AIR_WALL_SCENE: PackedScene = preload("res://components/wall.tscn")
 const TEXTURED_WALL_SCENE: PackedScene = preload("res://components/textured_wall.tscn")
 const PORTAL_SCENE: PackedScene = preload("res://components/portal.tscn")
 const INVESTIGATION_POINT_SCENE: PackedScene = preload("res://components/investigation_point.tscn")
+const CHEST_SCENE: PackedScene = preload("res://components/chest.tscn")
 const LAYOUT_VERSION := 4
 const GROUND_ENTRANCE_HEIGHT := 240.0
 const ROOMS_JSON_PATH := "res://building/rooms.json"
@@ -109,10 +112,9 @@ func register_rooms() -> void:
 
 		# 将 JSON 数组形式的 position 转为 Vector2
 		for pt in room.get("investigation_points", []):
-			if pt is Dictionary and pt.has("position") and pt["position"] is Array:
-				var arr: Array = pt["position"]
-				if arr.size() >= 2:
-					pt["position"] = Vector2(float(arr[0]), float(arr[1]))
+			_convert_relative_position(pt)
+		for chest_data in room.get("chests", []):
+			_convert_relative_position(chest_data)
 
 		room_registry.append(room)
 
@@ -120,6 +122,12 @@ func register_rooms() -> void:
 	if not building_config_available:
 		push_warning("区域没有完整建筑配置，跳过生成: %s / %s" % [scene_id, zone_type])
 
+
+func _convert_relative_position(data) -> void:
+	if data is Dictionary and data.has("position") and data["position"] is Array:
+		var arr: Array = data["position"]
+		if arr.size() >= 2:
+			data["position"] = Vector2(float(arr[0]), float(arr[1]))
 
 func room_probability(room: Dictionary, _floor_index: int) -> float:
 	return maxf(0.0, float(room.get("weight", 1.0)))
@@ -315,7 +323,7 @@ func _spawn_room(data: Dictionary, floor_index: int, room_index: int) -> void:
 	background.z_index = -10
 	room_root.add_child(background)
 
-	_create_room_content(room_root, room_id, floor_index, width)
+	_create_room_content(room_root, room_id, floor_index, room_index, width)
 
 	# 只在非最右侧房间添加右墙，但墙壁现在在间隔区域中
 	var row: Array = zone_state["rooms"][floor_index]
@@ -362,7 +370,7 @@ func _find_room_data(room_id: String) -> Dictionary:
 	return {}
 
 
-func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, room_width: float) -> void:
+func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, room_index: int, room_width: float) -> void:
 	var room_data := _find_room_data(room_id)
 	if room_data.is_empty():
 		return
@@ -402,6 +410,38 @@ func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, 
 		ip.investigation_name = String(pt.get("investigation_name", ""))
 		ip.sub_scene = sub
 		content.add_child(ip)
+
+	var room_chests: Array = room_data.get("chests", [])
+	for chest_index in range(room_chests.size()):
+		var raw_chest = room_chests[chest_index]
+		if not raw_chest is Dictionary:
+			continue
+		var chest := CHEST_SCENE.instantiate() as Chest
+		if not chest:
+			continue
+		chest.position = raw_chest.get("position", Vector2.ZERO)
+		var generated_type := String(raw_chest.get("type", ""))
+		chest.chest_id = _dynamic_chest_id(room_id, generated_type, floor_index, room_index, chest_index)
+		chest.chest_type = generated_type
+		chest.display_name = String(raw_chest.get("name", "箱子"))
+		chest.capacity = maxi(1, int(raw_chest.get("capacity", 24)))
+		chest.infinite_storage = bool(raw_chest.get("infinite", false))
+		chest.sub_scene = sub
+		content.add_child(chest)
+
+
+func _dynamic_chest_id(room_id: String, chest_type: String, floor_index: int, room_index: int, chest_index: int) -> String:
+	# 长度前缀编码不会像简单 replace 那样让 `1,2` 与 `1_2` 发生碰撞。
+	# room/type/region/layout 纳入身份后，布局或配置改变不会误用旧种类箱子的内容。
+	var identity_parts: Array[String] = [
+		scene_id, zone_id, zone_type, building_instance_id,
+		str(LAYOUT_VERSION), room_id, chest_type,
+		str(floor_index), str(room_index), str(chest_index),
+	]
+	var encoded: Array[String] = []
+	for part in identity_parts:
+		encoded.append("%d:%s" % [part.length(), part])
+	return "dyn_chest|" + "|".join(encoded)
 
 
 func _room_x(floor_index: int, room_index: int) -> float:

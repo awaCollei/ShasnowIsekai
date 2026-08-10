@@ -47,8 +47,9 @@ func _on_overwrite_confirmed() -> void:
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	# 设置菜单打开时，不处理 ESC（交给设置菜单处理）
-	if _settings_menu:
+	# 设置菜单或背包打开时不处理 ESC，避免两个暂停层互相覆盖状态。
+	var inventory_ui := get_node_or_null("/root/InventoryUI")
+	if _settings_menu or (inventory_ui and inventory_ui.visible):
 		return
 
 	if event is InputEventKey and event.pressed and not event.echo:

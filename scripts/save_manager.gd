@@ -26,6 +26,7 @@ class SaveData:
 	## key 为地图场景路径；即使 enemies 为空也代表该地图已初始化/已清理。
 	var enemy_maps: Dictionary = {}
 	var map_state: Dictionary = {}
+	var inventory_state: Dictionary = {}
 	var has_data: bool = false
 
 # 当前是否在游戏中（非主菜单）
@@ -70,6 +71,7 @@ func save_game(slot: int) -> bool:
 	# 整体保存可保留此前访问过的其他地图；空 enemies 数组也是有效状态。
 	config.set_value("enemy_maps", "states", data.enemy_maps)
 	config.set_value("world_map", "state", data.map_state)
+	config.set_value("inventory", "state", data.inventory_state)
 
 	# 保存任务进度
 	for quest_id in data.quest_progress:
@@ -150,6 +152,8 @@ func load_save_info(slot: int) -> SaveData:
 	data.enemy_maps = saved_enemy_maps.duplicate(true) if saved_enemy_maps is Dictionary else {}
 	var saved_map_state = config.get_value("world_map", "state", {})
 	data.map_state = saved_map_state.duplicate(true) if saved_map_state is Dictionary else {}
+	var saved_inventory = config.get_value("inventory", "state", {})
+	data.inventory_state = saved_inventory.duplicate(true) if saved_inventory is Dictionary else {}
 	data.has_data = true
 
 	# 读取任务进度
@@ -167,12 +171,17 @@ func load_game(slot: int) -> void:
 	if not info.has_data:
 		push_error("槽位 %d 没有存档数据" % slot)
 		return
+	# 在覆盖当前会话数据前验证目标场景，损坏存档读档失败时不污染背包和世界状态。
+	if info.scene_path.is_empty() or not ResourceLoader.exists(info.scene_path):
+		push_error("存档场景不存在: %s" % info.scene_path)
+		return
 
 	current_slot = slot if slot != AUTO_SAVE_SLOT else -1
 	current_scene_path = info.scene_path
 	current_zone_id = info.zone_id
 	runtime_enemy_maps = info.enemy_maps.duplicate(true)
 	runtime_map_state = MapState.ensure(info.map_state.duplicate(true))
+	InventoryManager.load_data(info.inventory_state)
 	is_loading_game = true
 
 	# 关闭暂停菜单
@@ -195,6 +204,8 @@ func load_game(slot: int) -> void:
 	await get_tree().process_frame
 	_restore_player(info)
 	is_loading_game = false
+	# 旧存档可能在场景初始化时新增动态箱子；读档结束后补一份自动存档。
+	request_auto_save("读档后同步动态内容")
 
 
 # 开始新游戏
@@ -205,6 +216,7 @@ func start_new_game() -> void:
 	current_zone_id = MapState.BASE_ID
 	runtime_enemy_maps.clear()
 	runtime_map_state = MapState.create_new()
+	InventoryManager.reset()
 
 	# 重置任务进度
 	_reset_quest_progress()
@@ -429,6 +441,7 @@ func _collect_save_data(slot: int) -> SaveData:
 	]
 	data.enemy_maps = runtime_enemy_maps.duplicate(true)
 	data.map_state = MapState.ensure(runtime_map_state.duplicate(true))
+	data.inventory_state = InventoryManager.serialize()
 
 	# 收集任务进度
 	var plot_mgr = get_node_or_null("/root/PlotlineManager")

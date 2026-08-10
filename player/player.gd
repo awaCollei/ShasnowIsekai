@@ -95,7 +95,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	var direction := Input.get_axis("ui_left", "ui_right")
+	var direction := Input.get_axis("move_left", "move_right")
 
 	# ======================
 	# 始终疾跑检测

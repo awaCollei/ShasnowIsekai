@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bhk8g7l1pse8f" path="res://components/portal.tscn" id="7_portal"]
 [ext_resource type="PackedScene" uid="uid://cmg4bseg87hut" path="res://components/wall.tscn" id="8_wall"]
 [ext_resource type="PackedScene" path="res://components/investigation_point.tscn" id="8_xejcm"]
+[ext_resource type="PackedScene" path="res://components/chest.tscn" id="9_chest"]
 
 [node name="Main" type="Node2D" unique_id=1532273606]
 script = ExtResource("6_base_script")
@@ -117,6 +118,14 @@ sub_scene = "outdoor"
 [node name="RightWall2" parent="IndoorArea" unique_id=602538165 instance=ExtResource("8_wall")]
 position = Vector2(366, 200)
 sub_scene = "floor2"
+
+[node name="RVWarehouse" parent="." instance=ExtResource("9_chest")]
+position = Vector2(80, 540)
+chest_id = "rv_warehouse"
+chest_type = "warehouse"
+display_name = "房车仓库"
+infinite_storage = true
+sub_scene = "indoor"
 
 [node name="InvestigationPoint" type="Node2D" parent="." unique_id=347995260]
 

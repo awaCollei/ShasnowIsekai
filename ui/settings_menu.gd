@@ -9,7 +9,7 @@ signal closed
 
 const BINDING_ACTIONS: Array[String] = [
 	"move_up", "move_down", "move_left", "move_right",
-	"interact", "select_prev", "select_next", "menu",
+	"interact", "inventory", "select_prev", "select_next", "menu",
 	"attack", "chant", "dodge", "confirm"
 ]
 

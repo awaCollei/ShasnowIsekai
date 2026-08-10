@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://components/chest.gd" id="1"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(110, 95)
+
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(0.17, 0.09, 0.24, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.78, 0.62, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Chest" type="Area2D"]
+script = ExtResource("1")
+collision_layer = 0
+collision_mask = 1
+
+[node name="Visual" type="Panel" parent="."]
+offset_left = -50.0
+offset_top = -36.0
+offset_right = 50.0
+offset_bottom = 36.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("2")
+
+[node name="Label" type="Label" parent="Visual"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "储物箱"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")

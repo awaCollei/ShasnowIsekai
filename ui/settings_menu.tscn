@@ -230,6 +230,22 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "→"
 
+[node name="Row_inventory" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_inventory"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "背包"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_inventory"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "E"
+
 [node name="Row_interact" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=1391538081]
 layout_mode = 2
 theme_override_constants/separation = 12

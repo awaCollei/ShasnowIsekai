@@ -4,7 +4,7 @@ class_name MapState
 const WIDTH := 7
 const HEIGHT := 6
 const BASE_ID := "base"
-const VERSION := 3
+const VERSION := 4
 
 static func create_new() -> Dictionary:
 	var zones := {}
@@ -20,7 +20,7 @@ static func create_new() -> Dictionary:
 			zones[id] = _new_zone("city1", pool[index])
 			index += 1
 	var base := _new_zone("base", "camp", true)
-	return {"version": VERSION, "width": WIDTH, "height": HEIGHT, "base": base, "zones": zones}
+	return {"version": VERSION, "width": WIDTH, "height": HEIGHT, "loot_seed": rng.randi(), "base": base, "zones": zones}
 
 static func _new_zone(scene: String, region_type: String, visited := false) -> Dictionary:
 	return {"scene":scene, "region":scene, "region_type":region_type, "discovered":visited, "entered":visited, "visit_count":1 if visited else 0, "rooms":[], "enemies":[], "enemy_initialized":false}
@@ -28,6 +28,8 @@ static func _new_zone(scene: String, region_type: String, visited := false) -> D
 static func ensure(data: Dictionary) -> Dictionary:
 	if data.is_empty() or not data.has("zones") or not data["zones"] is Dictionary: return create_new()
 	data["version"] = VERSION; data["width"] = WIDTH; data["height"] = HEIGHT
+	# 旧存档使用固定兼容种子，确保未保存的新箱子下次读取时仍生成相同内容。
+	if not data.has("loot_seed"): data["loot_seed"] = 1357911
 	return data
 
 static func zone_id(x: int, y: int) -> String: return "%d,%d" % [x, y]

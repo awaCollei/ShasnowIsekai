@@ -44,6 +44,9 @@ func _ready() -> void:
 		# 立即登记运行时状态，避免未保存时往返地图造成重复刷新。
 		SaveManager.capture_enemy_map(self)
 	_bind_existing_enemies()
+	# _ready 时 SceneManager.scene_changed 尚未必完成，直接由当前路径解析 ID。
+	var inventory_scene_id := SceneRegistry.find_scene_id_by_path(scene_file_path)
+	InventoryManager.restore_scene_drops(inventory_scene_id)
 
 	# 多态扩展点：子场景只覆写自己需要的部分。
 	_trigger_scene_plot()
