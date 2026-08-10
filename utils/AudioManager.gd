@@ -24,6 +24,7 @@ var _looping_sfx_players: Array[AudioStreamPlayer] = []
 func _ready() -> void:
 	add_child(bgm_player)
 	bgm_player.name = "BGMPlayer"
+	bgm_player.process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 ## 播放游戏音效（支持重叠播放）

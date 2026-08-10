@@ -70,6 +70,7 @@ func open() -> void:
 	is_open = true
 	visible = true
 	get_tree().paused = true
+	AudioManager.pause_bgm()
 	_show_main_menu()
 
 
@@ -77,6 +78,7 @@ func close() -> void:
 	is_open = false
 	visible = false
 	get_tree().paused = false
+	AudioManager.resume_bgm()
 
 
 func _show_main_menu() -> void:
