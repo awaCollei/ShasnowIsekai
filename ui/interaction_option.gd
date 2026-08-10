@@ -17,6 +17,9 @@ var is_selected: bool = false
 func _ready() -> void:
 	# 只让根节点接收点击，避免子 Label 抢走 GUI 输入。
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	# 同步当前交互键绑定
+	if key_label:
+		key_label.text = SettingsManager.get_key_name("interact")
 	set_selected(false)
 
 func set_text(text: String) -> void:
