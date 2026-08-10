@@ -33,17 +33,17 @@ var room_registry: Array[Dictionary] = []
 var generated_rooms: Array[Dictionary] = []
 var zone_id := "0,2"
 var zone_state: Dictionary = {}
+var scene_id := ""
+var zone_type := ""
+var building_config: Dictionary = {}
+var building_config_available := false
 
 const AIR_WALL_SCENE: PackedScene = preload("res://components/wall.tscn")
 const TEXTURED_WALL_SCENE: PackedScene = preload("res://components/textured_wall.tscn")
 const PORTAL_SCENE: PackedScene = preload("res://components/portal.tscn")
 const INVESTIGATION_POINT_SCENE: PackedScene = preload("res://components/investigation_point.tscn")
-const LAYOUT_VERSION := 3  # 版本号增加，因为布局算法变了
+const LAYOUT_VERSION := 4
 const GROUND_ENTRANCE_HEIGHT := 240.0
-
-## 硬编码的场景和区域类型；后续区域类型完成后改为动态选择。
-const CUR_SCENE := "city1"
-const CUR_ZONE_TYPE := "office_building"
 const ROOMS_JSON_PATH := "res://building/rooms.json"
 
 var floor_pitch: float:
@@ -52,11 +52,16 @@ var floor_pitch: float:
 
 
 func _ready() -> void:
-	register_rooms()
+	# 配置依赖区域状态，因此在 generate() 中加载，而不是在节点 ready 时加载。
+	pass
 
 
 ## 从 rooms.json 加载房间配置，动态计算纹理路径和图片宽度。地图子类可以覆写此函数。
 func register_rooms() -> void:
+	room_registry.clear()
+	building_config_available = false
+	if scene_id.is_empty() or zone_type.is_empty():
+		return
 	var file := FileAccess.open(ROOMS_JSON_PATH, FileAccess.READ)
 	if not file:
 		push_error("无法读取房间配置: %s" % ROOMS_JSON_PATH)
@@ -69,13 +74,19 @@ func register_rooms() -> void:
 		push_error("房间配置 JSON 解析失败: %s" % ROOMS_JSON_PATH)
 		return
 
+	if not json.data is Dictionary:
+		push_error("房间配置根节点必须是对象")
+		return
 	var root: Dictionary = json.data
-	var scene_data: Dictionary = root.get(CUR_SCENE, {})
-	var zone_data: Dictionary = scene_data.get(CUR_ZONE_TYPE, {})
+	var scene_data: Dictionary = root.get(scene_id, {})
+	var zone_data: Dictionary = scene_data.get(zone_type, {})
+	if zone_data.is_empty():
+		return
+	building_config = zone_data
 	var raw_rooms: Array = zone_data.get("rooms", [])
 
 	if raw_rooms.is_empty():
-		push_error("房间配置为空: %s / %s" % [CUR_SCENE, CUR_ZONE_TYPE])
+		push_error("房间配置为空: %s / %s" % [scene_id, zone_type])
 		return
 
 	room_registry.clear()
@@ -85,8 +96,8 @@ func register_rooms() -> void:
 		var room: Dictionary = raw.duplicate(true)
 		var room_id := String(raw.get("id", ""))
 
-		# 动态拼接纹理路径: res://assets/{场景}/rooms/{区域类型}/{ID}.png
-		room["texture"] = "res://assets/%s/rooms/%s/%s.png" % [CUR_SCENE, CUR_ZONE_TYPE, room_id]
+		# 动态拼接纹理路径: res://assets/{场景}/{区域类型}/{ID}.png
+		room["texture"] = "res://assets/%s/%s/%s.png" % [scene_id, zone_type, room_id]
 
 		# 动态计算 width：加载纹理获取图片宽度
 		var tex := load(room["texture"]) as Texture2D
@@ -100,9 +111,14 @@ func register_rooms() -> void:
 		for pt in room.get("investigation_points", []):
 			if pt is Dictionary and pt.has("position") and pt["position"] is Array:
 				var arr: Array = pt["position"]
-				pt["position"] = Vector2(float(arr[0]), float(arr[1]))
+				if arr.size() >= 2:
+					pt["position"] = Vector2(float(arr[0]), float(arr[1]))
 
 		room_registry.append(room)
+
+	building_config_available = not room_registry.is_empty() and not _find_room_by_id("楼梯间").is_empty()
+	if not building_config_available:
+		push_warning("区域没有完整建筑配置，跳过生成: %s / %s" % [scene_id, zone_type])
 
 
 func room_probability(room: Dictionary, _floor_index: int) -> float:
@@ -112,13 +128,21 @@ func room_probability(room: Dictionary, _floor_index: int) -> float:
 func generate(state: Dictionary, id: String) -> void:
 	zone_id = id
 	zone_state = state
+	scene_id = String(state.get("scene", "city1"))
+	zone_type = String(state.get("region_type", ""))
+	register_rooms()
 	_clear_generated_building()
+	if not building_config_available:
+		return
+	_apply_building_config()
 
 	var layouts: Array = zone_state.get("rooms", [])
 	if not _layout_is_current(layouts):
 		layouts = _create_layout()
 		zone_state["rooms"] = layouts
 		zone_state["room_layout_version"] = LAYOUT_VERSION
+		zone_state["room_layout_scene"] = scene_id
+		zone_state["room_layout_zone_type"] = zone_type
 
 	for floor_index in range(floor_count):
 		var row: Array = layouts[floor_index]
@@ -132,6 +156,10 @@ func generate(state: Dictionary, id: String) -> void:
 	_add_floor_separator(floor_count)
 
 	_add_outer_walls()
+
+
+func has_building_config() -> bool:
+	return building_config_available
 
 
 func floor_sub_scene(floor_index: int) -> String:
@@ -168,6 +196,8 @@ func _clear_generated_building() -> void:
 
 func _layout_is_current(layouts: Array) -> bool:
 	if int(zone_state.get("room_layout_version", 0)) != LAYOUT_VERSION:
+		return false
+	if String(zone_state.get("room_layout_scene", "")) != scene_id or String(zone_state.get("room_layout_zone_type", "")) != zone_type:
 		return false
 	if layouts.size() != floor_count:
 		return false
@@ -218,22 +248,27 @@ func _create_layout() -> Array:
 				break
 			var width: float
 			if String(selected.get("id", "")) == "空房间":
-				width = minf(float(selected.get("width", remaining)), remaining)
+				width = minf(minf(float(selected.get("width", remaining)), _empty_room_max_width(remaining)), remaining)
 			else:
 				width = float(selected.get("width", remaining))
 			row.append({"id": String(selected.get("id", "空房间")), "width_px": width, "entered": false})
 			used_width += width
 
-		# 处理剩余宽度
-		if used_width < building_width:
-			var gaps_so_far := float(row.size()) * room_gap
-			var remaining := building_width - used_width - gaps_so_far
-			if remaining > 0:
-				# 空房间吸收余量；如果最后一间不是空房间则追加一间空房间。
-				if row.size() == 1 or String(row[row.size() - 1].get("id", "")) != "空房间":
-					row.append({"id": empty_id, "width_px": remaining, "entered": false})
-				else:
-					row[row.size() - 1]["width_px"] = float(row[row.size() - 1]["width_px"]) + remaining
+		# 处理剩余宽度：空房间的最大宽度按本建筑动态计算，必要时分成多个槽位。
+		# 选择下一间时要预留新间隔；实际填充时只扣除已有的间隔，避免
+		# 在“剩余宽度小于一个间隔”时留下未填充的尾部。
+		var remaining := building_width - used_width - float(row.size()) * room_gap
+		while remaining > 0.0 and row.size() < max_rooms_per_floor:
+			var empty_width := minf(remaining, _empty_room_max_width(remaining))
+			row.append({"id": empty_id, "width_px": empty_width, "entered": false})
+			used_width += empty_width
+			remaining = building_width - used_width - float(row.size()) * room_gap
+
+		# 只要还存在可用宽度，就由最后一个槽位吸收它。这里使用
+		# (房间数 - 1) 个间隔，而不是 row.size() 个，确保布局精确填满。
+		remaining = building_width - used_width - float(row.size() - 1) * room_gap
+		if remaining > 0.0 and not row.is_empty():
+			row[row.size() - 1]["width_px"] = float(row[row.size() - 1]["width_px"]) + remaining
 		result.append(row)
 	return result
 
@@ -458,9 +493,13 @@ func _add_stair_portal(floor_index: int) -> void:
 	var portal := PORTAL_SCENE.instantiate() as Portal
 	if not portal:
 		return
-	var row: Array = zone_state["rooms"][floor_index]
-	var actual_stairwell_width := float(row[0].get("width_px", building_width))
-	portal.position = Vector2(actual_stairwell_width * 0.25, floor_y(floor_index) - stair_portal_height)
+	var portal_pos: Array = building_config.get("portal_positions", [])
+	if portal_pos.size() >= 2:
+		portal.position = Vector2(float(portal_pos[0]), floor_y(floor_index) + float(portal_pos[1]))
+	else:
+		var row: Array = zone_state["rooms"][floor_index]
+		var actual_stairwell_width := float(row[0].get("width_px", building_width))
+		portal.position = Vector2(actual_stairwell_width * 0.25, floor_y(floor_index) - stair_portal_height)
 	portal.portal_id = _portal_id(floor_index)
 	portal.sub_scene = floor_sub_scene(floor_index)
 	portal.portal_name = "前往%d 楼" % (floor_index + 1)
@@ -480,6 +519,26 @@ func _room_id_exists(room_id: String) -> bool:
 		if String(room.get("id", "")) == room_id:
 			return true
 	return false
+
+
+func _apply_building_config() -> void:
+	floor_count = maxi(1, int(building_config.get("floor_count", floor_count)))
+	var stairwell := _find_room_by_id("楼梯间")
+	# 楼梯间宽度优先使用配置，否则取楼梯间贴图的自然宽度。
+	if building_config.has("stairwell_width"):
+		stairwell_width = float(building_config["stairwell_width"])
+	elif stairwell.has("width"):
+		stairwell_width = float(stairwell["width"])
+
+
+func _empty_room_max_width(remaining_width: float) -> float:
+	# 空房间不再依赖固定宽度；上限随建筑剩余空间和可用房间槽位变化。
+	var configured := float(building_config.get("empty_room_max_width", 0.0))
+	if configured > 0.0:
+		return configured
+	var slots := maxi(1, max_rooms_per_floor - 1)
+	var calculated := (building_width - stairwell_width - float(slots) * room_gap) / float(slots)
+	return maxf(1.0, calculated)
 
 
 func _find_room_by_id(room_id: String) -> Dictionary:

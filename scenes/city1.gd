@@ -42,6 +42,10 @@ func _spawn_scene_entities() -> void:
 	if not room_generator:
 		return
 	room_generator.generate(current_zone_state, active_zone_id)
+	if not room_generator.has_building_config():
+		# residential/market 等尚未完成的区域不生成伪建筑，也不生成建筑内敌人。
+		_write_zone_state()
+		return
 
 	if current_zone_state.get("enemies", []).is_empty() and not bool(current_zone_state.get("enemy_initialized", false)):
 		_spawn_zone_enemies()
@@ -66,7 +70,7 @@ func _prepare_zone_state() -> void:
 	current_zone_state = zones.get(active_zone_id, {})
 	if current_zone_state.is_empty():
 		current_zone_state = {
-			"scene": "city1", "region": "city1", "discovered": true,
+			"scene": "city1", "region": "city1", "region_type": "office", "discovered": true,
 			"entered": true, "rooms": [], "enemies": [], "enemy_initialized": false,
 		}
 		zones[active_zone_id] = current_zone_state

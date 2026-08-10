@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bp8drhhtvfq7n"
-path="res://.godot/imported/办公室.png-3cf2846ca15e9cf9e2d2d557f79d6fa7.ctex"
+uid="uid://co587h6p3j4sd"
+path="res://.godot/imported/楼梯间.png-893672ea5c69d09b92df1fb381a4fe92.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/city1/rooms/office_building/办公室.png"
-dest_files=["res://.godot/imported/办公室.png-3cf2846ca15e9cf9e2d2d557f79d6fa7.ctex"]
+source_file="res://assets/city1/office/楼梯间.png"
+dest_files=["res://.godot/imported/楼梯间.png-893672ea5c69d09b92df1fb381a4fe92.ctex"]
 
 [params]
 

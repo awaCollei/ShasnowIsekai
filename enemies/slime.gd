@@ -12,7 +12,7 @@ class_name Slime
 @export_group("战斗")
 @export var move_speed := 105.0
 @export var attack_damage := 12.0
-@export var attack_hit_frame := 7
+@export var attack_hit_frame := 9
 @export var attack_cooldown := 0.8
 @export var starts_facing_right := false
 

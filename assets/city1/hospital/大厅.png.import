@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8eebcfr0ia1j"
-path="res://.godot/imported/机房.png-27c1413914e5d17151d07cd988d93263.ctex"
+uid="uid://brvt1drnnbd0x"
+path="res://.godot/imported/大厅.png-00228b93327efe173d05f20339cfcf79.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/city1/rooms/office_building/机房.png"
-dest_files=["res://.godot/imported/机房.png-27c1413914e5d17151d07cd988d93263.ctex"]
+source_file="res://assets/city1/hospital/大厅.png"
+dest_files=["res://.godot/imported/大厅.png-00228b93327efe173d05f20339cfcf79.ctex"]
 
 [params]
 

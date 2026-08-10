@@ -57,7 +57,7 @@ enemy_y = floor_y - enemy_height_above_floor
 
 ## 房间资源制作约定
 
-每个 `rooms/city1/*.tscn` 的根节点都以房间**左下角地板**为 `(0, 0)`：
+每个 `city1/*.tscn` 的根节点都以房间**左下角地板**为 `(0, 0)`：
 
 - X 从 `0` 向右；
 - Y 从 `-400` 到 `0`；

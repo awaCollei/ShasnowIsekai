@@ -7,8 +7,8 @@
 [ext_resource type="Script" uid="uid://bb6d1us42vdv7" path="res://player/animation.gd" id="5_anim"]
 [ext_resource type="Script" uid="uid://cmwkty0se2aee" path="res://player/magic_chant_effect.gd" id="6_chant_fx"]
 [ext_resource type="Script" uid="uid://bu7qbeo76b04u" path="res://player/magic_blade.gd" id="7_magic_blade"]
-[ext_resource type="Script" path="res://player/run_wind_effect.gd" id="8_run_wind_fx"]
-[ext_resource type="Script" path="res://ui/player_status_hud.gd" id="9_status_hud"]
+[ext_resource type="Script" uid="uid://bmaiwyhkohbot" path="res://player/run_wind_effect.gd" id="8_run_wind_fx"]
+[ext_resource type="Script" uid="uid://0dfdvb7ywgpv" path="res://ui/player_status_hud.gd" id="9_status_hud"]
 
 [sub_resource type="RectangleShape2D" id="AttackShape"]
 size = Vector2(121.5, 120)
@@ -48,7 +48,7 @@ shape = SubResource("MagicBladeShape")
 [node name="MagicChantEffect" type="Node2D" parent="." unique_id=102691671]
 script = ExtResource("6_chant_fx")
 
-[node name="RunWindEffect" type="Node2D" parent="."]
+[node name="RunWindEffect" type="Node2D" parent="." unique_id=920324436]
 script = ExtResource("8_run_wind_fx")
 
 [node name="PlayerAnimation" type="Node" parent="." unique_id=945792146]
@@ -60,10 +60,10 @@ script = ExtResource("4_batk_script")
 [node name="MagicBlade" type="Node2D" parent="." unique_id=240688494]
 script = ExtResource("7_magic_blade")
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1569120007]
 layer = 20
 
-[node name="PlayerStatusHUD" type="Control" parent="HUD"]
+[node name="PlayerStatusHUD" type="Control" parent="HUD" unique_id=895501142]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
