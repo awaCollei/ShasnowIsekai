@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgjdlh47ah10n"
-path="res://.godot/imported/茶水间.png-96f38386738294650b97fdcdcc70df1d.ctex"
+path="res://.godot/imported/茶水间.png-e327bf844489db878acffc746c5ff4d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/city1/rooms/茶水间.png"
-dest_files=["res://.godot/imported/茶水间.png-96f38386738294650b97fdcdcc70df1d.ctex"]
+source_file="res://assets/city1/rooms/office_building/茶水间.png"
+dest_files=["res://.godot/imported/茶水间.png-e327bf844489db878acffc746c5ff4d7.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8eebcfr0ia1j"
-path="res://.godot/imported/机房.png-acf48b6ba027d35530349758581ed034.ctex"
+path="res://.godot/imported/机房.png-27c1413914e5d17151d07cd988d93263.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/city1/rooms/机房.png"
-dest_files=["res://.godot/imported/机房.png-acf48b6ba027d35530349758581ed034.ctex"]
+source_file="res://assets/city1/rooms/office_building/机房.png"
+dest_files=["res://.godot/imported/机房.png-27c1413914e5d17151d07cd988d93263.ctex"]
 
 [params]
 

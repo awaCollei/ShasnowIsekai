@@ -1,0 +1,51 @@
+{
+  "city1": {
+    "office_building": {
+      "rooms": [
+        {
+          "id": "楼梯间",
+          "weight": 0.0,
+          "role": "stairwell"
+        },
+        {
+          "id": "空房间",
+          "weight": 0.1,
+          "role": "empty"
+        },
+        {
+          "id": "茶水间",
+          "weight": 1.0,
+          "investigation_points": [
+            {
+              "position": [320, -40],
+              "investigation_id": "city1_sample",
+              "message": "这里是 city1 的调查点示例。",
+              "investigation_name": "调查房间"
+            }
+          ]
+        },
+        {
+          "id": "办公室",
+          "weight": 1.0,
+          "investigation_points": [
+            {
+              "position": [320, -40],
+              "investigation_id": "city1_sample",
+              "message": "这里是 city1 的调查点示例。",
+              "investigation_name": "调查房间"
+            }
+          ]
+        },
+        {
+          "id": "办公室2",
+          "weight": 1.0
+        },
+        {
+          "id": "机房",
+          "weight": 1.0
+        }
+
+      ]
+    }
+  }
+}

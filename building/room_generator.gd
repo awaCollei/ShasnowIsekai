@@ -40,6 +40,11 @@ const INVESTIGATION_POINT_SCENE: PackedScene = preload("res://components/investi
 const LAYOUT_VERSION := 2
 const GROUND_ENTRANCE_HEIGHT := 240.0
 
+## 硬编码的场景和区域类型；后续区域类型完成后改为动态选择。
+const CUR_SCENE := "city1"
+const CUR_ZONE_TYPE := "office_building"
+const ROOMS_JSON_PATH := "res://building/rooms.json"
+
 var floor_pitch: float:
 	get:
 		return room_height + floor_separator_height
@@ -49,49 +54,54 @@ func _ready() -> void:
 	register_rooms()
 
 
-## width 的单位是像素，不再是“槽位数量”。地图子类可以覆写此表。
+## 从 rooms.json 加载房间配置，动态计算纹理路径和图片宽度。地图子类可以覆写此函数。
 func register_rooms() -> void:
-	room_registry = [
-		{
-			"id": "stairwell",
-			"texture": "res://assets/city1/rooms/offer_building/楼梯间.png",
-			"weight": 0.0,
-		},
-		{
-			"id": "empty",
-			"texture": "res://assets/city1/rooms/offer_building/empty.png",
-			"width": 938.0,
-			"weight": 0.5,
-		},
-		{
-			"id": "room1",
-			"texture": "res://assets/city1/rooms/offer_building/茶水间.png",
-			"width": 943.0,
-			"weight": 1.0,
-			"investigation_points": [
-				{
-					"position": Vector2(320, -40),
-					"investigation_id": "city1_sample",
-					"message": "这里是 city1 的调查点示例。",
-					"investigation_name": "调查房间",
-				},
-			],
-		},
-		{
-			"id": "room2",
-			"texture": "res://assets/city1/rooms/offer_building/办公室.png",
-			"width": 1329.0,
-			"weight": 1.0,
-			"investigation_points": [
-				{
-					"position": Vector2(320, -40),
-					"investigation_id": "city1_sample",
-					"message": "这里是 city1 的调查点示例。",
-					"investigation_name": "调查房间",
-				},
-			],
-		},
-	]
+	var file := FileAccess.open(ROOMS_JSON_PATH, FileAccess.READ)
+	if not file:
+		push_error("无法读取房间配置: %s" % ROOMS_JSON_PATH)
+		return
+
+	var json := JSON.new()
+	var error := json.parse(file.get_as_text())
+	file.close()
+	if error != OK:
+		push_error("房间配置 JSON 解析失败: %s" % ROOMS_JSON_PATH)
+		return
+
+	var root: Dictionary = json.data
+	var scene_data: Dictionary = root.get(CUR_SCENE, {})
+	var zone_data: Dictionary = scene_data.get(CUR_ZONE_TYPE, {})
+	var raw_rooms: Array = zone_data.get("rooms", [])
+
+	if raw_rooms.is_empty():
+		push_error("房间配置为空: %s / %s" % [CUR_SCENE, CUR_ZONE_TYPE])
+		return
+
+	room_registry.clear()
+	for raw in raw_rooms:
+		if not raw is Dictionary:
+			continue
+		var room: Dictionary = raw.duplicate(true)
+		var room_id := String(raw.get("id", ""))
+
+		# 动态拼接纹理路径: res://assets/{场景}/rooms/{区域类型}/{ID}.png
+		room["texture"] = "res://assets/%s/rooms/%s/%s.png" % [CUR_SCENE, CUR_ZONE_TYPE, room_id]
+
+		# 动态计算 width：加载纹理获取图片宽度
+		var tex := load(room["texture"]) as Texture2D
+		if tex:
+			room["width"] = float(tex.get_width())
+		else:
+			push_warning("无法加载房间纹理: %s，使用默认宽度" % room["texture"])
+			room["width"] = 640.0
+
+		# 将 JSON 数组形式的 position 转为 Vector2
+		for pt in room.get("investigation_points", []):
+			if pt is Dictionary and pt.has("position") and pt["position"] is Array:
+				var arr: Array = pt["position"]
+				pt["position"] = Vector2(float(arr[0]), float(arr[1]))
+
+		room_registry.append(room)
 
 
 func room_probability(room: Dictionary, _floor_index: int) -> float:
@@ -135,7 +145,7 @@ func floor_y(floor_index: int) -> float:
 func get_enemy_spawn_candidates(height_above_floor: float) -> Array[Dictionary]:
 	var candidates: Array[Dictionary] = []
 	for room in generated_rooms:
-		if String(room.get("id", "")) == "stairwell":
+		if String(room.get("role", "")) == "stairwell":
 			continue
 		var width := float(room["width"])
 		if width <= 200.0:
@@ -165,7 +175,7 @@ func _layout_is_current(layouts: Array) -> bool:
 			return false
 		if not row[0] is Dictionary:
 			return false
-		if String(row[0].get("id", "")) != "stairwell":
+		if String(row[0].get("role", "")) != "stairwell":
 			return false
 		if not is_equal_approx(float(row[0].get("width_px", 0.0)) , stairwell_width):
 			return false
@@ -181,11 +191,16 @@ func _layout_is_current(layouts: Array) -> bool:
 
 func _create_layout() -> Array:
 	var result: Array = []
+	# 找到楼梯间房间数据
+	var stairwell_room := _find_room_by_role("stairwell")
+	var stairwell_id := String(stairwell_room.get("id", "楼梯间"))
+	var empty_room := _find_room_by_role("empty")
+	var empty_id := String(empty_room.get("id", "空房间"))
 	for floor_index in range(floor_count):
 		var row: Array = []
 		var used_width := 0.0
 		var first_width := stairwell_width
-		row.append({"id": "stairwell", "width_px": first_width, "entered": false})
+		row.append({"id": stairwell_id, "role": "stairwell", "width_px": first_width, "entered": false})
 		used_width += first_width
 
 		while used_width < building_width and row.size() < max_rooms_per_floor:
@@ -194,17 +209,17 @@ func _create_layout() -> Array:
 			if selected.is_empty():
 				break
 			var width: float
-			if String(selected.get("id", "")) == "empty":
+			if String(selected.get("role", "")) == "empty":
 				width = minf(float(selected.get("width", remaining)), remaining)
 			else:
 				width = float(selected.get("width", remaining))
-			row.append({"id": String(selected.get("id", "empty")), "width_px": width, "entered": false})
+			row.append({"id": String(selected.get("id", "空房间")), "role": String(selected.get("role", "")), "width_px": width, "entered": false})
 			used_width += width
 
 		if used_width < building_width:
 			# 空房间吸收余量；如果最后一间不是空房间则追加一间空房间。
-			if row.size() == 1 or String(row[row.size() - 1].get("id", "")) != "empty":
-				row.append({"id": "empty", "width_px": building_width - used_width, "entered": false})
+			if row.size() == 1 or String(row[row.size() - 1].get("role", "")) != "empty":
+				row.append({"id": empty_id, "role": "empty", "width_px": building_width - used_width, "entered": false})
 			else:
 				row[row.size() - 1]["width_px"] = float(row[row.size() - 1]["width_px"]) + building_width - used_width
 		result.append(row)
@@ -215,9 +230,9 @@ func _choose_room(floor_index: int, remaining_width: float) -> Dictionary:
 	var choices: Array[Dictionary] = []
 	var total := 0.0
 	for room in room_registry:
-		if String(room.get("id", "")) == "stairwell":
+		if String(room.get("role", "")) == "stairwell":
 			continue
-		if String(room.get("id", "")) != "empty" and float(room.get("width", 0.0)) > remaining_width:
+		if String(room.get("role", "")) != "empty" and float(room.get("width", 0.0)) > remaining_width:
 			continue
 		var weight := room_probability(room, floor_index)
 		if weight > 0.0:
@@ -234,7 +249,7 @@ func _choose_room(floor_index: int, remaining_width: float) -> Dictionary:
 
 
 func _spawn_room(data: Dictionary, floor_index: int, room_index: int) -> void:
-	var room_id := String(data.get("id", "empty"))
+	var room_id := String(data.get("id", "空房间"))
 	var width := float(data.get("width_px", 640.0))
 	var x := _room_x(floor_index, room_index)
 	var baseline_y := floor_y(floor_index)
@@ -282,6 +297,7 @@ func _spawn_room(data: Dictionary, floor_index: int, room_index: int) -> void:
 		"floor": floor_index,
 		"room_index": room_index,
 		"id": room_id,
+		"role": String(data.get("role", "")),
 		"x": x,
 		"width": width,
 		"entered": bool(data.get("entered", false)),
@@ -313,7 +329,7 @@ func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, 
 		sprite.texture = load(texture_path) as Texture2D
 		sprite.position = Vector2(room_width * 0.5, -225.0)
 		# 空房间缩窄时裁剪贴图，两侧等量裁切以保持居中
-		if room_id == "empty":
+		if String(room_data.get("role", "")) == "empty":
 			var natural_width := float(room_data.get("width", 938.0))
 			if room_width < natural_width:
 				var tex := sprite.texture
@@ -442,3 +458,10 @@ func _room_id_exists(room_id: String) -> bool:
 		if String(room.get("id", "")) == room_id:
 			return true
 	return false
+
+
+func _find_room_by_role(role: String) -> Dictionary:
+	for room in room_registry:
+		if String(room.get("role", "")) == role:
+			return room
+	return {}
