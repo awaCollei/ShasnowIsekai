@@ -4,13 +4,11 @@
       "rooms": [
         {
           "id": "楼梯间",
-          "weight": 0.0,
-          "role": "stairwell"
+          "weight": 0.0
         },
         {
           "id": "空房间",
-          "weight": 0.1,
-          "role": "empty"
+          "weight": 0.1
         },
         {
           "id": "茶水间",

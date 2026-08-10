@@ -15,6 +15,7 @@ signal room_entered(floor_index: int, room_index: int)
 
 @export_group("Rooms")
 @export_range(2, 20, 1) var max_rooms_per_floor: int = 5
+@export_range(0.0, 100.0, 1.0) var room_gap: float = 30.0  # 新增：房间之间的间隔
 @export var unseen_color := Color(0.0, 0.0, 0.0, 1.0)
 @export var revealed_room_color := Color("252535")
 
@@ -37,7 +38,7 @@ const AIR_WALL_SCENE: PackedScene = preload("res://components/wall.tscn")
 const TEXTURED_WALL_SCENE: PackedScene = preload("res://components/textured_wall.tscn")
 const PORTAL_SCENE: PackedScene = preload("res://components/portal.tscn")
 const INVESTIGATION_POINT_SCENE: PackedScene = preload("res://components/investigation_point.tscn")
-const LAYOUT_VERSION := 2
+const LAYOUT_VERSION := 3  # 版本号增加，因为布局算法变了
 const GROUND_ENTRANCE_HEIGHT := 240.0
 
 ## 硬编码的场景和区域类型；后续区域类型完成后改为动态选择。
@@ -145,7 +146,7 @@ func floor_y(floor_index: int) -> float:
 func get_enemy_spawn_candidates(height_above_floor: float) -> Array[Dictionary]:
 	var candidates: Array[Dictionary] = []
 	for room in generated_rooms:
-		if String(room.get("role", "")) == "stairwell":
+		if String(room.get("id", "")) == "楼梯间":
 			continue
 		var width := float(room["width"])
 		if width <= 200.0:
@@ -175,7 +176,7 @@ func _layout_is_current(layouts: Array) -> bool:
 			return false
 		if not row[0] is Dictionary:
 			return false
-		if String(row[0].get("role", "")) != "stairwell":
+		if String(row[0].get("id", "")) != "楼梯间":
 			return false
 		if not is_equal_approx(float(row[0].get("width_px", 0.0)) , stairwell_width):
 			return false
@@ -184,7 +185,9 @@ func _layout_is_current(layouts: Array) -> bool:
 			if not data is Dictionary or not data.has("width_px") or not _room_id_exists(String(data.get("id", ""))):
 				return false
 			total_width += float(data["width_px"])
-		if not is_equal_approx(total_width, building_width):
+		# 考虑间隔的总宽度
+		var total_gaps := float(row.size() - 1) * room_gap
+		if not is_equal_approx(total_width + total_gaps, building_width):
 			return false
 	return true
 
@@ -192,36 +195,45 @@ func _layout_is_current(layouts: Array) -> bool:
 func _create_layout() -> Array:
 	var result: Array = []
 	# 找到楼梯间房间数据
-	var stairwell_room := _find_room_by_role("stairwell")
+	var stairwell_room := _find_room_by_id("楼梯间")
 	var stairwell_id := String(stairwell_room.get("id", "楼梯间"))
-	var empty_room := _find_room_by_role("empty")
+	var empty_room := _find_room_by_id("空房间")
 	var empty_id := String(empty_room.get("id", "空房间"))
+	
 	for floor_index in range(floor_count):
 		var row: Array = []
-		var used_width := 0.0
+		var used_width := 0.0  # 房间宽度总和，不含间隔
 		var first_width := stairwell_width
 		row.append({"id": stairwell_id, "role": "stairwell", "width_px": first_width, "entered": false})
 		used_width += first_width
 
+		# 可用宽度 = 建筑总宽 - 间隔总和
 		while used_width < building_width and row.size() < max_rooms_per_floor:
-			var remaining := building_width - used_width
+			var gaps_so_far := float(row.size()) * room_gap  # 已有房间之间的间隔
+			var remaining := building_width - used_width - gaps_so_far
+			if remaining <= 0:
+				break
 			var selected := _choose_room(floor_index, remaining)
 			if selected.is_empty():
 				break
 			var width: float
-			if String(selected.get("role", "")) == "empty":
+			if String(selected.get("id", "")) == "空房间":
 				width = minf(float(selected.get("width", remaining)), remaining)
 			else:
 				width = float(selected.get("width", remaining))
-			row.append({"id": String(selected.get("id", "空房间")), "role": String(selected.get("role", "")), "width_px": width, "entered": false})
+			row.append({"id": String(selected.get("id", "空房间")), "width_px": width, "entered": false})
 			used_width += width
 
+		# 处理剩余宽度
 		if used_width < building_width:
-			# 空房间吸收余量；如果最后一间不是空房间则追加一间空房间。
-			if row.size() == 1 or String(row[row.size() - 1].get("role", "")) != "empty":
-				row.append({"id": empty_id, "role": "empty", "width_px": building_width - used_width, "entered": false})
-			else:
-				row[row.size() - 1]["width_px"] = float(row[row.size() - 1]["width_px"]) + building_width - used_width
+			var gaps_so_far := float(row.size()) * room_gap
+			var remaining := building_width - used_width - gaps_so_far
+			if remaining > 0:
+				# 空房间吸收余量；如果最后一间不是空房间则追加一间空房间。
+				if row.size() == 1 or String(row[row.size() - 1].get("id", "")) != "空房间":
+					row.append({"id": empty_id, "width_px": remaining, "entered": false})
+				else:
+					row[row.size() - 1]["width_px"] = float(row[row.size() - 1]["width_px"]) + remaining
 		result.append(row)
 	return result
 
@@ -230,9 +242,9 @@ func _choose_room(floor_index: int, remaining_width: float) -> Dictionary:
 	var choices: Array[Dictionary] = []
 	var total := 0.0
 	for room in room_registry:
-		if String(room.get("role", "")) == "stairwell":
+		if String(room.get("id", "")) == "楼梯间":
 			continue
-		if String(room.get("role", "")) != "empty" and float(room.get("width", 0.0)) > remaining_width:
+		if String(room.get("id", "")) != "空房间" and float(room.get("width", 0.0)) > remaining_width:
 			continue
 		var weight := room_probability(room, floor_index)
 		if weight > 0.0:
@@ -270,15 +282,19 @@ func _spawn_room(data: Dictionary, floor_index: int, room_index: int) -> void:
 
 	_create_room_content(room_root, room_id, floor_index, width)
 
-	# 每间房拥有自己右侧的无碰撞贴图墙；外墙由 _add_outer_walls 单独创建。
-	if room_index < (zone_state["rooms"][floor_index] as Array).size() - 1:
+	# 只在非最右侧房间添加右墙，但墙壁现在在间隔区域中
+	var row: Array = zone_state["rooms"][floor_index]
+	if room_index < row.size() - 1:
 		_add_interior_wall(room_root, width)
 
 	var trigger := Area2D.new()
 	trigger.name = "RevealTrigger"
 	var trigger_shape := CollisionShape2D.new()
 	var rectangle := RectangleShape2D.new()
-	rectangle.size = Vector2(width, room_height)
+	# 触发区域保持房间宽度，但稍微缩小边缘
+	var trigger_width := width - wall_width * 0.5
+	var trigger_height := room_height - wall_width * 0.5
+	rectangle.size = Vector2(trigger_width, trigger_height)
 	trigger_shape.position = Vector2(width * 0.5, -room_height * 0.5)
 	trigger_shape.shape = rectangle
 	trigger.add_child(trigger_shape)
@@ -329,7 +345,7 @@ func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, 
 		sprite.texture = load(texture_path) as Texture2D
 		sprite.position = Vector2(room_width * 0.5, -225.0)
 		# 空房间缩窄时裁剪贴图，两侧等量裁切以保持居中
-		if String(room_data.get("role", "")) == "empty":
+		if String(room_data.get("id", "")) == "空房间":
 			var natural_width := float(room_data.get("width", 938.0))
 			if room_width < natural_width:
 				var tex := sprite.texture
@@ -356,8 +372,10 @@ func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, 
 func _room_x(floor_index: int, room_index: int) -> float:
 	var x := 0.0
 	var row: Array = zone_state["rooms"][floor_index]
+	# 房间位置 = 之前所有房间宽度 + 之前所有间隔
 	for index in range(room_index):
 		x += float(row[index].get("width_px", 0.0))
+		x += room_gap  # 每个房间后面跟一个间隔
 	return x
 
 
@@ -379,10 +397,12 @@ func _add_interior_wall(room_root: Node2D, room_width: float) -> void:
 	var wall := TEXTURED_WALL_SCENE.instantiate() as TexturedWall
 	if not wall:
 		return
-	wall.position = Vector2(room_width - wall_width, -room_height)
+	# 墙壁现在放置在房间右边缘 + 间隔的一半位置
+	wall.position = Vector2(room_width + room_gap * 0.5 - wall_width * 0.5, -room_height)
 	wall.wall_size = Vector2(wall_width, room_height)
 	if interior_wall_texture:
 		wall.wall_texture = interior_wall_texture
+	wall.z_index = 5
 	room_root.add_child(wall)
 
 
@@ -404,8 +424,9 @@ func _add_floor_separator(floor_index: int) -> void:
 func _add_outer_walls() -> void:
 	var top_y := floor_y(floor_count - 1) - room_height
 	var total_height := -top_y
-	# 左墙在一楼保留入口，否则玩家从建筑外无法进入第一个楼梯间。
+	# 左墙在一楼保留入口
 	_add_outer_wall(Vector2(0.0, top_y), Vector2(wall_width, maxf(1.0, total_height - GROUND_ENTRANCE_HEIGHT)))
+	# 右墙从顶部到底部
 	_add_outer_wall(Vector2(building_width - wall_width, top_y), Vector2(wall_width, total_height))
 
 
@@ -420,7 +441,7 @@ func _add_outer_wall(wall_position: Vector2, size: Vector2) -> void:
 	wall.z_index = 30
 	add_child(wall)
 
-	# 视觉墙：用 TextureRect 平铺，避免 region_rect 超出纹理尺寸导致黑色区域
+	# 视觉墙：用 TextureRect 平铺
 	if outer_wall_texture:
 		var visual := TextureRect.new()
 		visual.name = "OuterWallVisual"
@@ -460,8 +481,8 @@ func _room_id_exists(room_id: String) -> bool:
 	return false
 
 
-func _find_room_by_role(role: String) -> Dictionary:
+func _find_room_by_id(room_id: String) -> Dictionary:
 	for room in room_registry:
-		if String(room.get("role", "")) == role:
+		if String(room.get("id", "")) == room_id:
 			return room
 	return {}
