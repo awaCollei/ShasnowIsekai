@@ -2,6 +2,7 @@
   "city1": {
     "hospital": {
       "floor_count": 5,
+      "building_width": 3200.0,
       "portal_positions": [
         400,
         -105
@@ -50,6 +51,7 @@
     },
     "mall": {
       "floor_count": 5,
+      "building_width": 4000.0,
       "portal_positions": [
         760,
         -105
@@ -95,6 +97,7 @@
     },
     "office": {
       "floor_count": 6,
+      "building_width": 3200.0,
       "portal_positions": [
         238.25,
         -105
@@ -176,6 +179,7 @@
     },
     "residential": {
       "floor_count": 6,
+      "building_width": 3200.0,
       "portal_positions": [
         325,
         -105

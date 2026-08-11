@@ -17,7 +17,7 @@ class_name WorldScene
 
 @export_group("Parallax")
 ## 0 表示远景固定，1 表示远景完全跟随相机。
-@export_range(0.0, 1.0, 0.01) var far_bg_parallax: float = 0.8
+@export_range(0.0, 1.0, 0.01) var far_bg_parallax: float = 0.82
 
 @export_group("Combat Feedback")
 @export var damage_number_scene: PackedScene = preload("res://ui/damage_number.tscn")

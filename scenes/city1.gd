@@ -7,7 +7,7 @@ const DEFAULT_CITY_ZONE := "1,2"
 
 @export_group("Building Placement")
 ## 建筑左下角 / 1 楼地板表面的世界坐标。
-@export var building_origin: Vector2 = Vector2(-250.0, 735.0)
+@export var building_origin: Vector2 = Vector2(-700.0, 735.0)
 @export var enemy_height_above_floor: float = 40.0
 
 @export_group("Building Resources")

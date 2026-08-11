@@ -170,6 +170,12 @@ func _create_layout() -> Array:
 				width = remaining - float(empty_count) * room_gap - float(empty_count - 1) * empty_room_width
 			row.append({"id": "空房间", "width": width, "entered": false})
 
+		# 打乱非楼梯间房间，使空房间不会总是出现在最右侧。
+		var non_stairwell := row.slice(1)
+		non_stairwell.shuffle()
+		for i in range(non_stairwell.size()):
+			row[i + 1] = non_stairwell[i]
+
 		result.append(row)
 	return result
 
@@ -411,3 +417,4 @@ func _portal_id(floor_index: int) -> String:
 
 func _apply_building_config() -> void:
 	floor_count = int(building_config["floor_count"])
+	building_width = float(building_config["building_width"])
