@@ -372,10 +372,10 @@ func _add_floor_separator(floor_index: int) -> void:
 
 
 func _add_outer_walls() -> void:
-	var top_y := floor_y(floor_count - 1) - room_height
+	var top_y := floor_y(floor_count - 1) - room_height - 50
 	var total_height := -top_y
-	_add_outer_wall(Vector2(0.0, top_y), Vector2(wall_width, total_height - GROUND_ENTRANCE_HEIGHT))
-	_add_outer_wall(Vector2(building_width - wall_width, top_y), Vector2(wall_width, total_height))
+	_add_outer_wall(Vector2(-wall_width, top_y), Vector2(wall_width, total_height - GROUND_ENTRANCE_HEIGHT))
+	_add_outer_wall(Vector2(building_width, top_y), Vector2(wall_width, total_height))
 
 
 func _add_outer_wall(wall_position: Vector2, size: Vector2) -> void:
