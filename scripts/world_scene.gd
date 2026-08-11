@@ -17,7 +17,9 @@ class_name WorldScene
 
 @export_group("Parallax")
 ## 0 表示远景固定，1 表示远景完全跟随相机。
-@export_range(0.0, 1.0, 0.01) var far_bg_parallax: float = 0.82
+@export_range(0.0, 1.0, 0.01) var far_bg_parallax_x: float = 0.82
+@export_range(0.0, 1.0, 0.01) var far_bg_parallax_y: float = 0.82
+@export var far_bg_base_offset_y: float = -300.0
 
 @export_group("Combat Feedback")
 @export var damage_number_scene: PackedScene = preload("res://ui/damage_number.tscn")
@@ -29,7 +31,6 @@ var far_background: Node2D = null
 var camera: Camera2D = null
 
 var _far_bg_base_position: Vector2
-var _camera_base_x: float = 0.0
 var _last_rv_sub_scene: String = ""
 
 
@@ -71,8 +72,6 @@ func _resolve_common_nodes() -> void:
 func _initialize_common_visuals() -> void:
 	if far_background:
 		_far_bg_base_position = far_background.position
-	if camera:
-		_camera_base_x = camera.global_position.x
 	_update_rv_texture_if_needed(true)
 
 
@@ -98,8 +97,9 @@ func update_rv_texture() -> void:
 func _update_parallax() -> void:
 	if not camera or not far_background:
 		return
-	var camera_offset_x: float = camera.global_position.x - _far_bg_base_position.x
-	far_background.position.x = _far_bg_base_position.x + camera_offset_x * far_bg_parallax
+	var camera_offset: Vector2 = camera.global_position - _far_bg_base_position
+	far_background.position.x = _far_bg_base_position.x + camera_offset.x * far_bg_parallax_x
+	far_background.position.y = _far_bg_base_position.y + camera_offset.y * far_bg_parallax_y + far_bg_base_offset_y
 
 
 ## 通用敌人生成入口。敌人默认放入 Enemies 节点；没有该节点时放在场景根节点。
