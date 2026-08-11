@@ -9,10 +9,19 @@ const VERSION := 4
 static func create_new() -> Dictionary:
 	var zones := {}
 	var rng := RandomNumberGenerator.new(); rng.randomize()
-	var city_types := ["office", "hospital", "residential", "mall"]
-	# 规则：先保证每种类型至少出现一次，再填充剩余格子。
-	var pool := city_types.duplicate()
-	for i in range(WIDTH * HEIGHT - pool.size()): pool.append(city_types[rng.randi_range(0, city_types.size() - 1)])
+	
+	var region_types := SceneRegistry.get_region_types("city1")
+	var city_types: Array[String] = []
+	var weighted_pool: Array[String] = []
+	for rt in region_types:
+		city_types.append(rt.id)
+		var w: int = rt.get("weight", 10)
+		for _i in range(w):
+			weighted_pool.append(rt.id)
+	
+	# 规则：先保证每种类型至少出现一次，再按权重填充剩余格子。
+	var pool: Array[String] = city_types.duplicate()
+	for i in range(WIDTH * HEIGHT - pool.size()): pool.append(weighted_pool[rng.randi_range(0, weighted_pool.size() - 1)])
 	pool.shuffle(); var index := 0
 	for y in range(HEIGHT):
 		for x in range(WIDTH):

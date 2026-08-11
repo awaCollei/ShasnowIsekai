@@ -43,6 +43,15 @@ static func type_name(region_type: String) -> String:
 	_ensure_loaded()
 	return _find_region_type(region_type).get("name", "未知区域")
 
+static func get_region_types(scene_id: String) -> Array:
+	_ensure_loaded()
+	var info: Dictionary = _scenes.get(scene_id, {})
+	var raw: Array = info.get("region_types", [])
+	var result: Array = []
+	for rt in raw:
+		if rt is Dictionary: result.append(rt.duplicate())
+	return result
+
 static func region_description(region_type: String) -> String:
 	_ensure_loaded()
 	return _find_region_type(region_type).get("description", "一片尚待探索的区域。")

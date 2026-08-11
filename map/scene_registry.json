@@ -6,9 +6,9 @@
     "default_sub_scene": "outdoor",
     "description": "风雨中的安全据点，也是你的第一处落脚点。",
     "region_types": [
-      {"id": "shop", "name": "商店", "description": "营地里的补给商店。"},
-      {"id": "camp", "name": "营地", "description": "房车营地，安全而熟悉。"},
-      {"id": "garage", "name": "车库", "description": "可以修理和改造装备的地方。"}
+      {"id": "shop", "name": "商店", "description": "营地里的补给商店。", "weight": 30},
+      {"id": "camp", "name": "营地", "description": "房车营地，安全而熟悉。", "weight": 50},
+      {"id": "garage", "name": "车库", "description": "可以修理和改造装备的地方。", "weight": 20}
     ]
   },
   "city1": {
@@ -18,10 +18,10 @@
     "default_sub_scene": "outdoor",
     "description": "一座被灾变笼罩的海滨城市，街区里仍藏着有用的物资。",
     "region_types": [
-      {"id": "office", "name": "写字楼", "description": "高层建筑，可能藏有办公用品和补给。", "building_generation": true},
-      {"id": "hospital", "name": "医院", "description": "药品与医疗物资，也许还有幸存者。", "building_generation": true},
-      {"id": "residential", "name": "居民楼", "description": "普通居民区，房间里可能留下生活物资。", "building_generation": false},
-      {"id": "mall", "name": "商场", "description": "曾经热闹的街区，物资种类丰富但风险未知。", "building_generation": false}
+      {"id": "office", "name": "写字楼", "description": "高层建筑，可能藏有办公用品和补给。", "weight": 30},
+      {"id": "hospital", "name": "医院", "description": "药品与医疗物资，也许还有幸存者。", "weight": 10},
+      {"id": "residential", "name": "居民楼", "description": "普通居民区，房间里可能留下生活物资。", "weight": 35},
+      {"id": "mall", "name": "商场", "description": "曾经热闹的街区，物资种类丰富但风险未知。", "weight": 20}
     ]
   }
 }
