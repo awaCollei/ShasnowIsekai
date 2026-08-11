@@ -62,7 +62,7 @@ func _refresh_option() -> void:
 	if not system:
 		return
 	if should_show:
-		system.add_option("chest_" + chest_id, "打开" + display_name, self)
+		system.add_option("chest_" + chest_id, display_name, self)
 	else:
 		system.remove_option("chest_" + chest_id)
 

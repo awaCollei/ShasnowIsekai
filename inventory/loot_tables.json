@@ -1,24 +1,84 @@
 {
   "chest_types": {
-    "warehouse": {
-      "generation": "none"
+    "hospital_medicine": {
+      "capacity": 18,
+      "generation": "per_slot_probability",
+      "rules": [
+        {
+          "chance": 0.2,
+          "item": "魔素结晶_1",
+          "max_count": 3,
+          "min_count": 1
+        },
+        {
+          "chance": 0.08,
+          "item": "魔素结晶_2",
+          "max_count": 1,
+          "min_count": 1
+        }
+      ]
     },
     "office_supply": {
       "capacity": 24,
       "generation": "per_slot_probability",
       "rules": [
-        {"chance": 0.28, "item": "电子元件_1", "min_count": 1, "max_count": 4},
-        {"chance": 0.12, "item": "电子元件_2", "min_count": 1, "max_count": 2},
-        {"chance": 0.18, "item": "钢材_1", "min_count": 1, "max_count": 3},
-        {"chance": 0.07, "item": "魔素结晶_1", "min_count": 1, "max_count": 2}
+        {
+          "chance": 0.28,
+          "item": "电子元件_1",
+          "max_count": 4,
+          "min_count": 1
+        },
+        {
+          "chance": 0.12,
+          "item": "电子元件_2",
+          "max_count": 2,
+          "min_count": 1
+        },
+        {
+          "chance": 0.18,
+          "item": "钢材_1",
+          "max_count": 3,
+          "min_count": 1
+        },
+        {
+          "chance": 0.07,
+          "item": "魔素结晶_1",
+          "max_count": 2,
+          "min_count": 1
+        }
       ]
     },
-    "hospital_medicine": {
-      "capacity": 18,
+    "warehouse": {
+      "generation": "none"
+    },
+    "city1_office_茶水间_chest_0": {
+      "capacity": 24,
       "generation": "per_slot_probability",
       "rules": [
-        {"chance": 0.20, "item": "魔素结晶_1", "min_count": 1, "max_count": 3},
-        {"chance": 0.08, "item": "魔素结晶_2", "min_count": 1, "max_count": 1}
+        {
+          "chance": 0.1,
+          "item": "电子元件_1",
+          "min_count": 1,
+          "max_count": 1
+        },
+        {
+          "chance": 0.1,
+          "item": "钢材_1",
+          "min_count": 1,
+          "max_count": 1
+        }
+      ]
+    },
+    "city1_office_茶水间_chest_1": {
+      "capacity": 24,
+      "generation": "per_slot_probability",
+      "rules": [
+        {
+          "chance": 0.1,
+          "item": "魔素结晶_1",
+          "min_count": 1,
+          "max_count": 1
+        }
       ]
     }
   }

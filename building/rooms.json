@@ -1,26 +1,149 @@
 {
   "city1": {
-    "office": {
-      "floor_count": 6,
-      "portal_positions": [238.25, -105],
-      "rooms": [
-        {"id": "楼梯间", "weight": 0.0},
-        {"id": "空房间", "weight": 0.1},
-        {"id": "茶水间", "weight": 1.0, "investigation_points": [{"position": [320, -40], "investigation_id": "city1_office_tea_sample", "message": "这里是 city1 的调查点示例。", "investigation_name": "调查房间"}]},
-        {"id": "办公室", "weight": 1.0, "investigation_points": [{"position": [320, -40], "investigation_id": "city1_office_sample", "message": "这里是 city1 的调查点示例。", "investigation_name": "调查房间"}], "chests": [{"position": [520, -55], "type": "office_supply", "name": "办公物资箱"}]},
-        {"id": "办公室2", "weight": 1.0},
-        {"id": "机房", "weight": 1.0}
-      ]
-    },
     "hospital": {
       "floor_count": 5,
-      "portal_positions": [400.0, -105],
+      "portal_positions": [
+        400,
+        -105
+      ],
       "rooms": [
-        {"id": "楼梯间", "weight": 0.0},
-        {"id": "空房间", "weight": 0.1},
-        {"id": "配药室", "weight": 1.0, "chests": [{"position": [460, -55], "type": "hospital_medicine", "name": "医疗物资箱"}]},
-        {"id": "病房", "weight": 1.0},
-        {"id": "大厅", "weight": 0.6}
+        {
+          "id": "楼梯间",
+          "weight": 0
+        },
+        {
+          "id": "空房间",
+          "weight": 0.1
+        },
+        {
+          "chests": [
+            {
+              "name": "医疗物资箱",
+              "position": [
+                460,
+                -55
+              ],
+              "type": "hospital_medicine"
+            }
+          ],
+          "id": "配药室",
+          "weight": 1
+        },
+        {
+          "id": "病房",
+          "weight": 1
+        },
+        {
+          "id": "大厅",
+          "weight": 0.6
+        }
+      ]
+    },
+    "office": {
+      "floor_count": 6,
+      "portal_positions": [
+        238.25,
+        -105
+      ],
+      "rooms": [
+        {
+          "id": "楼梯间",
+          "investigation_points": [
+            {
+              "investigation_id": "city1_office_楼梯间_inv_0",
+              "investigation_name": "电梯",
+              "message": "不是，你还想坐电梯？",
+              "position": [
+                743.5,
+                -111.8
+              ]
+            }
+          ],
+          "weight": 0
+        },
+        {
+          "id": "空房间",
+          "weight": 0.1
+        },
+        {
+          "chests": [
+            {
+              "name": "冰箱",
+              "position": [
+                587.5,
+                -121.8
+              ],
+              "type": "city1_office_茶水间_chest_0"
+            },
+            {
+              "name": "柜子",
+              "position": [
+                151.5,
+                -126.8
+              ],
+              "type": "city1_office_茶水间_chest_1"
+            }
+          ],
+          "id": "茶水间",
+          "investigation_points": [],
+          "weight": 1
+        },
+        {
+          "chests": [
+            {
+              "name": "办公物资箱",
+              "position": [
+                520,
+                -55
+              ],
+              "type": "office_supply"
+            }
+          ],
+          "id": "办公室",
+          "investigation_points": [],
+          "weight": 1
+        },
+        {
+          "id": "办公室2",
+          "weight": 1
+        },
+        {
+          "id": "机房",
+          "weight": 1
+        }
+      ]
+    },
+    "residential": {
+      "floor_count": 6,
+      "portal_positions": [
+        325,
+        -105
+      ],
+      "rooms": [
+        {
+          "id": "楼梯间",
+          "weight": 0
+        },
+        {
+          "id": "空房间",
+          "weight": 0.1
+        },
+        {
+          "id": "客厅",
+          "weight": 1
+        },
+        {
+          "id": "厨房",
+          "weight": 0.8
+        },
+        {
+          "id": "房间1",
+          "weight": 1
+        },
+        {
+          "id": "房间2",
+          "weight": 1
+        }
       ]
     }
   }
