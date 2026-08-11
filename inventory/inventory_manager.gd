@@ -14,6 +14,11 @@ var chest_types: Dictionary = {}
 var ground_drops: Dictionary = {}
 var _drop_serial := 0
 
+func get_drop_storage_id(sub_scene: String = "") -> String:
+	if sub_scene == "rv_indoor" or sub_scene == "rv_roof":
+		return "rv"
+	return SaveManager.current_zone_id
+
 func _ready() -> void:
 	_load_registry()
 	_load_loot_tables()
@@ -119,6 +124,7 @@ func drop_from_storage(storage: InventoryStorage, slot_index: int, world_positio
 	if item.is_empty():
 		return false
 	var sub_scene := ""
+	var owner_scene := ""
 	var scene := get_tree().current_scene
 	if scene:
 		for node in scene.find_children("*", "Player", true, false):
@@ -126,7 +132,9 @@ func drop_from_storage(storage: InventoryStorage, slot_index: int, world_positio
 			if player:
 				sub_scene = player.current_sub_scene
 				break
-	if not spawn_drop(item, world_position, "", sub_scene):
+		# 房车是跨区域共享的存储空间；普通掉落物属于当前区域。
+	owner_scene = get_drop_storage_id(sub_scene)
+	if not spawn_drop(item, world_position, owner_scene, sub_scene):
 		storage.put_slot(slot_index, item)
 		return false
 	SaveManager.request_auto_save("丢弃物品")
@@ -136,15 +144,24 @@ func spawn_drop(item: Dictionary, world_position: Vector2, scene_id: String = ""
 	if not has_item(String(item.get("id", ""))):
 		return false
 	if scene_id.is_empty():
-		scene_id = SceneManager.get_current_scene()
+		scene_id = get_drop_storage_id(sub_scene)
 	if scene_id.is_empty():
 		return false
 	_drop_serial += 1
 	var drop_id := "%s_%d_%d" % [scene_id, Time.get_ticks_msec(), _drop_serial]
-	var record := {"drop_id": drop_id, "item": item.duplicate(true), "position": world_position, "sub_scene": sub_scene}
+	var saved_position := world_position
+	if scene_id == "rv":
+		var current_scene := get_tree().current_scene
+		var rv := current_scene.find_child("RV", true, false) if current_scene else null
+		if rv:
+			saved_position = (rv as Node2D).to_local(world_position)
+	var record := {"drop_id": drop_id, "item": item.duplicate(true), "position": saved_position, "sub_scene": sub_scene}
+	if ground_drops.has(scene_id):
+		ground_drops[scene_id].append(record)
 	if not ground_drops.has(scene_id):
 		ground_drops[scene_id] = []
 	ground_drops[scene_id].append(record)
+	_deduplicate_drop_records(scene_id)
 	if _instantiate_drop(record, scene_id):
 		return true
 	# 实例化失败时必须撤销持久化记录，否则物品放回背包后会在下次进图复制。
@@ -153,7 +170,20 @@ func spawn_drop(item: Dictionary, world_position: Vector2, scene_id: String = ""
 		ground_drops.erase(scene_id)
 	return false
 
+func _deduplicate_drop_records(scene_id: String) -> void:
+	if not ground_drops.has(scene_id):
+		return
+	var seen := {}
+	var records: Array = ground_drops[scene_id]
+	for index in range(records.size() - 1, -1, -1):
+		var drop_id := String(records[index].get("drop_id", ""))
+		if seen.has(drop_id):
+			records.remove_at(index)
+		else:
+			seen[drop_id] = true
+
 func restore_scene_drops(scene_id: String) -> void:
+	_deduplicate_drop_records(scene_id)
 	if scene_id.is_empty() or not ground_drops.has(scene_id):
 		return
 	for record in ground_drops[scene_id]:
@@ -185,9 +215,24 @@ func _instantiate_drop(record: Dictionary, scene_id: String) -> bool:
 	var drop := DROP_SCENE.instantiate() as DroppedItem
 	if not drop:
 		return false
-	scene.add_child(drop)
-	drop.setup(String(record["drop_id"]), record["item"], record.get("position", Vector2.ZERO), scene_id, String(record.get("sub_scene", "")))
+	# 房车子场景可能仍处于 _ready() 的子节点装配阶段，不能立即 add_child。
+	# 同时 DroppedItem.setup() 依赖 @onready 的 Sprite2D，因此必须在入树后执行。
+	call_deferred("_attach_drop", scene, drop, record.duplicate(true), scene_id)
 	return true
+
+func _attach_drop(scene: Node, drop: DroppedItem, record: Dictionary, scene_id: String) -> void:
+	if not is_instance_valid(scene) or not is_instance_valid(drop):
+		return
+	if not scene.is_inside_tree() or not (scene is WorldScene):
+		drop.free()
+		return
+	scene.add_child(drop)
+	var drop_position: Vector2 = record.get("position", Vector2.ZERO)
+	if scene_id == "rv":
+		var rv := scene.find_child("RV", true, false)
+		if rv:
+			drop_position = (rv as Node2D).to_global(drop_position)
+	drop.setup(String(record["drop_id"]), record["item"], drop_position, scene_id, String(record.get("sub_scene", "")))
 
 func serialize() -> Dictionary:
 	var chest_data := {}

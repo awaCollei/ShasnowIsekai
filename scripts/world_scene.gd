@@ -13,7 +13,7 @@ class_name WorldScene
 @export_group("RV")
 @export var rv_indoor_texture: Texture2D = preload("res://assets/rv.png")
 @export var rv_outdoor_texture: Texture2D = preload("res://assets/rv2.png")
-@export var rv_indoor_sub_scene: String = "indoor"
+@export var rv_indoor_sub_scene: String = "rv_indoor"
 
 @export_group("Parallax")
 ## 0 表示远景固定，1 表示远景完全跟随相机。
@@ -45,13 +45,10 @@ func _ready() -> void:
 		# 立即登记运行时状态，避免未保存时往返地图造成重复刷新。
 		SaveManager.capture_enemy_map(self)
 	_bind_existing_enemies()
-	# _ready 时 SceneManager.scene_changed 尚未必完成，直接由当前路径解析 ID。
-	var inventory_scene_id := SceneRegistry.find_scene_id_by_path(scene_file_path)
-	InventoryManager.restore_scene_drops(inventory_scene_id)
-
-	# 多态扩展点：子场景只覆写自己需要的部分。
+	# 多态扩展点：区域场景需先完成区域状态初始化，再恢复该区域的掉落物。
 	_trigger_scene_plot()
 	_on_world_ready()
+	InventoryManager.restore_scene_drops(InventoryManager.get_drop_storage_id())
 
 
 func _process(_delta: float) -> void:

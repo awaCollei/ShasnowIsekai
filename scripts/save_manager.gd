@@ -297,6 +297,9 @@ func capture_current_enemy_map() -> void:
 	var scene := get_tree().current_scene
 	if scene is WorldScene:
 		capture_enemy_map(scene as WorldScene)
+		for node in scene.find_children("*", "RVWorld", true, false):
+			if node.has_method("capture_state"):
+				node.capture_state()
 
 
 func capture_enemy_map(world: WorldScene) -> void:

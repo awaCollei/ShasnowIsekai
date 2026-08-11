@@ -288,7 +288,7 @@ func destroy_character(character: Character) -> void:
 # 玩家操作锁定
 # ==========================
 
-## 切换玩家当前子场景（如 "outdoor" / "indoor"）
+## 切换玩家当前子场景（如 "outdoor" / "rv_indoor"）
 func change_sub_scene(sub_scene: String) -> void:
 	var player = _get_player()
 	if player:

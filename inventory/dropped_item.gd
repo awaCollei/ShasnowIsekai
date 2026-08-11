@@ -29,9 +29,10 @@ func _process(_delta: float) -> void:
 	if not is_instance_valid(world_player):
 		world_player = _find_player()
 	if world_player:
-		if sub_scene == "indoor":
+		if sub_scene == "rv_indoor":
 			sprite.visible = world_player.current_sub_scene == sub_scene
 		else:
+			# rv_roof 以及所有 outdoor/区域掉落物始终显示；交互选项仍按子场景判断。
 			sprite.visible = true
 	if is_instance_valid(player_ref):
 		_refresh_option()

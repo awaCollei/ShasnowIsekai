@@ -12,7 +12,7 @@ func play() -> void:
 	# 创建薇芯在房车内左侧位置
 	var vising = PlotlineManager.create_character("vising", Vector2(-115, 542))
 	PlotlineManager.character_set_direction(vising, "right")
-	PlotlineManager.change_sub_scene("indoor")
+	PlotlineManager.change_sub_scene("rv_indoor")
 	await PlotlineManager.black_fade_out()
 
 	PlotlineManager.lock_player()
