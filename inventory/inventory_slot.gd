@@ -69,27 +69,32 @@ func _get_drag_data(_at_position: Vector2):
 
 	var item: Dictionary = storage.slots[slot_index]
 	var preview_root := Control.new()
-	preview_root.custom_minimum_size = Vector2(64, 64)
-	preview_root.size = Vector2(64, 64)
-	preview_root.position = Vector2(-32, -32)
+	preview_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var preview_content := Control.new()
+	preview_content.position = Vector2(-32, -32)
+	preview_content.size = Vector2(64, 64)
+
 	var preview_icon := TextureRect.new()
 	preview_icon.texture = icon.texture
 	preview_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	preview_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	preview_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	preview_root.add_child(preview_icon)
-	preview_icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	preview_icon.size = Vector2(64, 64)
+	preview_content.add_child(preview_icon)
+
 	var preview_count := Label.new()
-	preview_count.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	preview_count.position = Vector2(-34, -26)
 	preview_count.size = Vector2(30, 22)
+	preview_count.position = Vector2(30, 40)
 	preview_count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	preview_count.add_theme_constant_override("outline_size", 3)
 	preview_count.add_theme_color_override("font_outline_color", Color.BLACK)
 	var count := int(item.get("count", 1))
 	preview_count.text = str(count) if count > 1 else ""
 	preview_count.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	preview_root.add_child(preview_count)
+	preview_content.add_child(preview_count)
+
+	preview_root.add_child(preview_content)
 	set_drag_preview(preview_root)
 	return {"storage": storage, "index": slot_index}
 
