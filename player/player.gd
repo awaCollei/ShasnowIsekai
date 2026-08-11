@@ -21,6 +21,8 @@ var hp: float = 100.0
 var mp: float = 100.0
 var reserved_mp: float = 0.0
 var is_dead := false
+## 当 UI（背包、箱子等）打开时锁定玩家操作，禁止移动和攻击。
+var ui_locked := false
 var _chant_mp_cost: float = 0.0
 var _cancel_start_reserved_mp: float = 0.0
 
@@ -84,6 +86,13 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		velocity = Vector2.ZERO
+		return
+	# UI 打开（背包/箱子）时锁定所有操作。
+	if ui_locked:
+		velocity.x = 0.0
+		if not animation.is_attacking() and not animation.is_chanting():
+			animation.request_idle()
+		move_and_slide()
 		return
 	# 局外只保留普通攻击。吟唱素材和 MagicBlade 节点继续保留，供回合制技能/未来大招复用。
 	if Input.is_action_just_pressed("attack") and not basic_attack.is_busy() and not animation.is_attacking():

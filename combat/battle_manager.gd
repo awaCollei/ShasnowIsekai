@@ -63,6 +63,8 @@ func _start_battle_deferred(player: Player, requested_enemies: Array[Enemy], pla
 
 	# 防止局外吟唱留下的临时预扣在冻结玩家后阻塞技能消费。
 	player.cancel_magic_chant()
+	# 战斗触发时强制关闭背包 / 箱子界面，防止 CanvasLayer UI 覆盖战斗场景。
+	_close_inventory_if_open(player)
 	_participants.assign(enemies)
 	_participants.append(player)
 	_freeze_world_participants()
@@ -167,3 +169,10 @@ func _on_world_scene_changed() -> void:
 	_participants.clear()
 	if is_instance_valid(old_battle):
 		old_battle.queue_free()
+
+
+func _close_inventory_if_open(player: Player) -> void:
+	var inventory_ui := get_node_or_null("/root/InventoryUI")
+	if inventory_ui and inventory_ui.visible:
+		inventory_ui.hide_inventory()
+		player.ui_locked = false

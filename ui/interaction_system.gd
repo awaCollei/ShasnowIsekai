@@ -39,6 +39,9 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if not is_visible or options.is_empty() or input_cooldown > 0.0:
 		return
+	# 背包 / 箱子界面打开时拒绝交互输入，防止误操作（如挨着传送门时意外触发）。
+	if _is_inventory_open():
+		return
 
 	# W/S（ui_up/ui_down）选择选项。
 	if event.is_action_pressed("ui_up"):
@@ -49,6 +52,10 @@ func _input(event: InputEvent) -> void:
 		input_cooldown = INPUT_COOLDOWN_TIME
 	elif event.is_action_pressed("interact"):
 		execute_selected()
+
+func _is_inventory_open() -> bool:
+	var inventory_ui := get_node_or_null("/root/InventoryUI")
+	return inventory_ui != null and inventory_ui.visible
 
 func add_option(id: String, text: String, target: Node) -> void:
 	for option in options:

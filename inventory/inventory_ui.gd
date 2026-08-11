@@ -69,6 +69,7 @@ func open_chest(chest_id: String, chest_type: String, display_name: String, capa
 func _begin_open() -> void:
 	if not _is_open:
 		_is_open = true
+		_set_player_lock(true)
 
 func hide_inventory() -> void:
 	visible = false
@@ -77,6 +78,12 @@ func hide_inventory() -> void:
 	_clear_selection()
 	if _is_open:
 		_is_open = false
+		_set_player_lock(false)
+
+func _set_player_lock(locked: bool) -> void:
+	var player := _find_player()
+	if player:
+		player.ui_locked = locked
 
 func move_item(from: InventoryStorage, from_index: int, to: InventoryStorage, to_index: int) -> void:
 	if not from or not to or from_index == to_index and from == to:
