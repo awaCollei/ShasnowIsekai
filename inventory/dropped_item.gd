@@ -29,7 +29,10 @@ func _process(_delta: float) -> void:
 	if not is_instance_valid(world_player):
 		world_player = _find_player()
 	if world_player:
-		sprite.visible = sub_scene.is_empty() or world_player.current_sub_scene == sub_scene
+		if sub_scene == "indoor":
+			sprite.visible = world_player.current_sub_scene == sub_scene
+		else:
+			sprite.visible = true
 	if is_instance_valid(player_ref):
 		_refresh_option()
 
