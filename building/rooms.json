@@ -39,6 +39,39 @@
         }
       ]
     },
+    "mall": {
+      "floor_count": 5,
+      "portal_positions": [
+        760,
+        -105
+      ],
+      "rooms": [
+        {
+          "id": "楼梯间",
+          "weight": 0
+        },
+        {
+          "id": "空房间",
+          "weight": 0.1
+        },
+        {
+          "id": "数码店",
+          "weight": 0.5
+        },
+        {
+          "id": "餐厅",
+          "weight": 1
+        },
+        {
+          "id": "超市",
+          "weight": 1
+        },
+        {
+          "id": "户外用品店",
+          "weight": 0.8
+        }
+      ]
+    },
     "office": {
       "floor_count": 6,
       "portal_positions": [
@@ -109,7 +142,7 @@
         },
         {
           "id": "机房",
-          "weight": 1
+          "weight": 0.5
         }
       ]
     },
@@ -130,7 +163,7 @@
         },
         {
           "id": "客厅",
-          "weight": 1
+          "weight": 0.8
         },
         {
           "id": "厨房",

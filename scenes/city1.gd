@@ -43,7 +43,6 @@ func _spawn_scene_entities() -> void:
 		return
 	room_generator.generate(current_zone_state, active_zone_id)
 	if not room_generator.has_building_config():
-		# residential/market 等尚未完成的区域不生成伪建筑，也不生成建筑内敌人。
 		_write_zone_state()
 		return
 

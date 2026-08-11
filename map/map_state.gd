@@ -9,7 +9,7 @@ const VERSION := 4
 static func create_new() -> Dictionary:
 	var zones := {}
 	var rng := RandomNumberGenerator.new(); rng.randomize()
-	var city_types := ["office", "hospital", "residential", "market"]
+	var city_types := ["office", "hospital", "residential", "mall"]
 	# 规则：先保证每种类型至少出现一次，再填充剩余格子。
 	var pool := city_types.duplicate()
 	for i in range(WIDTH * HEIGHT - pool.size()): pool.append(city_types[rng.randi_range(0, city_types.size() - 1)])
