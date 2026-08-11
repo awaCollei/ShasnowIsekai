@@ -563,8 +563,11 @@ func _room_id_exists(room_id: String) -> bool:
 
 func _apply_building_config() -> void:
 	floor_count = maxi(1, int(building_config.get("floor_count", floor_count)))
+	if building_config.has("max_rooms_per_floor"):
+		max_rooms_per_floor = maxi(2, int(building_config["max_rooms_per_floor"]))
+	if building_config.has("stair_portal_height"):
+		stair_portal_height = float(building_config["stair_portal_height"])
 	var stairwell := _find_room_by_id("楼梯间")
-	# 楼梯间宽度优先使用配置，否则取楼梯间贴图的自然宽度。
 	if building_config.has("stairwell_width"):
 		stairwell_width = float(building_config["stairwell_width"])
 	elif stairwell.has("width"):

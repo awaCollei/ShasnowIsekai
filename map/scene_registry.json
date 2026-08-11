@@ -20,7 +20,7 @@
     "region_types": [
       {"id": "office", "name": "写字楼", "description": "高层建筑，可能藏有办公用品和补给。", "building_generation": true},
       {"id": "hospital", "name": "医院", "description": "药品与医疗物资，也许还有幸存者。", "building_generation": true},
-      {"id": "residential", "name": "住宅区", "description": "普通居民区，房间里可能留下生活物资。", "building_generation": false},
+      {"id": "residential", "name": "居民楼", "description": "普通居民区，房间里可能留下生活物资。", "building_generation": false},
       {"id": "mall", "name": "商场", "description": "曾经热闹的街区，物资种类丰富但风险未知。", "building_generation": false}
     ]
   }

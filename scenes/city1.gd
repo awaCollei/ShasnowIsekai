@@ -8,17 +8,7 @@ const DEFAULT_CITY_ZONE := "1,2"
 @export_group("Building Placement")
 ## 建筑左下角 / 1 楼地板表面的世界坐标。
 @export var building_origin: Vector2 = Vector2(-250.0, 735.0)
-## 传送门和敌人相对本层地板向上的高度（正数向上）。
-@export var stair_portal_height: float = 105.0
 @export var enemy_height_above_floor: float = 40.0
-
-@export_group("Building Size")
-@export_range(1, 20, 1) var floor_count: int = 6
-@export var building_width: float = 3200.0
-@export var room_height: float = 450.0
-@export var floor_separator_height: float = 50.0
-@export var stairwell_width: float = 953.0
-@export_range(2, 20, 1) var max_rooms_per_floor: int = 5
 
 @export_group("Building Resources")
 @export var room_generator_scene: PackedScene
@@ -89,13 +79,6 @@ func _create_room_generator() -> void:
 		return
 
 	room_generator.position = building_origin
-	room_generator.floor_count = floor_count
-	room_generator.building_width = building_width
-	room_generator.room_height = room_height
-	room_generator.floor_separator_height = floor_separator_height
-	room_generator.stairwell_width = stairwell_width
-	room_generator.max_rooms_per_floor = max_rooms_per_floor
-	room_generator.stair_portal_height = stair_portal_height
 	room_generator.outer_wall_texture = outer_wall_texture
 	room_generator.interior_wall_texture = interior_wall_texture
 	room_generator.floor_texture = floor_texture
