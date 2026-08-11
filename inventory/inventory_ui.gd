@@ -128,14 +128,12 @@ func _on_quick_transfer(storage: InventoryStorage, index: int) -> void:
 	_refresh()
 
 func _on_outside_drop(storage: InventoryStorage, index: int) -> void:
-	if storage != InventoryManager.inventory:
-		return
 	var player := _find_player()
 	if not player:
 		return
 	var offset := Vector2(70.0 if player.animation.sprite.flip_h else -70.0, 0.0)
-	InventoryManager.drop_from_inventory(index, player.global_position + offset)
-	_clear_selection()
+	if InventoryManager.drop_from_storage(storage, index, player.global_position + offset):
+		_clear_selection()
 	_refresh()
 
 func _split_selected() -> void:

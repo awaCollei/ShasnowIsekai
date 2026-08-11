@@ -16,7 +16,7 @@ func setup(id: String, item: Dictionary, world_position: Vector2, owning_scene_i
 	item_data = item.duplicate(true)
 	scene_id = owning_scene_id
 	sub_scene = owning_sub_scene
-	global_position = world_position
+	global_position = world_position + Vector2(0, 80)
 	var path := InventoryManager.get_texture_path(String(item_data.get("id", "")))
 	if ResourceLoader.exists(path):
 		sprite.texture = load(path)
