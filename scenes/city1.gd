@@ -11,7 +11,6 @@ const DEFAULT_CITY_ZONE := "1,2"
 @export var enemy_height_above_floor: float = 40.0
 
 @export_group("Building Resources")
-@export var room_generator_scene: PackedScene
 @export var outer_wall_texture: Texture2D
 @export var interior_wall_texture: Texture2D
 @export var floor_texture: Texture2D
@@ -29,12 +28,7 @@ func uses_zone_state() -> bool:
 func _spawn_scene_entities() -> void:
 	_prepare_zone_state()
 	_create_room_generator()
-	if not room_generator:
-		return
 	room_generator.generate(current_zone_state, active_zone_id)
-	if not room_generator.has_building_config():
-		_write_zone_state()
-		return
 
 	if current_zone_state.get("enemies", []).is_empty() and not bool(current_zone_state.get("enemy_initialized", false)):
 		_spawn_zone_enemies()
@@ -71,13 +65,7 @@ func _prepare_zone_state() -> void:
 func _create_room_generator() -> void:
 	if room_generator and is_instance_valid(room_generator):
 		room_generator.queue_free()
-	var instance := room_generator_scene.instantiate() if room_generator_scene else RoomGenerator.new()
-	room_generator = instance as RoomGenerator
-	if not room_generator:
-		push_error("city1: room_generator_scene 的根节点必须是 RoomGenerator")
-		instance.free()
-		return
-
+	room_generator = RoomGenerator.new()
 	room_generator.position = building_origin
 	room_generator.outer_wall_texture = outer_wall_texture
 	room_generator.interior_wall_texture = interior_wall_texture
@@ -86,8 +74,6 @@ func _create_room_generator() -> void:
 
 
 func _spawn_zone_enemies() -> void:
-	if not room_generator:
-		return
 	var candidates := room_generator.get_enemy_spawn_candidates(enemy_height_above_floor)
 	candidates.shuffle()
 	var count := mini(_roll_enemy_count(), candidates.size())

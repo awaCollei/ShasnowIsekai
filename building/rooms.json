@@ -9,13 +9,20 @@
       "rooms": [
         {
           "id": "楼梯间",
-          "weight": 0
+          "weight": 0,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "空房间",
-          "weight": 0.1
+          "weight": 0.1,
+          "investigation_points": [],
+          "chests": []
         },
         {
+          "id": "配药室",
+          "weight": 1,
+          "investigation_points": [],
           "chests": [
             {
               "name": "医疗物资箱",
@@ -25,17 +32,19 @@
               ],
               "type": "hospital_medicine"
             }
-          ],
-          "id": "配药室",
-          "weight": 1
+          ]
         },
         {
           "id": "病房",
-          "weight": 1
+          "weight": 1,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "大厅",
-          "weight": 0.6
+          "weight": 0.6,
+          "investigation_points": [],
+          "chests": []
         }
       ]
     },
@@ -48,27 +57,39 @@
       "rooms": [
         {
           "id": "楼梯间",
-          "weight": 0
+          "weight": 0,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "空房间",
-          "weight": 0.1
+          "weight": 0.1,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "数码店",
-          "weight": 0.5
+          "weight": 0.5,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "餐厅",
-          "weight": 1
+          "weight": 1,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "超市",
-          "weight": 1
+          "weight": 1,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "户外用品店",
-          "weight": 0.8
+          "weight": 0.8,
+          "investigation_points": [],
+          "chests": []
         }
       ]
     },
@@ -81,6 +102,7 @@
       "rooms": [
         {
           "id": "楼梯间",
+          "weight": 0,
           "investigation_points": [
             {
               "investigation_id": "city1_office_楼梯间_inv_0",
@@ -92,13 +114,18 @@
               ]
             }
           ],
-          "weight": 0
+          "chests": []
         },
         {
           "id": "空房间",
-          "weight": 0.1
+          "weight": 0.1,
+          "investigation_points": [],
+          "chests": []
         },
         {
+          "id": "茶水间",
+          "weight": 1,
+          "investigation_points": [],
           "chests": [
             {
               "name": "冰箱",
@@ -116,12 +143,12 @@
               ],
               "type": "city1_office_茶水间_chest_1"
             }
-          ],
-          "id": "茶水间",
-          "investigation_points": [],
-          "weight": 1
+          ]
         },
         {
+          "id": "办公室",
+          "weight": 1,
+          "investigation_points": [],
           "chests": [
             {
               "name": "办公物资箱",
@@ -131,18 +158,19 @@
               ],
               "type": "office_supply"
             }
-          ],
-          "id": "办公室",
-          "investigation_points": [],
-          "weight": 1
+          ]
         },
         {
           "id": "办公室2",
-          "weight": 1
+          "weight": 1,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "机房",
-          "weight": 0.5
+          "weight": 0.5,
+          "investigation_points": [],
+          "chests": []
         }
       ]
     },
@@ -155,27 +183,39 @@
       "rooms": [
         {
           "id": "楼梯间",
-          "weight": 0
+          "weight": 0,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "空房间",
-          "weight": 0.1
+          "weight": 0.1,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "客厅",
-          "weight": 0.8
+          "weight": 0.8,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "厨房",
-          "weight": 0.8
+          "weight": 0.8,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "房间1",
-          "weight": 1
+          "weight": 1,
+          "investigation_points": [],
+          "chests": []
         },
         {
           "id": "房间2",
-          "weight": 1
+          "weight": 1,
+          "investigation_points": [],
+          "chests": []
         }
       ]
     }
