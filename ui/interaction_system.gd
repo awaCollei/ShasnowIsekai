@@ -32,6 +32,13 @@ func _process(delta: float) -> void:
 	if input_cooldown > 0.0:
 		input_cooldown -= delta
 
+	# 玩家被锁定时隐藏交互栏，解锁后若仍有可选项目则恢复显示。
+	var locked := _is_player_locked()
+	if locked and is_visible:
+		hide_ui()
+	elif not locked and not is_visible and not options.is_empty():
+		show_ui()
+
 	# CanvasLayer 下的 Control 使用视口坐标，位置需随玩家的画布坐标更新。
 	if is_visible:
 		update_position()
@@ -41,6 +48,9 @@ func _input(event: InputEvent) -> void:
 		return
 	# 背包 / 箱子界面打开时拒绝交互输入，防止误操作（如挨着传送门时意外触发）。
 	if _is_inventory_open():
+		return
+	# 玩家被剧情 / UI 锁定时拒绝交互，避免剧情演出期间误触发。
+	if _is_player_locked():
 		return
 
 	# W/S（ui_up/ui_down）选择选项。
@@ -56,6 +66,12 @@ func _input(event: InputEvent) -> void:
 func _is_inventory_open() -> bool:
 	var inventory_ui := get_node_or_null("/root/InventoryUI")
 	return inventory_ui != null and inventory_ui.visible
+
+
+func _is_player_locked() -> bool:
+	if not is_instance_valid(player_ref):
+		player_ref = find_player_node(get_tree().root)
+	return player_ref != null and player_ref.ui_locked
 
 func add_option(id: String, text: String, target: Node) -> void:
 	for option in options:

@@ -55,7 +55,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("inventory") and SaveManager.is_in_game and (visible or not get_tree().paused):
 		if visible:
 			hide_inventory()
-		elif not BattleManager.is_in_battle:
+		elif not BattleManager.is_in_battle and not _is_player_locked():
 			open_inventory()
 		get_viewport().set_input_as_handled()
 	elif visible and event.is_action_pressed("menu"):
@@ -66,7 +66,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func open_inventory() -> void:
-	if BattleManager.is_in_battle:
+	if BattleManager.is_in_battle or _is_player_locked():
 		return
 	_begin_open()
 	current_chest = null
@@ -78,7 +78,7 @@ func open_inventory() -> void:
 	_refresh()
 
 func open_chest(chest_id: String, chest_type: String, display_name: String, capacity: int, infinite: bool) -> void:
-	if BattleManager.is_in_battle:
+	if BattleManager.is_in_battle or _is_player_locked():
 		return
 	_begin_open()
 	current_chest_id = chest_id
@@ -317,3 +317,8 @@ func _find_player() -> Player:
 		for node in scene.find_children("*", "Player", true, false):
 			return node as Player
 	return null
+
+
+func _is_player_locked() -> bool:
+	var player := _find_player()
+	return player != null and player.ui_locked

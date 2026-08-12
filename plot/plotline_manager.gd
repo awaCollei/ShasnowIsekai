@@ -296,11 +296,22 @@ func change_sub_scene(sub_scene: String) -> void:
 
 ## 锁定玩家操作（移动、攻击、菜单等）
 func lock_player() -> void:
-	_disable_player_controls()
+	# 先关闭可能打开的背包/容器，避免 UI 残留。关闭时会触发软解锁，紧接着硬锁定覆盖。
+	var inventory_ui := get_node_or_null("/root/InventoryUI")
+	if inventory_ui and inventory_ui.visible:
+		inventory_ui.hide_inventory()
+
+	var player = _get_player()
+	if player:
+		player.lock_control()
+		player.status_hud.hide_animated()
 
 ## 解锁玩家操作
 func unlock_player() -> void:
-	_restore_player_controls()
+	var player = _get_player()
+	if player:
+		player.unlock_control()
+		player.status_hud.show_animated()
 
 # ==========================
 # 内部
@@ -318,32 +329,6 @@ func _ensure_black_ui() -> void:
 		return
 	_black_sui = _black_sui_scene.instantiate()
 	get_tree().root.add_child(_black_sui)
-
-
-func _disable_player_controls() -> void:
-	# 禁用玩家移动、攻击、菜单
-	var player = _get_player()
-	if player:
-		player.set_physics_process(false)
-		player.set_process(false)
-		player.status_hud.hide_animated()
-
-	# 禁止暂停菜单
-	var pause_menu = get_node_or_null("/root/PauseMenu")
-	if pause_menu:
-		pause_menu.set_process_unhandled_key_input(false)
-
-
-func _restore_player_controls() -> void:
-	var player = _get_player()
-	if player:
-		player.set_physics_process(true)
-		player.set_process(true)
-		player.status_hud.show_animated()
-
-	var pause_menu = get_node_or_null("/root/PauseMenu")
-	if pause_menu and not pause_menu.is_open:
-		pause_menu.set_process_unhandled_key_input(true)
 
 
 func _load_quest_book() -> void:

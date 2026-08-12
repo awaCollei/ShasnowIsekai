@@ -41,6 +41,12 @@ func is_busy() -> bool:
 	# 动作占用和冷却都必须阻止移动/新动作；攻击动画长于冷却时间。
 	return state == State.ATTACKING or cooldown_remaining > 0.0
 
+
+func cancel() -> void:
+	# 统一锁定玩家时中止普攻：结束判定并清空冷却，避免残留占用。
+	cooldown_remaining = 0.0
+	_end_attack()
+
 func try_attack() -> bool:
 	if cooldown_remaining > 0:
 		return false

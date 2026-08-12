@@ -72,6 +72,39 @@ func teleport_to(destination: Vector2) -> void:
 	if camera:
 		camera.smooth_move_to(destination)
 
+
+# ==========================
+# 操作锁定
+# ==========================
+## 统一锁定玩家操作：移动、攻击、菜单、停止当前动画，并同步锁定交互系统。
+func lock_control() -> void:
+	ui_locked = true
+	_stop_active_actions()
+	_set_pause_menu_enabled(false)
+
+
+## 解除锁定，恢复暂停菜单输入（暂停菜单仍打开时保持关闭）。
+func unlock_control() -> void:
+	ui_locked = false
+	_set_pause_menu_enabled(true)
+
+
+func _stop_active_actions() -> void:
+	cancel_magic_chant()
+	basic_attack.cancel()
+	magic_blade.cancel()
+	animation.request_idle()
+
+
+func _set_pause_menu_enabled(enabled: bool) -> void:
+	var pause_menu := get_node_or_null("/root/PauseMenu")
+	if not pause_menu:
+		return
+	if enabled and pause_menu.is_open:
+		return
+	pause_menu.set_process_unhandled_key_input(enabled)
+
+
 func _process(delta: float) -> void:
 	if is_dead:
 		return

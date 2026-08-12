@@ -74,6 +74,14 @@ func is_busy() -> bool:
 	return _busy
 
 
+func cancel() -> void:
+	# 统一锁定玩家时中止魔法之刃释放，避免 _busy 残留永久卡住移动。
+	_busy = false
+	_damage_dealt = false
+	hit_area.monitoring = false
+	_stop_release_effect()
+
+
 func _process(delta: float) -> void:
 	if not _effect_active:
 		return
