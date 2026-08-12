@@ -33,7 +33,9 @@ var _char_interval: float = 0.04
 var _is_typing: bool = false
 var _is_shown: bool = false
 var _can_advance: bool = false
-var _bbcode_tags: Array = []  # 预解析的BBCode标签 [{pos, tag, is_close}]
+
+# BBCode解析器
+var _bbcode_parser: BBCodeParser = BBCodeParser.new()
 
 # 立绘路径映射
 const ILLUSTRATION_PATHS: Dictionary = {
@@ -94,12 +96,6 @@ func set_speaker(name_str: String) -> void:
 	_speaker_bg.visible = has_speaker
 	_speaker_label.visible = has_speaker
 
-	# 根据名字长度调整背景宽度（可选）
-	# if has_speaker:
-	#     var bg_width := name_str.length() * 20 + 40
-	#     _speaker_bg.size = Vector2(bg_width, 36)
-	#     _speaker_label.size = _speaker_bg.size
-
 
 func set_text(text: String) -> void:
 	_full_text = text
@@ -108,7 +104,7 @@ func set_text(text: String) -> void:
 	_can_advance = false
 	_next_indicator.visible = false
 
-	_parse_bbcode_tags()
+	_bbcode_parser.parse(text)
 	_start_typewriter()
 
 
@@ -158,7 +154,7 @@ func clear_all() -> void:
 	_illust_left.visible = false
 	_illust_center.visible = false
 	_illust_right.visible = false
-	_bbcode_tags.clear()
+	_bbcode_parser.clear()
 
 
 # ==========================
@@ -179,8 +175,15 @@ func _process(delta: float) -> void:
 
 	while _char_timer >= _char_interval and _displayed_count < _full_text.length():
 		_char_timer -= _char_interval
-		_displayed_count += 1
-		_skip_past_bbcode_tag()
+		
+		# 检查当前位置是否在标签内，如果是则跳过
+		var next_pos := _get_next_char_position()
+		if next_pos > _displayed_count:
+			_displayed_count = next_pos
+		else:
+			_displayed_count += 1
+		
+		# 更新显示文本
 		_text_label.text = _render_stream_text()
 
 	if _displayed_count >= _full_text.length():
@@ -191,53 +194,35 @@ func _process(delta: float) -> void:
 
 
 func _render_stream_text() -> String:
-	"""返回当前已显示字符的文本，自动补全未闭合的BBCode标签"""
+	"""返回当前已显示字符的文本，只补全必要的BBCode标签"""
 	var displayed := _full_text.substr(0, _displayed_count)
-	var open_tags: Array[String] = []
-
-	for tag_info in _bbcode_tags:
-		if tag_info.pos >= _displayed_count:
-			break
-
-		if tag_info.is_close:
-			for i in range(open_tags.size() - 1, -1, -1):
-				if open_tags[i] == tag_info.tag:
-					open_tags.remove_at(i)
-					break
-		else:
-			open_tags.append(tag_info.tag)
-
-	for tag in open_tags:
+	
+	# 获取当前应该补全的闭合标签
+	var closing_tags := _bbcode_parser.get_unclosed_tags_at_position(_displayed_count)
+	
+	# 补全所有未闭合的标签
+	for tag in closing_tags:
 		displayed += "[/" + tag + "]"
-
+	
 	return displayed
 
 
-func _parse_bbcode_tags() -> void:
-	"""预解析全文中的BBCode标签位置"""
-	_bbcode_tags.clear()
-
-	var regex := RegEx.new()
-	regex.compile("\\[(/?)(\\w+)([^\\]]*)\\]")
-
-	for match_result in regex.search_all(_full_text):
-		_bbcode_tags.append({
-			"pos": match_result.get_start(),
-			"length": match_result.get_string().length(),
-			"tag": match_result.get_string(2),
-			"is_close": match_result.get_string(1) == "/",
-		})
-
-
-func _skip_past_bbcode_tag() -> void:
-	"""若当前光标处于BBCode标签内部，直接跳到标签末尾"""
-	for tag_info in _bbcode_tags:
-		var tag_start: int = tag_info.pos
-		var tag_end: int = tag_start + tag_info.length
-
-		if _displayed_count > tag_start and _displayed_count <= tag_end:
-			_displayed_count = tag_end
-			return
+func _get_next_char_position() -> int:
+	"""获取当前位置之后的下一个有效字符位置（跳过所有标签）"""
+	var pos := _displayed_count
+	
+	while pos < _full_text.length():
+		var in_tag := false
+		for tag in _bbcode_parser.get_all_tags():
+			if pos >= tag.pos and pos < tag.pos + tag.length:
+				in_tag = true
+				pos = tag.pos + tag.length
+				break
+		
+		if not in_tag:
+			break
+	
+	return pos
 
 
 func skip_typewriter() -> void:
