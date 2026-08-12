@@ -1,0 +1,20 @@
+[b]文字[/b]	          加粗
+[i]文字[/i]	          斜体
+[u]文字[/u]	         下划线
+[s]文字[/s]	         删除线
+[code]文字[/code]	等宽字体
+
+[color=red]红字[/color]          红色文字
+[color=#ff6600]橙色[/color]     自定义 HEX 颜色
+[bgcolor=yellow]高亮[/bgcolor]  黄色背景高亮
+常用颜色名：red green blue yellow orange purple cyan white gray black
+
+[shake rate=20 level=5]文字[/shake]	          颤抖（愤怒/恐惧）
+[wave amp=10 freq=5]文字[/wave]	              波浪（魔法/歌声）
+[pulse freq=2 color=#ff000040]文字[/pulse]   	脉冲闪烁
+[rainbow freq=1 sat=0.8 val=0.8]文字[/rainbow]	彩虹渐变
+[fade start=4 length=14]文字[/fade]	            渐隐效果
+
+[center]文字[/center]	居中
+[br]	                换行
+[url=链接]文字[/url] 	超链接
