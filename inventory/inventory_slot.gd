@@ -12,6 +12,7 @@ var drop_boundary: Control
 var _is_drag_source := false
 var _suppress_release_click := false
 
+@onready var selected_frame: Panel = $Selected
 @onready var icon: TextureRect = $Icon
 @onready var count_label: Label = $Count
 
@@ -36,15 +37,16 @@ func refresh() -> void:
 	if item is Dictionary:
 		var item_id := String(item.get("id", ""))
 		var path := InventoryManager.get_texture_path(item_id)
-		if ResourceLoader.exists(path):
-			icon.texture = load(path)
+		if ResourceLoader.exists(path, "Texture2D"):
+			icon.texture = ResourceLoader.load(path, "Texture2D") as Texture2D
 		var config := InventoryManager.get_item(item_id)
 		tooltip_text = "%s\n%s" % [config.get("name", item_id), config.get("description", "")]
 		var count := int(item.get("count", 1))
 		count_label.text = str(count) if count > 1 else ""
 
 func set_selected(selected: bool) -> void:
-	self_modulate = Color(1.18, 1.08, 1.28, 1.0) if selected else Color.WHITE
+	selected_frame.visible = selected
+	self_modulate = Color(1.08, 1.13, 1.12, 1.0) if selected else Color.WHITE
 
 func _on_gui_input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton or event.button_index != MOUSE_BUTTON_LEFT:
@@ -61,7 +63,7 @@ func _on_gui_input(event: InputEvent) -> void:
 	_suppress_release_click = false if not event.pressed else _suppress_release_click
 
 func _get_drag_data(_at_position: Vector2):
-	if not storage or slot_index >= storage.slots.size() or not storage.slots[slot_index] is Dictionary:
+	if not storage or slot_index < 0 or slot_index >= storage.slots.size() or not storage.slots[slot_index] is Dictionary:
 		return null
 	_is_drag_source = true
 	icon.modulate.a = 0.35
@@ -99,10 +101,12 @@ func _get_drag_data(_at_position: Vector2):
 	return {"storage": storage, "index": slot_index}
 
 func _can_drop_data(_at_position: Vector2, data) -> bool:
-	return data is Dictionary and data.has("storage") and data.has("index")
+	return data is Dictionary and data.get("storage") is InventoryStorage and int(data.get("index", -1)) >= 0
 
 func _drop_data(_at_position: Vector2, data) -> void:
-	inventory_ui.move_item(data.storage, int(data.index), storage, slot_index)
+	if not _can_drop_data(_at_position, data) or not is_instance_valid(inventory_ui):
+		return
+	inventory_ui.move_item(data.get("storage") as InventoryStorage, int(data.get("index", -1)), storage, slot_index)
 
 func _notification(what: int) -> void:
 	if what != NOTIFICATION_DRAG_END or not _is_drag_source:

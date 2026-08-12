@@ -117,10 +117,12 @@ func _generate_chest_loot(storage: InventoryStorage, chest_type: String, chest_i
 func drop_from_inventory(slot_index: int, world_position: Vector2) -> bool:
 	return drop_from_storage(inventory, slot_index, world_position)
 
-func drop_from_storage(storage: InventoryStorage, slot_index: int, world_position: Vector2) -> bool:
-	if not storage:
+func drop_from_storage(storage: InventoryStorage, slot_index: int, world_position: Vector2, amount: int = -1) -> bool:
+	if not storage or slot_index < 0 or slot_index >= storage.slots.size() or not storage.slots[slot_index] is Dictionary:
 		return false
-	var item := storage.take_slot(slot_index)
+	var available := int(storage.slots[slot_index].get("count", 1))
+	var drop_amount := available if amount < 0 else amount
+	var item := storage.take_amount(slot_index, drop_amount)
 	if item.is_empty():
 		return false
 	var sub_scene := ""
@@ -135,6 +137,7 @@ func drop_from_storage(storage: InventoryStorage, slot_index: int, world_positio
 		# 房车是跨区域共享的存储空间；普通掉落物属于当前区域。
 	owner_scene = get_drop_storage_id(sub_scene)
 	if not spawn_drop(item, world_position, owner_scene, sub_scene):
+		# 原格仍有同类物品时 put_slot 会正确合并；整组丢弃失败时则原位放回。
 		storage.put_slot(slot_index, item)
 		return false
 	SaveManager.request_auto_save("丢弃物品")
@@ -156,8 +159,6 @@ func spawn_drop(item: Dictionary, world_position: Vector2, scene_id: String = ""
 		if rv:
 			saved_position = (rv as Node2D).to_local(world_position)
 	var record := {"drop_id": drop_id, "item": item.duplicate(true), "position": saved_position, "sub_scene": sub_scene}
-	if ground_drops.has(scene_id):
-		ground_drops[scene_id].append(record)
 	if not ground_drops.has(scene_id):
 		ground_drops[scene_id] = []
 	ground_drops[scene_id].append(record)

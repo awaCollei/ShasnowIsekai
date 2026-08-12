@@ -41,8 +41,10 @@ func add_item(item_id: String, count: int = 1) -> bool:
 	return true
 
 func can_add(item_id: String, count: int = 1) -> bool:
+	if count <= 0 or not InventoryManager.has_item(item_id):
+		return false
 	if auto_expand:
-		return InventoryManager.has_item(item_id)
+		return true
 	var room := 0
 	var max_stack := InventoryManager.get_max_stack(item_id)
 	for item in slots:
@@ -88,12 +90,12 @@ func set_slot(index: int, item) -> void:
 		slots[index] = item
 		changed.emit()
 
-func split_stack(index: int) -> bool:
+func split_stack(index: int, split_count: int) -> bool:
 	if index < 0 or index >= slots.size() or not slots[index] is Dictionary:
 		return false
 	var source: Dictionary = slots[index]
 	var count := int(source.get("count", 1))
-	if count <= 1:
+	if split_count < 1 or split_count >= count:
 		return false
 	var empty := _find_empty()
 	if empty < 0 and auto_expand:
@@ -101,11 +103,26 @@ func split_stack(index: int) -> bool:
 		empty = _find_empty()
 	if empty < 0:
 		return false
-	var split_count := int(count / 2)
 	source["count"] = count - split_count
 	slots[empty] = {"id": String(source.get("id", "")), "count": split_count}
 	changed.emit()
 	return true
+
+## 从指定堆叠取出一定数量。参数无效时不修改存储。
+func take_amount(index: int, amount: int) -> Dictionary:
+	if index < 0 or index >= slots.size() or not slots[index] is Dictionary:
+		return {}
+	var source: Dictionary = slots[index]
+	var count := int(source.get("count", 1))
+	if amount < 1 or amount > count:
+		return {}
+	var result := {"id": String(source.get("id", "")), "count": amount}
+	if amount == count:
+		slots[index] = null
+	else:
+		source["count"] = count - amount
+	changed.emit()
+	return result
 
 func ensure_trailing_row() -> void:
 	if not auto_expand:
@@ -129,8 +146,12 @@ func load_data(data, minimum_size: int = -1) -> void:
 	if data is Array:
 		for i in range(mini(data.size(), slots.size())):
 			var raw = data[i]
-			if raw is Dictionary and InventoryManager.has_item(String(raw.get("id", ""))):
-				slots[i] = {"id": String(raw["id"]), "count": maxi(1, int(raw.get("count", 1)))}
+			if raw is Dictionary:
+				var item_id := String(raw.get("id", ""))
+				var count := int(raw.get("count", 0))
+				if InventoryManager.has_item(item_id) and count > 0:
+					# 存档属于不可信输入；禁止恢复出零/负数或超过注册表上限的堆叠。
+					slots[i] = {"id": item_id, "count": mini(count, InventoryManager.get_max_stack(item_id))}
 	changed.emit()
 
 func _find_empty() -> int:
