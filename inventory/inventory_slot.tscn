@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://db6826vmxew4v"]
 
-[ext_resource type="Script" path="res://inventory/inventory_slot.gd" id="1"]
+[ext_resource type="Script" uid="uid://8u4lepiue0np" path="res://inventory/inventory_slot.gd" id="1"]
 
 [sub_resource type="StyleBoxFlat" id="1"]
 bg_color = Color(0.065, 0.09, 0.1, 0.96)
@@ -8,7 +8,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.2, 0.34, 0.36, 0.9)
+border_color = Color(0.47865415, 0.69558614, 0.72412974, 0.9019608)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -28,13 +28,13 @@ corner_radius_bottom_left = 6
 shadow_color = Color(0.25, 0.75, 0.7, 0.55)
 shadow_size = 5
 
-[node name="InventorySlot" type="Panel"]
+[node name="InventorySlot" type="Panel" unique_id=744394879]
 custom_minimum_size = Vector2(64, 64)
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("1")
 script = ExtResource("1")
 
-[node name="Selected" type="Panel" parent="."]
+[node name="Selected" type="Panel" parent="." unique_id=1246744499]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -45,7 +45,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("SelectedStyle")
 
-[node name="Icon" type="TextureRect" parent="."]
+[node name="Icon" type="TextureRect" parent="." unique_id=1957344096]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +60,7 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Count" type="Label" parent="."]
+[node name="Count" type="Label" parent="." unique_id=1740815755]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -73,7 +73,6 @@ offset_right = -4.0
 offset_bottom = -2.0
 grow_horizontal = 0
 grow_vertical = 0
-mouse_filter = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 horizontal_alignment = 2

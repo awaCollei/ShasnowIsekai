@@ -1,20 +1,20 @@
 {
   "items": {
-    "电子元件_1": {"name": "电子元件 I", "description": "基础电子元件。", "max_stack": 99},
-    "电子元件_2": {"name": "电子元件 II", "description": "经过筛选的电子元件。", "max_stack": 99},
-    "电子元件_3": {"name": "电子元件 III", "description": "高性能电子元件。", "max_stack": 99},
-    "电子元件_4": {"name": "电子元件 IV", "description": "精密电子元件。", "max_stack": 99},
-    "钢材_1": {"name": "钢材 I", "description": "有些生锈的钢材。", "max_stack": 99},
-    "钢材_2": {"name": "钢材 II", "description": "常见的钢材。", "max_stack": 99},
-    "钢材_3": {"name": "钢材 III", "description": "品质较好钢材。", "max_stack": 99},
-    "钢材_4": {"name": "钢材 IV", "description": "高强度合金钢材。", "max_stack": 99},
-    "魔导书_储物": {"name": "储物魔导书", "description": "记载储物魔法的魔导书。", "max_stack": 1},
-    "魔导书_防御": {"name": "防御魔导书", "description": "记载防御魔法的魔导书。", "max_stack": 1},
-    "魔导书_攻击": {"name": "攻击魔导书", "description": "记载攻击魔法的魔导书。", "max_stack": 1},
-    "魔导书_魔力": {"name": "魔力魔导书", "description": "记载魔力知识的魔导书。", "max_stack": 1},
-    "魔素结晶_1": {"name": "魔素结晶 I", "description": "凝结的微量魔素。", "max_stack": 99},
-    "魔素结晶_2": {"name": "魔素结晶 II", "description": "较为纯净的魔素结晶。", "max_stack": 99},
-    "魔素结晶_3": {"name": "魔素结晶 III", "description": "蕴含大量魔素。", "max_stack": 99},
-    "魔素结晶_4": {"name": "魔素结晶 IV", "description": "极其纯净的魔素结晶。", "max_stack": 99}
+    "电子元件_1": {"name": "电子元件 I", "description": "基础电子元件。", "max_stack": 99, "quality": 1},
+    "电子元件_2": {"name": "电子元件 II", "description": "经过筛选的电子元件。", "max_stack": 99, "quality": 2},
+    "电子元件_3": {"name": "电子元件 III", "description": "高性能电子元件。", "max_stack": 99, "quality": 3},
+    "电子元件_4": {"name": "电子元件 IV", "description": "精密电子元件。", "max_stack": 99, "quality": 4},
+    "钢材_1": {"name": "钢材 I", "description": "有些生锈的钢材。", "max_stack": 99, "quality": 1},
+    "钢材_2": {"name": "钢材 II", "description": "常见的钢材。", "max_stack": 99, "quality": 2},
+    "钢材_3": {"name": "钢材 III", "description": "品质较好钢材。", "max_stack": 99, "quality": 3},
+    "钢材_4": {"name": "钢材 IV", "description": "高强度合金钢材。", "max_stack": 99, "quality": 4},
+    "魔导书_储物": {"name": "储物魔导书", "description": "记载储物魔法的魔导书。", "max_stack": 1, "quality": 2},
+    "魔导书_防御": {"name": "防御魔导书", "description": "记载防御魔法的魔导书。", "max_stack": 1, "quality": 3},
+    "魔导书_攻击": {"name": "攻击魔导书", "description": "记载攻击魔法的魔导书。", "max_stack": 1, "quality": 3},
+    "魔导书_魔力": {"name": "魔力魔导书", "description": "记载魔力知识的魔导书。", "max_stack": 1, "quality": 4},
+    "魔素结晶_1": {"name": "魔素结晶 I", "description": "凝结的微量魔素。", "max_stack": 99, "quality": 1},
+    "魔素结晶_2": {"name": "魔素结晶 II", "description": "较为纯净的魔素结晶。", "max_stack": 99, "quality": 2},
+    "魔素结晶_3": {"name": "魔素结晶 III", "description": "蕴含大量魔素。", "max_stack": 99, "quality": 3},
+    "魔素结晶_4": {"name": "魔素结晶 IV", "description": "极其纯净的魔素结晶。", "max_stack": 99, "quality": 4}
   }
 }

@@ -1,6 +1,14 @@
 extends CanvasLayer
 
 const SLOT_SCENE := preload("res://inventory/inventory_slot.tscn")
+const QUALITY_COLORS := {
+	1: Color(0.65, 0.65, 0.65),   # 亮灰
+	2: Color(0.30, 0.85, 0.30),   # 亮绿
+	3: Color(0.30, 0.60, 0.95),   # 亮蓝
+	4: Color(0.70, 0.35, 0.90),   # 亮紫
+	5: Color(0.95, 0.60, 0.15),   # 亮橙
+	6: Color(0.95, 0.25, 0.25),   # 亮红
+}
 enum AmountOperation { NONE, SPLIT, DISCARD }
 
 @onready var window: PanelContainer = $Center/Window
@@ -277,6 +285,7 @@ func _refresh_details() -> void:
 	if not _selection_is_valid():
 		detail_icon.texture = null
 		detail_name.text = "选择物品查看详情"
+		detail_name.remove_theme_color_override("font_color")
 		detail_count.text = ""
 		detail_description.text = "拖动物品整理位置，拖出窗口丢弃整组，双击物品快速转移"
 		split_button.disabled = true
@@ -291,6 +300,11 @@ func _refresh_details() -> void:
 	if ResourceLoader.exists(path, "Texture2D"):
 		detail_icon.texture = ResourceLoader.load(path, "Texture2D") as Texture2D
 	detail_name.text = String(config.get("name", item_id))
+	var quality := int(config.get("quality", 0))
+	if quality > 0 and QUALITY_COLORS.has(quality):
+		detail_name.add_theme_color_override("font_color", QUALITY_COLORS[quality])
+	else:
+		detail_name.remove_theme_color_override("font_color")
 	detail_count.text = "数量  %d" % int(item.get("count", 1))
 	detail_description.text = String(config.get("description", "暂无说明"))
 	split_button.disabled = int(item.get("count", 1)) <= 1

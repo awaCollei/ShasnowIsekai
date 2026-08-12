@@ -5,6 +5,15 @@ signal slot_selected(storage: InventoryStorage, index: int)
 signal quick_transfer_requested(storage: InventoryStorage, index: int)
 signal outside_drop_requested(storage: InventoryStorage, index: int)
 
+const QUALITY_COLORS := {
+	1: Color(0.65, 0.65, 0.65,0.5),   # 亮灰
+	2: Color(0.30, 0.85, 0.30,0.5),   # 亮绿
+	3: Color(0.30, 0.60, 0.95,0.5),   # 亮蓝
+	4: Color(0.70, 0.35, 0.90,0.5),   # 亮紫
+	5: Color(0.95, 0.60, 0.10,0.5),   # 亮橙
+	6: Color(0.95, 0.25, 0.25,0.5),   # 亮红
+}
+
 var storage: InventoryStorage
 var slot_index := -1
 var inventory_ui: Node
@@ -43,6 +52,21 @@ func refresh() -> void:
 		tooltip_text = "%s\n%s" % [config.get("name", item_id), config.get("description", "")]
 		var count := int(item.get("count", 1))
 		count_label.text = str(count) if count > 1 else ""
+		_apply_quality_bg(config.get("quality", 0))
+	else:
+		_apply_quality_bg(0)
+
+func _apply_quality_bg(quality: int) -> void:
+	var base := get_theme_stylebox("panel", "Panel")
+	var style_box: StyleBoxFlat
+	if base is StyleBoxFlat:
+		style_box = base.duplicate() as StyleBoxFlat
+	else:
+		style_box = StyleBoxFlat.new()
+		style_box.set_content_margin_all(0)
+	if quality > 0 and QUALITY_COLORS.has(quality):
+		style_box.bg_color = QUALITY_COLORS[quality]
+	add_theme_stylebox_override("panel", style_box)
 
 func set_selected(selected: bool) -> void:
 	selected_frame.visible = selected
