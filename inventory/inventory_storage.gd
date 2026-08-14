@@ -4,12 +4,10 @@ extends RefCounted
 signal changed
 
 var capacity: int
-var auto_expand: bool
 var slots: Array = []
 
-func _init(initial_capacity: int = 30, expands: bool = false) -> void:
+func _init(initial_capacity: int = 30) -> void:
 	capacity = maxi(initial_capacity, 1)
-	auto_expand = expands
 	slots.resize(capacity)
 	slots.fill(null)
 
@@ -30,10 +28,7 @@ func add_item(item_id: String, count: int = 1) -> bool:
 	while remaining > 0:
 		var empty := _find_empty()
 		if empty < 0:
-			if not auto_expand:
-				return false
-			_add_row()
-			empty = _find_empty()
+			return false
 		var amount := mini(remaining, max_stack)
 		slots[empty] = {"id": item_id, "count": amount}
 		remaining -= amount
@@ -43,8 +38,6 @@ func add_item(item_id: String, count: int = 1) -> bool:
 func can_add(item_id: String, count: int = 1) -> bool:
 	if count <= 0 or not InventoryManager.has_item(item_id):
 		return false
-	if auto_expand:
-		return true
 	var room := 0
 	var max_stack := InventoryManager.get_max_stack(item_id)
 	for item in slots:
@@ -65,8 +58,6 @@ func take_slot(index: int) -> Dictionary:
 func put_slot(index: int, item: Dictionary) -> Dictionary:
 	if index < 0 or item.is_empty():
 		return item
-	while index >= slots.size() and auto_expand:
-		_add_row()
 	if index >= slots.size():
 		return item
 	var current = slots[index]
@@ -98,9 +89,6 @@ func split_stack(index: int, split_count: int) -> bool:
 	if split_count < 1 or split_count >= count:
 		return false
 	var empty := _find_empty()
-	if empty < 0 and auto_expand:
-		_add_row()
-		empty = _find_empty()
 	if empty < 0:
 		return false
 	source["count"] = count - split_count
@@ -124,23 +112,11 @@ func take_amount(index: int, amount: int) -> Dictionary:
 	changed.emit()
 	return result
 
-func ensure_trailing_row() -> void:
-	if not auto_expand:
-		return
-	var empty_count := 0
-	for item in slots:
-		if item == null:
-			empty_count += 1
-	if empty_count < 6:
-		_add_row()
-
 func serialize() -> Array:
 	return slots.duplicate(true)
 
 func load_data(data, minimum_size: int = -1) -> void:
 	var target_size := capacity if minimum_size < 0 else maxi(capacity, minimum_size)
-	if data is Array:
-		target_size = maxi(target_size, data.size()) if auto_expand else capacity
 	slots.resize(target_size)
 	slots.fill(null)
 	if data is Array:
@@ -159,9 +135,3 @@ func _find_empty() -> int:
 		if slots[i] == null:
 			return i
 	return -1
-
-func _add_row() -> void:
-	var old_size := slots.size()
-	slots.resize(old_size + 6)
-	for i in range(old_size, slots.size()):
-		slots[i] = null

@@ -90,7 +90,6 @@ position = Vector2(80, 73)
 chest_id = "rv_warehouse"
 chest_type = "warehouse"
 display_name = "房车仓库"
-infinite_storage = true
 sub_scene = "rv_indoor"
 
 [node name="CabinInvestigation" parent="." unique_id=599493075 instance=ExtResource("5_investigation")]

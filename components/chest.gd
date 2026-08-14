@@ -1,8 +1,6 @@
 class_name Chest
 extends Area2D
 
-const RV_WAREHOUSE_ID := "rv_warehouse"
-
 ## chest_id 标识这个箱子实例，必须在整个存档中唯一。
 @export var chest_id: String = ""
 ## chest_type 决定 loot_tables.json 中使用的生成规则。
@@ -11,7 +9,6 @@ const RV_WAREHOUSE_ID := "rv_warehouse"
 @export_range(1, 3, 1) var star_level: int = 1
 @export var display_name: String = "箱子"
 @export var capacity: int = 24
-@export var infinite_storage: bool = false
 @export var sub_scene: String = ""
 
 var player_ref: Player
@@ -38,7 +35,7 @@ func _ready() -> void:
 	elif not InventoryManager.loot_tables.has(chest_type):
 		push_warning("未注册的箱子类型 %s: %s" % [chest_type, chest_id])
 	
-	InventoryManager.get_chest(chest_id, chest_type, star_level, capacity, infinite_storage)
+	InventoryManager.get_chest(chest_id, chest_type, star_level, capacity)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	
@@ -93,7 +90,7 @@ func interact() -> void:
 		return
 	var ui := get_node_or_null("/root/InventoryUI")
 	if ui:
-		ui.open_chest(chest_id, chest_type, display_name, capacity, infinite_storage, star_level)
+		ui.open_chest(chest_id, chest_type, display_name, capacity, star_level)
 
 func _can_interact() -> bool:
 	if not player_ref:

@@ -7,7 +7,7 @@ const DROP_SCENE := preload("res://inventory/dropped_item.tscn")
 
 var registry: Dictionary = {}
 var loot_tables: Dictionary = {}
-var inventory := InventoryStorage.new(10, false)
+var inventory := InventoryStorage.new(10)
 var chests: Dictionary = {}
 ## 与 chests 同键保存类型；类型属于实例存档，不能仅依赖当前房间配置。
 var chest_types: Dictionary = {}
@@ -71,15 +71,12 @@ func get_max_stack(item_id: String) -> int:
 func get_texture_path(item_id: String) -> String:
 	return ITEM_TEXTURE_DIR + item_id + ".png"
 
-func get_chest(chest_id: String, chest_type: String = "", star_level: int = 1, capacity: int = 24, infinite: bool = false) -> InventoryStorage:
+func get_chest(chest_id: String, chest_type: String = "", star_level: int = 1, capacity: int = 24) -> InventoryStorage:
 	if chests.has(chest_id):
-		# 旧存档没有 type 字段时，用当前场景配置补齐，但绝不重新生成内容。
-		if String(chest_types.get(chest_id, "")).is_empty() and not chest_type.is_empty():
-			chest_types[chest_id] = chest_type
 		return chests[chest_id]
 	var config: Dictionary = loot_tables.get(chest_type, {})
 	var actual_capacity := maxi(1, int(config.get("capacity", capacity)))
-	var storage := InventoryStorage.new(actual_capacity, infinite)
+	var storage := InventoryStorage.new(actual_capacity)
 	chests[chest_id] = storage
 	chest_types[chest_id] = chest_type
 	_generate_chest_loot(storage, chest_type, chest_id, star_level)
@@ -205,7 +202,7 @@ func pickup_drop(scene_id: String, drop_id: String) -> bool:
 			continue
 		var item: Dictionary = record.get("item", {})
 		if not inventory.can_add(String(item.get("id", "")), int(item.get("count", 1))):
-			MessageDisplayManager.show_info_message("背包已满")
+			MessageDisplayManager.show_failure_message("背包已经满了！")
 			return false
 		inventory.add_item(String(item["id"]), int(item.get("count", 1)))
 		records.remove_at(i)
@@ -246,7 +243,6 @@ func serialize() -> Dictionary:
 		chest_data[chest_id] = {
 			"type": String(chest_types.get(chest_id, "")),
 			"capacity": storage.capacity,
-			"auto_expand": storage.auto_expand,
 			"slots": storage.serialize(),
 		}
 	return {"inventory": inventory.serialize(), "chests": chest_data, "ground_drops": ground_drops.duplicate(true)}
@@ -258,15 +254,11 @@ func load_data(data: Dictionary) -> void:
 	var chest_data = data.get("chests", {})
 	if chest_data is Dictionary:
 		for chest_id in chest_data:
-			var raw = chest_data[chest_id]
-			# 兼容早期仅保存 slots 数组的格式。
-			var slot_data = raw.get("slots", []) if raw is Dictionary else raw
-			var saved_capacity := int(raw.get("capacity", 24)) if raw is Dictionary else 24
-			var infinite := bool(raw.get("auto_expand", String(chest_id) == "rv_warehouse")) if raw is Dictionary else String(chest_id) == "rv_warehouse"
-			var storage := InventoryStorage.new(saved_capacity, infinite)
-			storage.load_data(slot_data)
+			var raw: Dictionary = chest_data[chest_id]
+			var storage := InventoryStorage.new(int(raw.get("capacity", 24)))
+			storage.load_data(raw.get("slots", []))
 			chests[chest_id] = storage
-			chest_types[chest_id] = String(raw.get("type", "")) if raw is Dictionary else ""
+			chest_types[chest_id] = String(raw.get("type", ""))
 	var drops = data.get("ground_drops", {})
 	ground_drops = drops.duplicate(true) if drops is Dictionary else {}
 

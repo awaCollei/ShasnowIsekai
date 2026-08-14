@@ -77,12 +77,12 @@ func open_inventory() -> void:
 	title.text = "背包"
 	_refresh()
 
-func open_chest(chest_id: String, chest_type: String, display_name: String, capacity: int, infinite: bool, star_level: int = 1) -> void:
+func open_chest(chest_id: String, chest_type: String, display_name: String, capacity: int, star_level: int = 1) -> void:
 	if BattleManager.is_in_battle or _is_player_locked():
 		return
 	_begin_open()
 	current_chest_id = chest_id
-	current_chest = InventoryManager.get_chest(chest_id, chest_type, star_level, capacity, infinite)
+	current_chest = InventoryManager.get_chest(chest_id, chest_type, star_level, capacity)
 	if not current_chest.changed.is_connected(_queue_refresh):
 		current_chest.changed.connect(_queue_refresh)
 	_clear_selection()
@@ -153,7 +153,7 @@ func _on_quick_transfer(storage: InventoryStorage, index: int) -> void:
 	var item_id := String(item.get("id", ""))
 	var count := int(item.get("count", 1))
 	if not target.add_item(item_id, count):
-		MessageDisplayManager.show_info_message("目标容器空间不足")
+		# MessageDisplayManager.show_failure_message("目标容器空间不足！")
 		return
 	storage.take_slot(index)
 	_clear_selection()
@@ -265,7 +265,6 @@ func _refresh() -> void:
 		_clear_selection()
 	_fill_grid(player_grid, InventoryManager.inventory)
 	if current_chest:
-		current_chest.ensure_trailing_row()
 		_fill_grid(chest_grid, current_chest)
 	_refresh_details()
 
