@@ -35,6 +35,7 @@ InventoryManager.spawn_drop(
 
 - `chest_id`：箱子实例的唯一 ID，用于隔离存档内容。
 - `chest_type`：箱子类型，对应 `loot_tables.json` 中的生成规则。
+- `star_level`：箱子采用的区域星级（1–3）；动态建筑箱子自动继承所属区域星级。
 
 手工放置的箱子需要设置唯一 `chest_id`。`rooms.json` 中只写相对位置和 `type`，`RoomGenerator` 会用无碰撞长度前缀编码，将 `scene + zone + region_type + building_instance_id + layout_version + room_id + chest_type + floor + room_index + chest_index` 动态构造成稳定唯一 ID；因此大量地图中重复出现相同房间时也不会共享箱子内容，布局或箱子类型变化也不会误接旧内容。同一 zone 有多个建筑生成器时，需要为它们设置不同且稳定的 `building_instance_id`。
 
@@ -42,9 +43,11 @@ InventoryManager.spawn_drop(
 
 ## 战利品注册表
 
-`loot_tables.json` 的 `chest_types` 按箱子类型配置生成方式。目前支持 `generation: "per_slot_probability"`：箱子首次创建时，每个格子独立生成一个 `[0,1)` 随机数，按 `rules` 中的 `chance` 顺序累计概率；命中后按 `min_count`–`max_count` 生成物品，未命中则为空格。各规则概率之和建议不超过 1，剩余概率就是空格概率。
+`loot_tables.json` 的 `chest_types` 按箱子类型配置生成方式，`capacity` 与 `generation` 为公共字段，`star_levels` 的 `"1"`、`"2"`、`"3"` 分别保存各星级的 `rules`。目前支持 `generation: "per_slot_probability"`：箱子首次创建时，每个格子独立生成一个 `[0,1)` 随机数，按当前星级规则中的 `chance` 顺序累计概率；命中后按 `min_count`–`max_count` 生成物品，未命中则为空格。各规则概率之和建议不超过 1，剩余概率就是空格概率。
 
-箱子内容一旦生成便随实例 ID 保存，重新进入房间或读档不会再次刷新。每个新世界还会在地图状态中保存 `loot_seed`；箱子使用 `loot_seed + chest_id` 的独立随机序列生成，因此读取尚未写入箱子字段的旧存档时也不会反复重掷。
+默认三级战利品表维护在 `building/editor/app.py`。删除旧 `loot_tables.json` 后启动编辑器并保存战利品表，即可生成新结构文件。
+
+箱子内容一旦生成便随实例 ID 保存，重新进入房间或读档不会再次刷新。每个新世界还会在地图状态中保存 `loot_seed`；箱子使用 `loot_seed XOR chest_id.hash()` 的独立随机序列生成，因此各箱子的结果稳定且互不影响。
 
 ## 操作
 

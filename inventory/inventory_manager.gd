@@ -45,17 +45,19 @@ func _load_loot_tables() -> void:
 	if parsed is Dictionary:
 		loot_tables = parsed.get("chest_types", {})
 	for type_id in loot_tables:
-		var rules = loot_tables[type_id].get("rules", [])
-		var probability_sum := 0.0
-		for rule in rules:
-			if not rule is Dictionary:
-				continue
-			probability_sum += maxf(0.0, float(rule.get("chance", 0.0)))
-			var item_id := String(rule.get("item", ""))
-			if not has_item(item_id):
-				push_warning("箱子类型 %s 引用了未注册物品: %s" % [type_id, item_id])
-		if probability_sum > 1.0001:
-			push_warning("箱子类型 %s 的每格概率总和大于 1，将按规则顺序截断" % type_id)
+		var star_levels: Dictionary = loot_tables[type_id].get("star_levels", {})
+		for star in ["1", "2", "3"]:
+			var rules = star_levels.get(star, {}).get("rules", [])
+			var probability_sum := 0.0
+			for rule in rules:
+				if not rule is Dictionary:
+					continue
+				probability_sum += maxf(0.0, float(rule.get("chance", 0.0)))
+				var item_id := String(rule.get("item", ""))
+				if not has_item(item_id):
+					push_warning("箱子类型 %s（%s 星）引用了未注册物品: %s" % [type_id, star, item_id])
+			if probability_sum > 1.0001:
+				push_warning("箱子类型 %s（%s 星）的每格概率总和大于 1，将按规则顺序截断" % [type_id, star])
 
 func has_item(item_id: String) -> bool:
 	return registry.has(item_id)
@@ -69,7 +71,7 @@ func get_max_stack(item_id: String) -> int:
 func get_texture_path(item_id: String) -> String:
 	return ITEM_TEXTURE_DIR + item_id + ".png"
 
-func get_chest(chest_id: String, chest_type: String = "", capacity: int = 24, infinite: bool = false) -> InventoryStorage:
+func get_chest(chest_id: String, chest_type: String = "", star_level: int = 1, capacity: int = 24, infinite: bool = false) -> InventoryStorage:
 	if chests.has(chest_id):
 		# 旧存档没有 type 字段时，用当前场景配置补齐，但绝不重新生成内容。
 		if String(chest_types.get(chest_id, "")).is_empty() and not chest_type.is_empty():
@@ -80,17 +82,19 @@ func get_chest(chest_id: String, chest_type: String = "", capacity: int = 24, in
 	var storage := InventoryStorage.new(actual_capacity, infinite)
 	chests[chest_id] = storage
 	chest_types[chest_id] = chest_type
-	_generate_chest_loot(storage, chest_type, chest_id)
+	_generate_chest_loot(storage, chest_type, chest_id, star_level)
 	SaveManager.request_auto_save("生成箱子战利品")
 	return storage
 
 ## 逐格进行一次随机判定。规则概率按数组顺序占用 [0, 1) 区间，
 ## 未命中任何规则时该格保持为空。
-func _generate_chest_loot(storage: InventoryStorage, chest_type: String, chest_id: String) -> void:
+func _generate_chest_loot(storage: InventoryStorage, chest_type: String, chest_id: String, star_level: int) -> void:
 	var config: Dictionary = loot_tables.get(chest_type, {})
 	if String(config.get("generation", "none")) != "per_slot_probability":
 		return
-	var rules = config.get("rules", [])
+	var star_levels: Dictionary = config.get("star_levels", {})
+	var level_config: Dictionary = star_levels.get(str(star_level), {})
+	var rules = level_config.get("rules", [])
 	if not rules is Array:
 		return
 	var rng := RandomNumberGenerator.new()

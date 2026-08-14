@@ -7,6 +7,8 @@ const RV_WAREHOUSE_ID := "rv_warehouse"
 @export var chest_id: String = ""
 ## chest_type 决定 loot_tables.json 中使用的生成规则。
 @export var chest_type: String = ""
+## 动态建筑箱子继承所属区域星级；场景内固定箱子默认为 1 星。
+@export_range(1, 3, 1) var star_level: int = 1
 @export var display_name: String = "箱子"
 @export var capacity: int = 24
 @export var infinite_storage: bool = false
@@ -30,7 +32,7 @@ func _ready() -> void:
 	if has_node("Visual/Label"):
 		$Visual/Label.text = display_name
 	# 第一次创建实例时立即按类型生成战利品；已有存档实例不会重复刷新。
-	InventoryManager.get_chest(chest_id, chest_type, capacity, infinite_storage)
+	InventoryManager.get_chest(chest_id, chest_type, star_level, capacity, infinite_storage)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 
@@ -71,7 +73,7 @@ func interact() -> void:
 		return
 	var ui := get_node_or_null("/root/InventoryUI")
 	if ui:
-		ui.open_chest(chest_id, chest_type, display_name, capacity, infinite_storage)
+		ui.open_chest(chest_id, chest_type, display_name, capacity, infinite_storage, star_level)
 
 func _can_interact() -> bool:
 	return player_ref != null and (sub_scene.is_empty() or player_ref.current_sub_scene == sub_scene)

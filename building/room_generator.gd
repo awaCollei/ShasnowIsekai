@@ -309,6 +309,7 @@ func _create_room_content(room_root: Node2D, room_id: String, floor_index: int, 
 		chest.position = chest_data["position"]
 		chest.chest_id = _dynamic_chest_id(room_id, chest_data["type"], floor_index, room_index, chest_index)
 		chest.chest_type = chest_data["type"]
+		chest.star_level = int(zone_state["star"])
 		chest.display_name = chest_data["name"]
 		chest.sub_scene = sub
 		content.add_child(chest)

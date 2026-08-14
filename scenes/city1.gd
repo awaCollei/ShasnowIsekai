@@ -5,6 +5,13 @@ const INTRO_PLOT_ID: String = "1_1"
 const SLIME_SCENE: PackedScene = preload("res://enemies/slime.tscn")
 const DEFAULT_CITY_ZONE := "1,2"
 
+## 敌人系统仍在早期阶段：暂时只用数量、生命和伤害倍率表达区域星级。
+const ENEMY_STAR_RULES := {
+	1: {"extra_count": 0, "hp_multiplier": 1.0, "damage_multiplier": 1.0},
+	2: {"extra_count": 1, "hp_multiplier": 1.35, "damage_multiplier": 1.20},
+	3: {"extra_count": 2, "hp_multiplier": 1.75, "damage_multiplier": 1.45},
+}
+
 @export_group("Building Placement")
 ## 建筑左下角 / 1 楼地板表面的世界坐标。
 @export var building_origin: Vector2 = Vector2(-700.0, 735.0)
@@ -53,7 +60,7 @@ func _prepare_zone_state() -> void:
 	current_zone_state = zones.get(active_zone_id, {})
 	if current_zone_state.is_empty():
 		current_zone_state = {
-			"scene": "city1", "region": "city1", "region_type": "office", "discovered": true,
+			"scene": "city1", "region": "city1", "region_type": "office", "star": 1, "discovered": true,
 			"entered": true, "rooms": [], "enemies": [], "enemy_initialized": false,
 		}
 		zones[active_zone_id] = current_zone_state
@@ -84,6 +91,7 @@ func _spawn_zone_enemies() -> void:
 		var enemy := spawn_enemy(SLIME_SCENE, world_position)
 		if not enemy:
 			continue
+		_apply_enemy_star_strength(enemy, true)
 		enemy.sub_scene = String(candidate["sub_scene"])
 		saved.append({
 			"scene_path": SLIME_SCENE.resource_path,
@@ -106,6 +114,7 @@ func _restore_zone_enemies() -> void:
 			continue
 		var enemy := spawn_enemy(packed, raw.get("position", Vector2.ZERO))
 		if enemy:
+			_apply_enemy_star_strength(enemy, false)
 			enemy.max_hp = maxi(1, int(raw.get("max_hp", enemy.max_hp)))
 			enemy.hp = clampi(int(raw.get("hp", enemy.max_hp)), 1, enemy.max_hp)
 			enemy.sub_scene = String(raw.get("sub_scene", "outdoor"))
@@ -113,13 +122,28 @@ func _restore_zone_enemies() -> void:
 
 func _roll_enemy_count() -> int:
 	var value := randf()
+	var base_count: int
 	if value < 0.20:
-		return 0
-	if value < 0.60:
-		return 1
-	if value < 0.90:
-		return 2
-	return 3
+		base_count = 0
+	elif value < 0.60:
+		base_count = 1
+	elif value < 0.90:
+		base_count = 2
+	else:
+		base_count = 3
+	var rule: Dictionary = ENEMY_STAR_RULES[int(current_zone_state["star"])]
+	return base_count + int(rule["extra_count"])
+
+
+func _apply_enemy_star_strength(enemy: Enemy, scale_health: bool) -> void:
+	var rule: Dictionary = ENEMY_STAR_RULES[int(current_zone_state["star"])]
+	if scale_health:
+		enemy.max_hp = maxi(1, roundi(float(enemy.max_hp) * float(rule["hp_multiplier"])))
+		enemy.hp = enemy.max_hp
+	# 当前 city1 只有 Slime；保留基类字段同步，方便后续敌人重构前观察效果。
+	enemy.battle_damage *= float(rule["damage_multiplier"])
+	if enemy is Slime:
+		(enemy as Slime).attack_damage *= float(rule["damage_multiplier"])
 
 
 func capture_zone_state() -> void:

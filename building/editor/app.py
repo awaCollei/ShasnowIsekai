@@ -3,6 +3,7 @@ rooms.json 可视化编辑器
 启动方式: python app.py
 然后在浏览器打开 http://localhost:8765
 """
+import copy
 import json
 import os
 from flask import Flask, jsonify, request, send_file, render_template_string
@@ -15,6 +16,91 @@ LOOT_TABLES_JSON = os.path.join(os.path.join(BASE_DIR, "..", "inventory"), "loot
 ITEMS_JSON = os.path.join(os.path.join(BASE_DIR, "..", "inventory"), "items.json")
 ASSETS_DIR = os.path.join(os.path.join(BASE_DIR, ".."), "assets")
 
+# loot_tables.json 被删除后，编辑器以此表作为新文件初始内容。
+# capacity / generation 属于箱子类型；star_levels 分别配置 1~3 星区域的逐格刷新规则。
+DEFAULT_LOOT_TABLES = {
+    "chest_types": {
+        "hospital_medicine": {
+            "capacity": 18,
+            "generation": "per_slot_probability",
+            "star_levels": {
+                "1": {"rules": [
+                    {"chance": 0.20, "item": "魔素结晶_1", "min_count": 1, "max_count": 3},
+                    {"chance": 0.08, "item": "魔素结晶_2", "min_count": 1, "max_count": 1},
+                ]},
+                "2": {"rules": [
+                    {"chance": 0.28, "item": "魔素结晶_1", "min_count": 2, "max_count": 4},
+                    {"chance": 0.14, "item": "魔素结晶_2", "min_count": 1, "max_count": 2},
+                ]},
+                "3": {"rules": [
+                    {"chance": 0.34, "item": "魔素结晶_1", "min_count": 2, "max_count": 5},
+                    {"chance": 0.22, "item": "魔素结晶_2", "min_count": 1, "max_count": 3},
+                ]},
+            },
+        },
+        "office_supply": {
+            "capacity": 24,
+            "generation": "per_slot_probability",
+            "star_levels": {
+                "1": {"rules": [
+                    {"chance": 0.28, "item": "电子元件_1", "min_count": 1, "max_count": 4},
+                    {"chance": 0.12, "item": "电子元件_2", "min_count": 1, "max_count": 2},
+                    {"chance": 0.18, "item": "钢材_1", "min_count": 1, "max_count": 3},
+                    {"chance": 0.07, "item": "魔素结晶_1", "min_count": 1, "max_count": 2},
+                ]},
+                "2": {"rules": [
+                    {"chance": 0.30, "item": "电子元件_1", "min_count": 2, "max_count": 5},
+                    {"chance": 0.18, "item": "电子元件_2", "min_count": 1, "max_count": 3},
+                    {"chance": 0.20, "item": "钢材_1", "min_count": 2, "max_count": 4},
+                    {"chance": 0.10, "item": "魔素结晶_1", "min_count": 1, "max_count": 3},
+                ]},
+                "3": {"rules": [
+                    {"chance": 0.30, "item": "电子元件_1", "min_count": 3, "max_count": 6},
+                    {"chance": 0.24, "item": "电子元件_2", "min_count": 2, "max_count": 4},
+                    {"chance": 0.22, "item": "钢材_1", "min_count": 2, "max_count": 5},
+                    {"chance": 0.14, "item": "魔素结晶_1", "min_count": 2, "max_count": 4},
+                ]},
+            },
+        },
+        "warehouse": {
+            "capacity": 24,
+            "generation": "none",
+            "star_levels": {"1": {"rules": []}, "2": {"rules": []}, "3": {"rules": []}},
+        },
+        "city1_office_茶水间_chest_0": {
+            "capacity": 24,
+            "generation": "per_slot_probability",
+            "star_levels": {
+                "1": {"rules": [
+                    {"chance": 0.10, "item": "电子元件_1", "min_count": 1, "max_count": 1},
+                    {"chance": 0.10, "item": "钢材_1", "min_count": 1, "max_count": 1},
+                ]},
+                "2": {"rules": [
+                    {"chance": 0.16, "item": "电子元件_1", "min_count": 1, "max_count": 2},
+                    {"chance": 0.14, "item": "钢材_1", "min_count": 1, "max_count": 2},
+                ]},
+                "3": {"rules": [
+                    {"chance": 0.22, "item": "电子元件_1", "min_count": 2, "max_count": 3},
+                    {"chance": 0.18, "item": "钢材_1", "min_count": 2, "max_count": 3},
+                    {"chance": 0.08, "item": "电子元件_2", "min_count": 1, "max_count": 1},
+                ]},
+            },
+        },
+        "city1_office_茶水间_chest_1": {
+            "capacity": 24,
+            "generation": "per_slot_probability",
+            "star_levels": {
+                "1": {"rules": [{"chance": 0.10, "item": "魔素结晶_1", "min_count": 1, "max_count": 1}]},
+                "2": {"rules": [{"chance": 0.18, "item": "魔素结晶_1", "min_count": 1, "max_count": 2}]},
+                "3": {"rules": [
+                    {"chance": 0.22, "item": "魔素结晶_1", "min_count": 2, "max_count": 3},
+                    {"chance": 0.08, "item": "魔素结晶_2", "min_count": 1, "max_count": 1},
+                ]},
+            },
+        },
+    }
+}
+
 
 def load_json(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -22,8 +108,20 @@ def load_json(path):
 
 
 def save_json(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def load_loot_tables():
+    if not os.path.exists(LOOT_TABLES_JSON):
+        return copy.deepcopy(DEFAULT_LOOT_TABLES)
+    data = load_json(LOOT_TABLES_JSON)
+    chest_types = data.get("chest_types", {}) if isinstance(data, dict) else {}
+    # 旧版顶层 rules 不再参与编辑；返回新默认表，保存时即可重建文件。
+    if any("star_levels" not in entry for entry in chest_types.values() if isinstance(entry, dict)):
+        return copy.deepcopy(DEFAULT_LOOT_TABLES)
+    return data
 
 
 @app.route("/")
@@ -45,12 +143,8 @@ def save_rooms():
 
 @app.route("/api/chest_types")
 def get_chest_types():
-    try:
-        data = load_json(LOOT_TABLES_JSON)
-        types = list(data.get("chest_types", {}).keys())
-        return jsonify(types)
-    except Exception:
-        return jsonify(["office_supply", "hospital_medicine"])
+    data = load_loot_tables()
+    return jsonify(list(data.get("chest_types", {}).keys()))
 
 
 @app.route("/api/texture")
@@ -66,12 +160,14 @@ def serve_texture():
 
 @app.route("/api/loot_tables")
 def get_loot_tables():
-    return jsonify(load_json(LOOT_TABLES_JSON))
+    return jsonify(load_loot_tables())
 
 
 @app.route("/api/loot_tables/save", methods=["POST"])
 def save_loot_tables():
     data = request.get_json()
+    if not isinstance(data, dict) or not isinstance(data.get("chest_types"), dict):
+        return jsonify({"ok": False, "error": "chest_types 必须是对象"}), 400
     save_json(LOOT_TABLES_JSON, data)
     return jsonify({"ok": True})
 
@@ -202,6 +298,14 @@ button.secondary:hover { background:#1a4a7a; }
           <option value="none">none</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>区域星级</label>
+        <select id="loot-star-level" onchange="switchLootStarLevel()">
+          <option value="1">※ 1 星</option>
+          <option value="2">※※ 2 星</option>
+          <option value="3">※※※ 3 星</option>
+        </select>
+      </div>
       <div id="loot-rules"></div>
       <button class="btn-sm" onclick="addLootRule()">+ 添加规则</button>
       <button class="secondary btn-sm" style="margin-top:8px;" onclick="saveLootTables()">保存战利品表</button>
@@ -231,6 +335,7 @@ let lootTablesData = {};
 let itemsList = [];
 let chestTypes = [];
 let selectedPointIndex = -1;
+let selectedLootStarLevel = '1';
 let isDragging = false;
 let dragPointIndex = -1;
 let bgImage = null;
@@ -592,6 +697,7 @@ function addPointAt(type, cx, cy) {
 }
 
 function selectPoint(type, index) {
+  collectLootRules();
   selectedPointType = type;
   selectedPointIndex = index;
   updatePointList();
@@ -748,6 +854,28 @@ function escapeHtml(s) {
 
 // ======== LOOT TABLE EDITOR ========
 
+function ensureLootEntry(chestType) {
+  if (!lootTablesData.chest_types || typeof lootTablesData.chest_types !== 'object') {
+    lootTablesData.chest_types = {};
+  }
+  if (!lootTablesData.chest_types[chestType]) {
+    lootTablesData.chest_types[chestType] = {
+      capacity: 24,
+      generation: 'per_slot_probability',
+      star_levels: {},
+    };
+  }
+  const entry = lootTablesData.chest_types[chestType];
+  if (!entry.star_levels || typeof entry.star_levels !== 'object') entry.star_levels = {};
+  for (const level of ['1', '2', '3']) {
+    if (!entry.star_levels[level] || typeof entry.star_levels[level] !== 'object') {
+      entry.star_levels[level] = { rules: [] };
+    }
+    if (!Array.isArray(entry.star_levels[level].rules)) entry.star_levels[level].rules = [];
+  }
+  return entry;
+}
+
 function updateLootEditor() {
   const container = document.getElementById('loot-editor');
   if (selectedPointIndex < 0 || selectedPointType !== 'chest') {
@@ -763,12 +891,22 @@ function updateLootEditor() {
   const chestType = ch.type || '';
   document.getElementById('loot-type-id').value = chestType;
 
-  const chestTypes = lootTablesData.chest_types || {};
-  const existing = chestTypes[chestType] || {};
+  const existing = ensureLootEntry(chestType);
+  selectedLootStarLevel = '1';
+  document.getElementById('loot-star-level').value = selectedLootStarLevel;
   document.getElementById('loot-capacity').value = existing.capacity || 24;
   document.getElementById('loot-generation').value = existing.generation || 'per_slot_probability';
 
-  renderLootRules(existing.rules || []);
+  renderLootRules(existing.star_levels[selectedLootStarLevel].rules);
+}
+
+function switchLootStarLevel() {
+  collectLootRules();
+  selectedLootStarLevel = document.getElementById('loot-star-level').value;
+  const chestType = document.getElementById('loot-type-id').value;
+  if (!chestType) return;
+  const entry = ensureLootEntry(chestType);
+  renderLootRules(entry.star_levels[selectedLootStarLevel].rules);
 }
 
 function renderLootRules(rules) {
@@ -810,32 +948,30 @@ function renderLootRules(rules) {
 function addLootRule() {
   const chestType = document.getElementById('loot-type-id').value;
   if (!chestType) return;
-  const chestTypes = lootTablesData.chest_types || {};
-  if (!chestTypes[chestType]) {
-    chestTypes[chestType] = { capacity: 24, generation: 'per_slot_probability', rules: [] };
-  }
-  if (!chestTypes[chestType].rules) chestTypes[chestType].rules = [];
-  chestTypes[chestType].rules.push({ chance: 0.1, item: itemsList[0] || '', min_count: 1, max_count: 1 });
-  renderLootRules(chestTypes[chestType].rules);
+  collectLootRules();
+  const entry = ensureLootEntry(chestType);
+  const rules = entry.star_levels[selectedLootStarLevel].rules;
+  rules.push({ chance: 0.1, item: itemsList[0] || '', min_count: 1, max_count: 1 });
+  renderLootRules(rules);
 }
 
 function deleteLootRule(index) {
   const chestType = document.getElementById('loot-type-id').value;
-  const chestTypes = lootTablesData.chest_types || {};
-  const entry = chestTypes[chestType];
-  if (!entry || !entry.rules) return;
-  entry.rules.splice(index, 1);
-  renderLootRules(entry.rules);
+  if (!chestType) return;
+  collectLootRules();
+  const entry = ensureLootEntry(chestType);
+  const rules = entry.star_levels[selectedLootStarLevel].rules;
+  rules.splice(index, 1);
+  renderLootRules(rules);
 }
 
 function collectLootRules() {
   const chestType = document.getElementById('loot-type-id').value;
-  const chestTypes = lootTablesData.chest_types || {};
-  const entry = chestTypes[chestType];
-  if (!entry) return;
+  if (!chestType) return;
+  const entry = ensureLootEntry(chestType);
   entry.capacity = parseInt(document.getElementById('loot-capacity').value) || 24;
   entry.generation = document.getElementById('loot-generation').value;
-  const rules = entry.rules || [];
+  const rules = entry.star_levels[selectedLootStarLevel].rules;
   for (let i = 0; i < rules.length; i++) {
     rules[i].chance = parseFloat(document.getElementById(`lr-chance-${i}`).value) || 0;
     rules[i].item = document.getElementById(`lr-item-${i}`).value;
@@ -846,6 +982,7 @@ function collectLootRules() {
 
 async function saveLootTables() {
   collectLootRules();
+  for (const chestType of Object.keys(lootTablesData.chest_types || {})) ensureLootEntry(chestType);
   const status = document.getElementById('loot-save-status');
   try {
     const res = await fetch('/api/loot_tables/save', {
@@ -854,6 +991,7 @@ async function saveLootTables() {
       body: JSON.stringify(lootTablesData),
     });
     const result = await res.json();
+    if (!res.ok) throw new Error(result.error || `HTTP ${res.status}`);
     if (result.ok) {
       status.textContent = '战利品表已保存!';
       status.style.color = '#4caf50';

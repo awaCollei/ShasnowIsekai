@@ -43,6 +43,10 @@ static func type_name(region_type: String) -> String:
 	_ensure_loaded()
 	return _find_region_type(region_type).get("name", "未知区域")
 
+static func type_icon(region_type: String) -> String:
+	_ensure_loaded()
+	return _find_region_type(region_type).get("icon", "❓")
+
 static func get_region_types(scene_id: String) -> Array:
 	_ensure_loaded()
 	var info: Dictionary = _scenes.get(scene_id, {})

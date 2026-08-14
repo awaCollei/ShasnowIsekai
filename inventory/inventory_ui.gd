@@ -77,12 +77,12 @@ func open_inventory() -> void:
 	title.text = "背包"
 	_refresh()
 
-func open_chest(chest_id: String, chest_type: String, display_name: String, capacity: int, infinite: bool) -> void:
+func open_chest(chest_id: String, chest_type: String, display_name: String, capacity: int, infinite: bool, star_level: int = 1) -> void:
 	if BattleManager.is_in_battle or _is_player_locked():
 		return
 	_begin_open()
 	current_chest_id = chest_id
-	current_chest = InventoryManager.get_chest(chest_id, chest_type, capacity, infinite)
+	current_chest = InventoryManager.get_chest(chest_id, chest_type, star_level, capacity, infinite)
 	if not current_chest.changed.is_connected(_queue_refresh):
 		current_chest.changed.connect(_queue_refresh)
 	_clear_selection()
