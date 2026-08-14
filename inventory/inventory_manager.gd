@@ -7,7 +7,7 @@ const DROP_SCENE := preload("res://inventory/dropped_item.tscn")
 
 var registry: Dictionary = {}
 var loot_tables: Dictionary = {}
-var inventory := InventoryStorage.new(30, false)
+var inventory := InventoryStorage.new(10, false)
 var chests: Dictionary = {}
 ## 与 chests 同键保存类型；类型属于实例存档，不能仅依赖当前房间配置。
 var chest_types: Dictionary = {}
