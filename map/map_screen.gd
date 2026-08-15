@@ -109,10 +109,10 @@ func _build_grid(scene_id: String) -> void:
 func _add_map_cell(zone: Dictionary, id: String, x: int, y: int, order: int) -> void:
 	var cell := Button.new(); cell.custom_minimum_size = Vector2(100, 82); cell.focus_mode = Control.FOCUS_ALL; cell.set_meta("zone_id", id)
 	cell.add_theme_stylebox_override("normal", _cell_style(zone, false)); cell.add_theme_stylebox_override("hover", _cell_style(zone, true)); cell.add_theme_stylebox_override("disabled", _cell_style(zone, false)); cell.pressed.connect(_select_zone.bind(id)); _grid.add_child(cell)
-	_add_cell_content(cell, zone)
+	_add_cell_content(cell, zone, id)
 	cell.modulate.a = 0.0; var delay = 0.025 * abs(x - _grid.columns / 2) + 0.025 * abs(y - 2) + order * 0.006; var t := create_tween(); t.tween_interval(delay); t.tween_property(cell, "modulate:a", 1.0, 0.22).set_trans(Tween.TRANS_CUBIC)
 
-func _add_cell_content(cell: Button, zone: Dictionary) -> void:
+func _add_cell_content(cell: Button, zone: Dictionary, id: String) -> void:
 	var content := VBoxContainer.new()
 	content.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	content.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -123,7 +123,7 @@ func _add_cell_content(cell: Button, zone: Dictionary) -> void:
 		_add_cell_label(content, "未知区域", 14)
 		return
 	var region_type: String = zone["region_type"]
-	_add_cell_label(content, "⭐".repeat(int(zone["star"])), 12)
+	_add_cell_label(content, "🚩" if id == MapState.BASE_ID else "⭐".repeat(int(zone["star"])), 12)
 	_add_cell_label(content, SceneRegistry.type_icon(region_type), 30)
 	_add_cell_label(content, MapState.type_name(region_type), 14)
 
@@ -153,7 +153,8 @@ func _find_cell_for_zone(zone_id: String) -> Button:
 func _select_zone(id: String) -> void:
 	if _selected_zone == id: _clear_detail(); return
 	if is_instance_valid(_selected_cell): _selected_cell.add_theme_stylebox_override("normal", _cell_style(MapState.get_zone(SaveManager.runtime_map_state, _selected_zone), false))
-	_selected_zone = id; var zone: Dictionary = MapState.get_zone(SaveManager.runtime_map_state, id); detail_title.text = "%s %s" % [SceneRegistry.type_icon(zone["region_type"]), MapState.type_name(zone["region_type"])]; detail_desc.text = SceneRegistry.region_description(zone["region_type"]); detail_meta.text = "危险度%s   ·   坐标 %s   ·   去过 %d 次" % ["⭐".repeat(int(zone["star"])), id, int(zone.get("visit_count", 0))]; travel_button.disabled = false
+	_selected_zone = id; var zone: Dictionary = MapState.get_zone(SaveManager.runtime_map_state, id); detail_title.text = "%s %s" % [SceneRegistry.type_icon(zone["region_type"]), MapState.type_name(zone["region_type"])]; detail_desc.text = SceneRegistry.region_description(zone["region_type"]); var visit: int = int(zone.get("visit_count", 0))
+	detail_meta.text = "安全区   ·   坐标 %s   ·   去过 %d 次" % [id, visit] if id == MapState.BASE_ID else "危险度%s   ·   坐标 %s   ·   去过 %d 次" % ["⭐".repeat(int(zone["star"])), id, visit]; travel_button.disabled = false
 	_selected_cell = _find_cell_for_zone(id)
 	if is_instance_valid(_selected_cell): _selected_cell.add_theme_stylebox_override("normal", _selected_cell_style(zone))
 
