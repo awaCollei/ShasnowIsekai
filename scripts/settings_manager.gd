@@ -43,6 +43,7 @@ var always_run: bool = false
 # 音量设置（0.0 ~ 1.0）
 var game_sfx_volume: float = 1.0
 var ui_sfx_volume: float = 1.0
+var voice_volume: float = 1.0
 var bgm_volume: float = 1.0
 
 # 设置文件路径
@@ -79,6 +80,11 @@ func load_settings() -> void:
 	else:
 		ui_sfx_volume = 1.0
 
+	if err == OK and config.has_section_key("audio", "voice"):
+		voice_volume = config.get_value("audio", "voice", 1.0)
+	else:
+		voice_volume = 1.0
+
 	if err == OK and config.has_section_key("audio", "bgm"):
 		bgm_volume = config.get_value("audio", "bgm", 1.0)
 	else:
@@ -97,6 +103,7 @@ func save_settings() -> void:
 
 	config.set_value("audio", "game_sfx", game_sfx_volume)
 	config.set_value("audio", "ui_sfx", ui_sfx_volume)
+	config.set_value("audio", "voice", voice_volume)
 	config.set_value("audio", "bgm", bgm_volume)
 
 	config.save(SETTINGS_PATH)
@@ -121,6 +128,7 @@ func reset_to_defaults() -> void:
 	always_run = false
 	game_sfx_volume = 1.0
 	ui_sfx_volume = 1.0
+	voice_volume = 1.0
 	bgm_volume = 1.0
 	apply_key_bindings()
 	apply_audio_settings()
@@ -154,6 +162,12 @@ func set_ui_sfx_volume(value: float) -> void:
 	save_settings()
 
 
+func set_voice_volume(value: float) -> void:
+	voice_volume = value
+	AudioManager.set_voice_volume(value)
+	save_settings()
+
+
 func set_bgm_volume(value: float) -> void:
 	bgm_volume = value
 	AudioManager.set_bgm_volume(value)
@@ -163,4 +177,5 @@ func set_bgm_volume(value: float) -> void:
 func apply_audio_settings() -> void:
 	AudioManager.set_game_sfx_volume(game_sfx_volume)
 	AudioManager.set_ui_sfx_volume(ui_sfx_volume)
+	AudioManager.set_voice_volume(voice_volume)
 	AudioManager.set_bgm_volume(bgm_volume)

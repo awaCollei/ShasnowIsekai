@@ -24,6 +24,10 @@ var _black_sui_scene = preload("res://plot/black_screen.tscn")
 var quest_book: Dictionary = {}           # 从 script.json 加载的任务书
 var _quest_completed: Dictionary = {}     # 已完成的任务 { quest_id: true }
 
+# 当前剧本 ID，用于定位 assets/VO 下的对应语音目录。
+# 文件名由 chat() 全部参数的规范 JSON 计算 SHA-256 得到，与执行顺序无关。
+var _active_plot_id: String = ""
+
 
 func _ready() -> void:
 	_load_quest_book()
@@ -33,7 +37,7 @@ func _ready() -> void:
 # 剧情播放
 # ==========================
 
-## 加载并播放指定剧情脚本（如 "1_1"）
+## 加载并播放指定剧情脚本（如 "1-1-1"）
 func play_plot(plot_id: String) -> void:
 	if is_playing:
 		push_warning("PlotlineManager: 已有剧情正在播放")
@@ -50,6 +54,7 @@ func play_plot(plot_id: String) -> void:
 		return
 
 	is_playing = true
+	_active_plot_id = plot_id
 	plot_started.emit()
 
 	# 添加剧情脚本到场景树以便使用 await
@@ -60,6 +65,8 @@ func play_plot(plot_id: String) -> void:
 	# 确保清理
 	if is_playing:
 		chat_end()
+	AudioManager.stop_voice()
+	_active_plot_id = ""
 	is_playing = false
 	plot_ended.emit()
 
@@ -85,6 +92,7 @@ func chat_start() -> void:
 ##           双人时有效值为 "face_to_face"/"back_to_back"，默认为 "face_to_face"
 func chat(speaker: Variant, text: String, illustrations: Array = [], direction: String = "auto") -> void:
 	_ensure_chat_ui()
+	_play_chat_voice(speaker, text, illustrations, direction)
 	
 	# 解析 speaker 参数
 	var display_name: String
@@ -128,10 +136,14 @@ func chat(speaker: Variant, text: String, illustrations: Array = [], direction: 
 	_chat_ui.set_illustration_direction(final_direction)
 	_chat_ui.set_text(text)
 	await _chat_ui.advance_confirmed
+	# 第一次确认仅立即显示全文，不会触发 advance_confirmed，因此不会中断语音；
+	# 第二次确认推进时在这里停止，随后下一句 chat() 会立即播放对应语音。
+	AudioManager.stop_voice()
 
 
 ## 结束对话：关闭聊天UI
 func chat_end() -> void:
+	AudioManager.stop_voice()
 	if _chat_ui:
 		_chat_ui.hide_ui()
 
@@ -329,6 +341,25 @@ func _ensure_black_ui() -> void:
 		return
 	_black_sui = _black_sui_scene.instantiate()
 	get_tree().root.add_child(_black_sui)
+
+
+func _play_chat_voice(speaker: Variant, text: String, illustrations: Array, direction: String) -> void:
+	# 结构示例：plotline/1/1-1/1-1-1.gd
+	#        -> assets/VO/1/1-1/1-1-1/<参数SHA-256>.ogg
+	AudioManager.stop_voice()
+	if _active_plot_id.is_empty():
+		return
+	var parts := _active_plot_id.split("-")
+	if parts.size() < 3:
+		return
+	# 参数顺序固定，JSON.stringify() 的紧凑结果也是可视化编辑器的哈希输入。
+	var signature := JSON.stringify([speaker, text, illustrations, direction])
+	var voice_hash := signature.sha256_text()
+	var voice_path := "res://assets/VO/%s/%s-%s/%s/%s.ogg" % [
+		parts[0], parts[0], parts[1], _active_plot_id, voice_hash
+	]
+	if ResourceLoader.exists(voice_path):
+		AudioManager.play_voice(voice_path)
 
 
 func _load_quest_book() -> void:

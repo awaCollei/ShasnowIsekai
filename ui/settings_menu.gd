@@ -17,6 +17,8 @@ const BINDING_ACTIONS: Array[String] = [
 @onready var game_sfx_value_label: Label = $BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/GameSfxRow/ValueLabel
 @onready var ui_sfx_slider: HSlider = $BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/UiSfxRow/Slider
 @onready var ui_sfx_value_label: Label = $BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/UiSfxRow/ValueLabel
+@onready var voice_slider: HSlider = $BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow/Slider
+@onready var voice_value_label: Label = $BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow/ValueLabel
 @onready var bgm_slider: HSlider = $BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/BgmRow/Slider
 @onready var bgm_value_label: Label = $BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/BgmRow/ValueLabel
 @onready var always_run_check: CheckBox = $BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/AlwaysRunRow/CheckBox
@@ -47,6 +49,7 @@ func _ready() -> void:
 	# 连接音量滑块
 	game_sfx_slider.value_changed.connect(_on_game_sfx_volume_changed)
 	ui_sfx_slider.value_changed.connect(_on_ui_sfx_volume_changed)
+	voice_slider.value_changed.connect(_on_voice_volume_changed)
 	bgm_slider.value_changed.connect(_on_bgm_volume_changed)
 
 
@@ -98,9 +101,11 @@ func _update_key_display() -> void:
 func _update_volume_sliders() -> void:
 	game_sfx_slider.set_value_no_signal(SettingsManager.game_sfx_volume)
 	ui_sfx_slider.set_value_no_signal(SettingsManager.ui_sfx_volume)
+	voice_slider.set_value_no_signal(SettingsManager.voice_volume)
 	bgm_slider.set_value_no_signal(SettingsManager.bgm_volume)
 	_update_volume_label(game_sfx_value_label, SettingsManager.game_sfx_volume)
 	_update_volume_label(ui_sfx_value_label, SettingsManager.ui_sfx_volume)
+	_update_volume_label(voice_value_label, SettingsManager.voice_volume)
 	_update_volume_label(bgm_value_label, SettingsManager.bgm_volume)
 
 
@@ -133,6 +138,11 @@ func _on_game_sfx_volume_changed(value: float) -> void:
 func _on_ui_sfx_volume_changed(value: float) -> void:
 	SettingsManager.set_ui_sfx_volume(value)
 	_update_volume_label(ui_sfx_value_label, value)
+
+
+func _on_voice_volume_changed(value: float) -> void:
+	SettingsManager.set_voice_volume(value)
+	_update_volume_label(voice_value_label, value)
 
 
 func _on_bgm_volume_changed(value: float) -> void:

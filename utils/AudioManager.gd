@@ -1,16 +1,21 @@
 extends Node
 
 ## 全局音频管理器
-## 四种音频通道：游戏音效、UI音效、循环音效、背景音乐
-## 用法：AudioManager.play_game_sfx(stream) / AudioManager.play_ui_sfx(stream) / AudioManager.play_bgm(stream)
-##       AudioManager.play_looping_sfx(stream) / AudioManager.stop_looping_sfx(player)
+## 全局音频通道：游戏音效、UI音效、循环音效、背景音乐、剧情语音
+## 剧情语音同一时间只播放一句；开始下一句或结束对话时由 PlotlineManager 中断。
 
-# 背景音乐播放器（同一时间只能有一首）
+# 背景音乐与剧情语音播放器（各自同一时间只能播放一条）
 @onready var bgm_player: AudioStreamPlayer = AudioStreamPlayer.new()
+@onready var voice_player: AudioStreamPlayer = AudioStreamPlayer.new()
 
 # 音量控制（范围 0.0 ~ 1.0）
 var game_sfx_volume: float = 1.0
 var ui_sfx_volume: float = 1.0
+var voice_volume: float = 1.0:
+	set(value):
+		voice_volume = clampf(value, 0.0, 1.0)
+		if voice_player:
+			voice_player.volume_db = linear_to_db(voice_volume)
 var bgm_volume: float = 1.0:
 	set(value):
 		bgm_volume = clampf(value, 0.0, 1.0)
@@ -25,6 +30,10 @@ func _ready() -> void:
 	add_child(bgm_player)
 	bgm_player.name = "BGMPlayer"
 	bgm_player.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	add_child(voice_player)
+	voice_player.name = "VoicePlayer"
+	voice_player.process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 ## 播放游戏音效（支持重叠播放）
@@ -103,6 +112,24 @@ func play_ui_sfx(stream: Variant, volume_override: float = -1.0) -> void:
 	player.play()
 
 
+## 播放剧情语音。若上一句仍在播放，会先中断上一句。
+func play_voice(stream: Variant) -> void:
+	var audio_stream = _get_stream(stream)
+	if audio_stream == null:
+		push_warning("AudioManager: 无法播放剧情语音，音频流为空")
+		return
+	voice_player.stop()
+	voice_player.stream = audio_stream
+	voice_player.volume_db = linear_to_db(voice_volume)
+	voice_player.play()
+
+
+## 中断当前剧情语音。
+func stop_voice() -> void:
+	voice_player.stop()
+	voice_player.stream = null
+
+
 ## 播放背景音乐（同一时间只能有一首）
 func play_bgm(stream: Variant, fade_in_time: float = 0.0, volume_override: float = -1.0) -> void:
 	var audio_stream = _get_stream(stream)
@@ -164,6 +191,11 @@ func set_ui_sfx_volume(value: float) -> void:
 	ui_sfx_volume = clampf(value, 0.0, 1.0)
 
 
+## 设置剧情语音音量（0.0 ~ 1.0）
+func set_voice_volume(value: float) -> void:
+	voice_volume = clampf(value, 0.0, 1.0)
+
+
 ## 设置背景音乐音量（0.0 ~ 1.0）
 func set_bgm_volume(value: float) -> void:
 	bgm_volume = clampf(value, 0.0, 1.0)
@@ -177,6 +209,11 @@ func get_game_sfx_volume() -> float:
 ## 获取 UI 音效音量
 func get_ui_sfx_volume() -> float:
 	return ui_sfx_volume
+
+
+## 获取剧情语音音量
+func get_voice_volume() -> float:
+	return voice_volume
 
 
 ## 获取背景音乐音量

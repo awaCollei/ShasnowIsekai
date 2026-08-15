@@ -122,6 +122,32 @@ theme_override_font_sizes/font_size = 16
 text = "100%"
 horizontal_alignment = 2
 
+[node name="VoiceRow" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "语音"
+
+[node name="Slider" type="HSlider" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="ValueLabel" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "100%"
+horizontal_alignment = 2
+
 [node name="BgmRow" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置" unique_id=537992734]
 layout_mode = 2
 theme_override_constants/separation = 12
