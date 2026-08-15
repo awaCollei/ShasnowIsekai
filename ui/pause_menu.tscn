@@ -2,11 +2,15 @@
 
 [ext_resource type="Script" uid="uid://lew74licgkjl" path="res://ui/pause_menu.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://jonut7r5ivto" path="res://ui/blur_shader.gdshader" id="2_shader"]
+[ext_resource type="Theme" uid="uid://cybfqyr8xfp1p" path="res://theme/teal_ui.tres" id="3_theme"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
 shader = ExtResource("2_shader")
 shader_parameter/blur_amount = 3.0
 shader_parameter/dim_amount = 0.4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fob5h"]
+bg_color = Color(1, 1, 1, 0)
 
 [node name="PauseMenu" type="CanvasLayer" unique_id=1166012258]
 process_mode = 3
@@ -20,6 +24,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_theme")
+
+[node name="Panel" type="Panel" parent="BlurRect" unique_id=1738428892]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -290.0
+offset_right = 220.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fob5h")
 
 [node name="CenterContainer" type="CenterContainer" parent="BlurRect" unique_id=2011215115]
 layout_mode = 0
@@ -31,7 +51,7 @@ grow_vertical = 2
 [node name="MainPanel" type="VBoxContainer" parent="BlurRect/CenterContainer" unique_id=809155243]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 20
 
 [node name="Title" type="Label" parent="BlurRect/CenterContainer/MainPanel" unique_id=997142723]
 layout_mode = 2

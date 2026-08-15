@@ -21,6 +21,7 @@ var _settings_menu = null
 
 func _ready() -> void:
 	visible = false
+	ButtonFeedback.setup_recursive(self)
 
 	# 连接主菜单按钮
 	$BlurRect/CenterContainer/MainPanel/ResumeButton.pressed.connect(_on_resume_pressed)
@@ -31,8 +32,8 @@ func _ready() -> void:
 	# 连接保存面板按钮
 	$BlurRect/CenterContainer/SavePanel/BackButton.pressed.connect(_on_save_back_pressed)
 
-	# 创建覆盖确认对话框
-	overwrite_confirm = ConfirmationDialog.new()
+	# 创建统一风格的覆盖确认框
+	overwrite_confirm = preload("res://ui/styled_confirm_dialog.gd").new()
 	overwrite_confirm.title = "覆盖存档"
 	overwrite_confirm.dialog_text = "该槽位已有存档，是否覆盖？"
 	overwrite_confirm.confirmed.connect(_on_overwrite_confirmed)

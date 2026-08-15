@@ -2,6 +2,7 @@
 
 [ext_resource type="Shader" uid="uid://jonut7r5ivto" path="res://ui/blur_shader.gdshader" id="1_shader"]
 [ext_resource type="Script" uid="uid://brhwfj3xinc5o" path="res://ui/settings_menu.gd" id="1_xutny"]
+[ext_resource type="Theme" uid="uid://cybfqyr8xfp1p" path="res://theme/teal_ui.tres" id="3_theme"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
 shader = ExtResource("1_shader")
@@ -20,6 +21,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_theme")
+
+[node name="Panel" type="Panel" parent="BlurRect" unique_id=2113862760]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -285.0
+offset_top = -280.0
+offset_right = 285.0
+offset_bottom = 270.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="CenterContainer" type="CenterContainer" parent="BlurRect" unique_id=941991303]
 layout_mode = 0
@@ -29,7 +45,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainVBox" type="VBoxContainer" parent="BlurRect/CenterContainer" unique_id=156395516]
-custom_minimum_size = Vector2(450, 0)
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -44,25 +60,16 @@ custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 
 [node name="TabContainer" type="TabContainer" parent="BlurRect/CenterContainer/MainVBox" unique_id=501745462]
+clip_contents = true
 custom_minimum_size = Vector2(450, 380)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 24
 current_tab = 0
-
-[node name="BackButton" type="Button" parent="BlurRect/CenterContainer/MainVBox" unique_id=1598503222]
-custom_minimum_size = Vector2(120, 36)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 16
-text = "返回"
-
-[node name="BottomSpacer" type="Control" parent="BlurRect/CenterContainer/MainVBox" unique_id=2011001000]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
 
 [node name="音量设置" type="VBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer" unique_id=264501889]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 25
 metadata/_tab_title = "音量设置"
 metadata/_tab_index = 0
 
@@ -77,8 +84,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/GameSfxRow" unique_id=980426455]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "游戏音效"
 
 [node name="Slider" type="HSlider" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/GameSfxRow" unique_id=737966287]
@@ -92,7 +98,7 @@ value = 1.0
 [node name="ValueLabel" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/GameSfxRow" unique_id=1540474024]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "100%"
 horizontal_alignment = 2
 
@@ -103,9 +109,8 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/UiSfxRow" unique_id=1310412801]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
-text = "UI音效"
+theme_override_font_sizes/font_size = 20
+text = "交互音效"
 
 [node name="Slider" type="HSlider" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/UiSfxRow" unique_id=1294347000]
 custom_minimum_size = Vector2(200, 0)
@@ -118,22 +123,21 @@ value = 1.0
 [node name="ValueLabel" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/UiSfxRow" unique_id=1432898682]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "100%"
 horizontal_alignment = 2
 
-[node name="VoiceRow" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置"]
+[node name="VoiceRow" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置" unique_id=1222348411]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow"]
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow" unique_id=186323631]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
-text = "语音"
+theme_override_font_sizes/font_size = 20
+text = "角色语音"
 
-[node name="Slider" type="HSlider" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow"]
+[node name="Slider" type="HSlider" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow" unique_id=1309482127]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -141,10 +145,10 @@ max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="ValueLabel" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow"]
+[node name="ValueLabel" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/VoiceRow" unique_id=1442409222]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "100%"
 horizontal_alignment = 2
 
@@ -155,8 +159,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/BgmRow" unique_id=535178619]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "背景音乐"
 
 [node name="Slider" type="HSlider" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/BgmRow" unique_id=1084756374]
@@ -170,7 +173,7 @@ value = 1.0
 [node name="ValueLabel" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/音量设置/BgmRow" unique_id=1240309557]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "100%"
 horizontal_alignment = 2
 
@@ -185,6 +188,7 @@ metadata/_tab_index = 1
 custom_minimum_size = Vector2(400, 280)
 layout_mode = 2
 size_flags_vertical = 3
+scroll_hint_mode = 1
 
 [node name="BindingsList" type="VBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer" unique_id=535328166]
 layout_mode = 2
@@ -199,7 +203,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_up" unique_id=70880082]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "移动（上）"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_up" unique_id=2119630218]
@@ -215,7 +219,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_down" unique_id=593694791]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "移动（下）"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_down" unique_id=661603430]
@@ -231,7 +235,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_left" unique_id=644513721]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "移动（左）"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_left" unique_id=1514591527]
@@ -247,7 +251,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_right" unique_id=484156683]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "移动（右）"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_right" unique_id=1793401559]
@@ -256,17 +260,17 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "→"
 
-[node name="Row_inventory" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList"]
+[node name="Row_inventory" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=1297238224]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_inventory"]
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_inventory" unique_id=1291919394]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
-text = "背包"
+theme_override_font_sizes/font_size = 20
+text = "打开背包"
 
-[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_inventory"]
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_inventory" unique_id=156077523]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
@@ -279,7 +283,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_interact" unique_id=1321905668]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "交互"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_interact" unique_id=1606431307]
@@ -295,7 +299,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_prev" unique_id=110144378]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "选择（上一个）"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_prev" unique_id=268616752]
@@ -311,7 +315,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_next" unique_id=1791205835]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "选择（下一个）"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_next" unique_id=291301081]
@@ -327,7 +331,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_menu" unique_id=1489279056]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "菜单"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_menu" unique_id=2001001128]
@@ -343,7 +347,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_attack" unique_id=1209416297]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "攻击"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_attack" unique_id=939336913]
@@ -359,7 +363,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_chant" unique_id=1752207028]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "吟唱"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_chant" unique_id=1176210932]
@@ -375,7 +379,7 @@ theme_override_constants/separation = 12
 [node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_dodge" unique_id=1888299107]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 20
 text = "闪避"
 
 [node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_dodge" unique_id=1986199641]
@@ -384,44 +388,57 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "Shift"
 
-[node name="KeybindSpacer" type="Control" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置" unique_id=1658780823]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-
-[node name="AlwaysRunRow" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置" unique_id=363972139]
+[node name="Row_confirm" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=1864995341]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/AlwaysRunRow" unique_id=1284426390]
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_confirm" unique_id=682605504]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "始终疾跑"
+theme_override_font_sizes/font_size = 20
+text = "确认/推进对话"
 
-[node name="CheckBox" type="CheckBox" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/AlwaysRunRow" unique_id=1299806821]
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_confirm" unique_id=396733062]
+custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
+text = "Space"
 
-[node name="ButtonsSpacer" type="Control" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置" unique_id=1086659592]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-
-[node name="ButtonsRow" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置" unique_id=476653185]
+[node name="ButtonsRow" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=476653185]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="ResetButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ButtonsRow" unique_id=787892606]
+[node name="ResetButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/ButtonsRow" unique_id=787892606]
 custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 16
 text = "恢复默认"
 
-
-
-[node name="WaitingLabel" type="Label" parent="BlurRect/CenterContainer/MainVBox" unique_id=1650019466]
+[node name="操作设置" type="VBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer" unique_id=1154177148]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
+theme_override_constants/separation = 8
+metadata/_tab_title = "操作设置"
+metadata/_tab_index = 2
+
+[node name="SpacerTop" type="Control" parent="BlurRect/CenterContainer/MainVBox/TabContainer/操作设置" unique_id=1669906179]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="AlwaysRunCheckBox" type="CheckButton" parent="BlurRect/CenterContainer/MainVBox/TabContainer/操作设置" unique_id=1191176237]
+custom_minimum_size = Vector2(56, 30)
+layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "按下新的按键..."
-horizontal_alignment = 1
+text = "始终疾跑"
+
+[node name="BottomSpacer" type="Control" parent="BlurRect/CenterContainer/MainVBox" unique_id=2011001000]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="BlurRect/CenterContainer/MainVBox" unique_id=1598503222]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+text = "返回"

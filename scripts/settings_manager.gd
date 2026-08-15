@@ -113,14 +113,17 @@ func apply_key_bindings() -> void:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
 
-		# 清除旧的事件
 		InputMap.action_erase_events(action)
-
-		# 添加新的按键事件
-		var event := InputEventKey.new()
-		event.keycode = key_bindings[action]
-		event.physical_keycode = key_bindings[action]
-		InputMap.action_add_event(action, event)
+		var binding_value: int = int(key_bindings[action])
+		if binding_value < 0:
+			var mouse_event := InputEventMouseButton.new()
+			mouse_event.button_index = -binding_value
+			InputMap.action_add_event(action, mouse_event)
+		else:
+			var key_event := InputEventKey.new()
+			key_event.keycode = binding_value
+			key_event.physical_keycode = binding_value
+			InputMap.action_add_event(action, key_event)
 
 func reset_to_defaults() -> void:
 	for action in DEFAULT_KEY_BINDINGS:
@@ -134,16 +137,25 @@ func reset_to_defaults() -> void:
 	apply_audio_settings()
 	save_settings()
 
-func set_key_binding(action: String, keycode: Key) -> void:
+func set_key_binding(action: String, keycode: int) -> void:
 	if key_bindings.has(action):
 		key_bindings[action] = keycode
 		apply_key_bindings()
 		save_settings()
 
 func get_key_name(action: String) -> String:
-	if key_bindings.has(action):
-		return OS.get_keycode_string(key_bindings[action])
-	return ""
+	if not key_bindings.has(action):
+		return ""
+	var binding_value: int = int(key_bindings[action])
+	match binding_value:
+		-1:
+			return "鼠标左键"
+		-2:
+			return "鼠标中键"
+		-3:
+			return "鼠标右键"
+		_:
+			return OS.get_keycode_string(binding_value)
 
 func set_always_run(value: bool) -> void:
 	always_run = value

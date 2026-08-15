@@ -5,6 +5,7 @@
 [ext_resource type="Theme" uid="uid://cgktf3nobp51i" path="res://theme/purple_glass_button.tres" id="4_p8ri8"]
 [ext_resource type="Shader" uid="uid://jonut7r5ivto" path="res://ui/blur_shader.gdshader" id="6_shader"]
 [ext_resource type="Texture2D" uid="uid://dl222vjq0dgg0" path="res://assets/settings.png" id="7_p8ri8"]
+[ext_resource type="Theme" path="res://theme/teal_ui.tres" id="8_teal"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_blur"]
 shader = ExtResource("6_shader")
@@ -76,6 +77,23 @@ theme = ExtResource("4_p8ri8")
 theme_override_font_sizes/font_size = 40
 text = "退出游戏"
 
+[node name="SaveSlotsCard" type="Panel" parent="." unique_id=1183629926]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -240.0
+offset_right = 280.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("8_teal")
+
 [node name="SaveSlotsPanel" type="VBoxContainer" parent="." unique_id=1183629927]
 visible = false
 layout_mode = 1
@@ -90,6 +108,7 @@ offset_right = 250.0
 offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("8_teal")
 theme_override_constants/separation = 12
 alignment = 1
 

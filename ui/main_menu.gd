@@ -4,6 +4,7 @@ extends Control
 @onready var save_slots_panel: VBoxContainer = $SaveSlotsPanel
 @onready var slots_container: VBoxContainer = $SaveSlotsPanel/SlotsContainer
 @onready var blur_rect: ColorRect = $BlurRect
+@onready var save_slots_card: Panel = $SaveSlotsCard
 @onready var new_game_button: Button = $MainPanel/NewGameButton
 @onready var load_game_button: Button = $MainPanel/LoadGameButton
 @onready var quit_button: Button = $MainPanel/QuitButton
@@ -20,8 +21,8 @@ func _ready() -> void:
 	$SaveSlotsPanel/BackButton.pressed.connect(_on_back_pressed)
 	$SettingsButton.pressed.connect(_on_settings_pressed)
 
-	# 创建删除确认对话框
-	delete_confirm = ConfirmationDialog.new()
+	# 创建统一风格的删除确认框
+	delete_confirm = preload("res://ui/styled_confirm_dialog.gd").new()
 	delete_confirm.title = "删除存档"
 	delete_confirm.confirmed.connect(_on_delete_confirmed)
 	add_child(delete_confirm)
@@ -50,12 +51,16 @@ func _on_back_pressed() -> void:
 func _show_main() -> void:
 	main_panel.visible = true
 	save_slots_panel.visible = false
+	save_slots_card.visible = false
+	$SettingsButton.visible = true
 	blur_rect.visible = false
 
 
 func _show_save_slots() -> void:
 	main_panel.visible = false
 	save_slots_panel.visible = true
+	save_slots_card.visible = true
+	$SettingsButton.visible = false
 	blur_rect.visible = true
 
 	# 清空旧条目

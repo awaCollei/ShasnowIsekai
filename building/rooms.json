@@ -1,29 +1,26 @@
 {
   "city1": {
     "hospital": {
+      "building_width": 3200,
       "floor_count": 5,
-      "building_width": 3200.0,
       "portal_positions": [
         400,
         -105
       ],
       "rooms": [
         {
+          "chests": [],
           "id": "楼梯间",
-          "weight": 0,
           "investigation_points": [],
-          "chests": []
+          "weight": 0
         },
         {
+          "chests": [],
           "id": "空房间",
-          "weight": 0.1,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.1
         },
         {
-          "id": "配药室",
-          "weight": 1,
-          "investigation_points": [],
           "chests": [
             {
               "name": "医疗物资箱",
@@ -33,79 +30,82 @@
               ],
               "type": "hospital_medicine"
             }
-          ]
+          ],
+          "id": "配药室",
+          "investigation_points": [],
+          "weight": 1
         },
         {
+          "chests": [],
           "id": "病房",
-          "weight": 1,
           "investigation_points": [],
-          "chests": []
+          "weight": 1
         },
         {
+          "chests": [],
           "id": "大厅",
-          "weight": 0.6,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.6
         }
       ]
     },
     "mall": {
+      "building_width": 4000,
       "floor_count": 5,
-      "building_width": 4000.0,
       "portal_positions": [
         760,
         -105
       ],
       "rooms": [
         {
+          "chests": [],
           "id": "楼梯间",
-          "weight": 0,
           "investigation_points": [],
-          "chests": []
+          "weight": 0
         },
         {
+          "chests": [],
           "id": "空房间",
-          "weight": 0.1,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.1
         },
         {
+          "chests": [],
           "id": "数码店",
-          "weight": 0.5,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.5
         },
         {
+          "chests": [],
           "id": "餐厅",
-          "weight": 1,
           "investigation_points": [],
-          "chests": []
+          "weight": 1
         },
         {
+          "chests": [],
           "id": "超市",
-          "weight": 1,
           "investigation_points": [],
-          "chests": []
+          "weight": 1
         },
         {
+          "chests": [],
           "id": "户外用品店",
-          "weight": 0.8,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.8
         }
       ]
     },
     "office": {
+      "building_width": 3200,
       "floor_count": 6,
-      "building_width": 3200.0,
       "portal_positions": [
         238.25,
         -105
       ],
       "rooms": [
         {
+          "chests": [],
           "id": "楼梯间",
-          "weight": 0,
           "investigation_points": [
             {
               "investigation_id": "city1_office_楼梯间_inv_0",
@@ -117,18 +117,15 @@
               ]
             }
           ],
-          "chests": []
+          "weight": 0
         },
         {
+          "chests": [],
           "id": "空房间",
-          "weight": 0.1,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.1
         },
         {
-          "id": "茶水间",
-          "weight": 1,
-          "investigation_points": [],
           "chests": [
             {
               "name": "冰箱",
@@ -146,12 +143,12 @@
               ],
               "type": "city1_office_茶水间_chest_1"
             }
-          ]
+          ],
+          "id": "茶水间",
+          "investigation_points": [],
+          "weight": 1
         },
         {
-          "id": "办公室",
-          "weight": 1,
-          "investigation_points": [],
           "chests": [
             {
               "name": "办公物资箱",
@@ -161,65 +158,68 @@
               ],
               "type": "office_supply"
             }
-          ]
+          ],
+          "id": "办公室",
+          "investigation_points": [],
+          "weight": 1
         },
         {
+          "chests": [],
           "id": "办公室2",
-          "weight": 1,
           "investigation_points": [],
-          "chests": []
+          "weight": 1
         },
         {
+          "chests": [],
           "id": "机房",
-          "weight": 0.5,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.5
         }
       ]
     },
     "residential": {
+      "building_width": 3200,
       "floor_count": 6,
-      "building_width": 3200.0,
       "portal_positions": [
         325,
         -105
       ],
       "rooms": [
         {
+          "chests": [],
           "id": "楼梯间",
-          "weight": 0,
           "investigation_points": [],
-          "chests": []
+          "weight": 0
         },
         {
+          "chests": [],
           "id": "空房间",
-          "weight": 0.1,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.1
         },
         {
+          "chests": [],
           "id": "客厅",
-          "weight": 0.8,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.8
         },
         {
+          "chests": [],
           "id": "厨房",
-          "weight": 0.8,
           "investigation_points": [],
-          "chests": []
+          "weight": 0.8
         },
         {
+          "chests": [],
           "id": "房间1",
-          "weight": 1,
           "investigation_points": [],
-          "chests": []
+          "weight": 1
         },
         {
+          "chests": [],
           "id": "房间2",
-          "weight": 1,
           "investigation_points": [],
-          "chests": []
+          "weight": 1
         }
       ]
     }
