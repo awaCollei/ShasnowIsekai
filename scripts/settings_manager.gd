@@ -2,36 +2,17 @@ extends Node
 
 # 默认键位绑定
 const DEFAULT_KEY_BINDINGS: Dictionary = {
-	"move_up": KEY_UP,
-	"move_down": KEY_DOWN,
 	"move_left": KEY_LEFT,
 	"move_right": KEY_RIGHT,
+	"select_up": KEY_UP,
+	"select_down": KEY_DOWN,
 	"interact": KEY_F,
 	"inventory": KEY_E,
-	"select_prev": KEY_W,
-	"select_next": KEY_S,
 	"menu": KEY_ESCAPE,
 	"attack": KEY_Z,
 	"chant": KEY_X,
 	"dodge": KEY_SHIFT,
 	"confirm": KEY_SPACE,
-}
-
-# 键位显示名称
-const KEY_BINDING_NAMES: Dictionary = {
-	"move_up": "移动（上）",
-	"move_down": "移动（下）",
-	"move_left": "移动（左）",
-	"move_right": "移动（右）",
-	"interact": "交互",
-	"inventory": "背包",
-	"select_prev": "选择（上一个）",
-	"select_next": "选择（下一个）",
-	"menu": "菜单",
-	"attack": "攻击",
-	"chant": "吟唱",
-	"dodge": "闪避",
-	"confirm": "确认/推进对话",
 }
 
 # 当前键位绑定
@@ -125,16 +106,10 @@ func apply_key_bindings() -> void:
 			key_event.physical_keycode = binding_value
 			InputMap.action_add_event(action, key_event)
 
-func reset_to_defaults() -> void:
+func reset_keys_to_defaults() -> void:
 	for action in DEFAULT_KEY_BINDINGS:
 		key_bindings[action] = DEFAULT_KEY_BINDINGS[action]
-	always_run = false
-	game_sfx_volume = 1.0
-	ui_sfx_volume = 1.0
-	voice_volume = 1.0
-	bgm_volume = 1.0
 	apply_key_bindings()
-	apply_audio_settings()
 	save_settings()
 
 func set_key_binding(action: String, keycode: int) -> void:

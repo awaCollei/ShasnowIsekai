@@ -4,8 +4,8 @@ extends CanvasLayer
 signal closed
 
 const BINDING_ACTIONS: Array[String] = [
-	"move_up", "move_down", "move_left", "move_right",
-	"interact", "inventory", "select_prev", "select_next", "menu",
+	"move_left", "move_right","select_up", "select_down",
+	"interact", "inventory", "menu",
 	"attack", "chant", "dodge", "confirm"
 ]
 const MOUSE_BINDINGS: Dictionary = {
@@ -46,8 +46,8 @@ func _ready() -> void:
 	$BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/ButtonsRow/ResetButton.pressed.connect(_on_reset_pressed)
 	$BlurRect/CenterContainer/MainVBox/BackButton.pressed.connect(close)
 	reset_confirm = preload("res://ui/styled_confirm_dialog.gd").new()
-	reset_confirm.title = "恢复默认设置"
-	reset_confirm.dialog_text = "确定要恢复所有音量、键位和游戏选项吗？"
+	reset_confirm.title = "重置所有键位"
+	reset_confirm.dialog_text = "确定要重置所有键位吗？"
 	reset_confirm.theme = preload("res://theme/teal_ui.tres")
 	reset_confirm.confirmed.connect(_on_reset_confirmed)
 	add_child(reset_confirm)
@@ -164,12 +164,9 @@ func _on_always_run_toggled(pressed: bool) -> void:
 func _on_reset_pressed() -> void:
 	reset_confirm.popup_centered()
 
-
 func _on_reset_confirmed() -> void:
-	SettingsManager.reset_to_defaults()
+	SettingsManager.reset_keys_to_defaults()
 	_update_key_display()
-	_update_volume_sliders()
-	always_run_check.button_pressed = false
 	get_viewport().gui_release_focus()
 
 

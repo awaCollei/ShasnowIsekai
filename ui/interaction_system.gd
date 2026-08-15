@@ -53,11 +53,11 @@ func _input(event: InputEvent) -> void:
 	if _is_player_locked():
 		return
 
-	# W/S（ui_up/ui_down）选择选项。
-	if event.is_action_pressed("ui_up"):
+	# W/S（select_up/select_down）选择选项。
+	if event.is_action_pressed("select_up"):
 		select_previous()
 		input_cooldown = INPUT_COOLDOWN_TIME
-	elif event.is_action_pressed("ui_down"):
+	elif event.is_action_pressed("select_down"):
 		select_next()
 		input_cooldown = INPUT_COOLDOWN_TIME
 	elif event.is_action_pressed("interact"):

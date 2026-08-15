@@ -196,38 +196,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 
-[node name="Row_move_up" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=30259401]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_up" unique_id=70880082]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "移动（上）"
-
-[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_up" unique_id=2119630218]
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "↑"
-
-[node name="Row_move_down" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=1248519824]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_down" unique_id=593694791]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "移动（下）"
-
-[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_move_down" unique_id=661603430]
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "↓"
-
 [node name="Row_move_left" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=428898437]
 layout_mode = 2
 theme_override_constants/separation = 12
@@ -260,6 +228,38 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "→"
 
+[node name="Row_select_up" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=1868888916]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_up" unique_id=110144378]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "选择（上一个）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_up" unique_id=268616752]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "↑"
+
+[node name="Row_select_down" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=16240923]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_down" unique_id=1791205835]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "选择（下一个）"
+
+[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_down" unique_id=291301081]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "↓"
+
 [node name="Row_inventory" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=1297238224]
 layout_mode = 2
 theme_override_constants/separation = 12
@@ -291,38 +291,6 @@ custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "F"
-
-[node name="Row_select_prev" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=1868888916]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_prev" unique_id=110144378]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "选择（上一个）"
-
-[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_prev" unique_id=268616752]
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "W"
-
-[node name="Row_select_next" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=16240923]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Label" type="Label" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_next" unique_id=1791205835]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "选择（下一个）"
-
-[node name="KeyButton" type="Button" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList/Row_select_next" unique_id=291301081]
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "S"
 
 [node name="Row_menu" type="HBoxContainer" parent="BlurRect/CenterContainer/MainVBox/TabContainer/键位设置/ScrollContainer/BindingsList" unique_id=451721807]
 layout_mode = 2
