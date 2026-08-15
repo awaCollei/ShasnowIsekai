@@ -156,9 +156,9 @@ func load_save_info(slot: int) -> SaveData:
 	data.inventory_state = saved_inventory.duplicate(true) if saved_inventory is Dictionary else {}
 	data.has_data = true
 
-	# 读取任务进度
-	var quest_keys := config.get_section_keys("quests")
-	if quest_keys != null:
+	# 读取任务进度（段不存在时 get_section_keys 会报错，先判断是否存在）
+	if config.has_section("quests"):
+		var quest_keys := config.get_section_keys("quests")
 		for key in quest_keys:
 			data.quest_progress[key] = config.get_value("quests", key)
 
